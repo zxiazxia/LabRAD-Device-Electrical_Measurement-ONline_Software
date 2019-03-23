@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>Pictures/Landaul Fan.PNG</file>
+    <file>Pictures/SessionSelect.png</file>
+  </qresource>
+</RCC>

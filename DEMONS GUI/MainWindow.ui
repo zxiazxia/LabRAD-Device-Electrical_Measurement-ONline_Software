@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>654</width>
+    <height>724</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">#centralwidget
+{
+background-color: rgb(0, 0, 0);
+}</string>
+   </property>
+   <widget class="QPushButton" name="pushButton_LabRADConnect">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>20</y>
+      <width>111</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton:pressed#pushButton_LabRADConnect{
+color: rgb(0,0,0);
+background-color:rgb(131,131,131);
+border: 1px solid rgb(0,0,0);
+border-radius: 5px
+}
+
+QPushButton#pushButton_LabRADConnect{
+color: rgb(131,131,131);
+background-color:rgb(0,0,0);
+border: 2px solid  rgb(131,131,131);
+border-radius: 5px
+}</string>
+    </property>
+    <property name="text">
+     <string>Connect Server</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_FourTerminalGateSweep">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>160</y>
+      <width>111</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton:pressed#pushButton_LabRADConnect{
+color: rgb(0,0,0);
+background-color:rgb(131,131,131);
+border: 1px solid rgb(0,0,0);
+border-radius: 5px
+}
+
+QPushButton#pushButton_LabRADConnect{
+color: rgb(131,131,131);
+background-color:rgb(0,0,0);
+border: 2px solid  rgb(131,131,131);
+border-radius: 5px
+}</string>
+    </property>
+    <property name="text">
+     <string>4tgs</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="Resources/DEMONSResources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
