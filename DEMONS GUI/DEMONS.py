@@ -35,29 +35,21 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
         self.moveDefault()
         
         #Intialize all widgets. 
-        self.LabRAD = LabRADConnect.Window(self.reactor, None)
+        self.MeasurementWindows = {
+            'LabRAD': LabRADConnect.Window(self.reactor, None),
+            'FourTerminalGateSweepWindow': FourTerminalGateSweep.Window(self.reactor, None)
+        }
         
-        #Connects all drop down menu button
-        self.pushButton_LabRADConnect.clicked.connect(self.openLabRADConnectWindow)
         
-        # self.pushButton_FourTerminalGateSweep.clicked.connect(self.openFourTerminalGateSweep)
+        self.pushButton_LabRADConnect.clicked.connect(lambda: self.openWindow('LabRAD'))
+        self.pushButton_FourTerminalGateSweep.clicked.connect(lambda: self.openWindow('FourTerminalGateSweepWindow'))
         
-        # #Connect signals between modules
-        # #When LabRAD Connect module emits all the local and remote labRAD connections, it goes to the device
-        # #select module. This module selects appropriate devices for things. That is then emitted and is distributed
-        # #among all the other modules
-        # self.LabRAD.cxnLocal.connect(self.DeviceSelect.connectLabRAD)
-        # self.LabRAD.cxnRemote.connect(self.DeviceSelect.connectRemoteLabRAD)
-        # self.DeviceSelect.newDeviceInfo.connect(self.distributeDeviceInfo)
-        
-        # self.LabRAD.cxnDisconnected.connect(self.disconnectLabRADConnections)
-        # self.LabRAD.newSessionFolder.connect(self.distributeSessionFolder)
-        
+        self.MeasurementWindows['LabRAD'].cxnsignal.connect(self.connect)
+        self.MeasurementWindows['LabRAD'].discxnsignal.connect(self.disconnect)
         
         
         #Open by default the LabRAD Connect Module and Device Select
-        self.openLabRADConnectWindow()
-        
+        self.openWindow('LabRAD')        
         
     def setupAdditionalUi(self):
         """Some UI elements would not set properly from Qt Designer. These initializations are done here."""
@@ -66,92 +58,37 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
 #----------------------------------------------------------------------------------------------#
             
     """ The following section connects actions related to default opening windows."""
+    def connect(self, key, object):
+        try:
+            for name, window in self.MeasurementWindows.iteritems():
+                if name != 'LabRAD': #Skip through labradconnect window
+                    if str(key) in window.serversList:
+                        window.connectServer(str(key), object)
+        except Exception as inst:
+            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+    def disconnect(self, key):
+        try:
+            for name, window in self.MeasurementWindows.iteritems():
+                if key in window.serversList:
+                    window.disconnectServer(key)
+        except Exception as inst:
+            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+    def openWindow(self, key):
+        self.MeasurementWindows[key].showNormal()
+        self.MeasurementWindows[key].moveDefault()
+        self.MeasurementWindows[key].raise_()
     
     def moveDefault(self):
         self.move(10,10)
-    
         
-    def openLabRADConnectWindow(self):
-        self.LabRAD.showNormal()
-        self.LabRAD.moveDefault()
-        self.LabRAD.raise_()
-        
-#----------------------------------------------------------------------------------------------#
-    """ The following section connects actions related to passing LabRAD connections."""
-    
-    def distributeDeviceInfo(self,dict):
-        #Call connectLabRAD functions for relevant modules
-        self.PlottersControl.connectLabRAD(dict)
-        self.nSOTChar.connectLabRAD(dict)
-        self.ScanControl.connectLabRAD(dict)
-        self.TFChar.connectLabRAD(dict)
-        self.Approach.connectLabRAD(dict)
-        self.JPEControl.connectLabRAD(dict)
-        self.Scripting.connectLabRAD(dict)
-        self.GoToSetpoint.connectLabRAD(dict)
-        self.FieldControl.connectLabRAD(dict)
-        self.TempControl.connectLabRAD(dict)
-        self.SampleCharacterizer.connectLabRAD(dict)
-        self.AttocubeCoarseControl.connectLabRAD(dict)
-
-    def disconnectLabRADConnections(self):
-        self.DeviceSelect.disconnectLabRAD()
-        self.PlottersControl.disconnectLabRAD()
-        self.nSOTChar.disconnectLabRAD()
-        self.ScanControl.disconnectLabRAD()
-        self.TFChar.disconnectLabRAD()
-        self.Approach.disconnectLabRAD()
-        self.JPEControl.disconnectLabRAD()
-        self.FieldControl.disconnectLabRAD()
-        self.Scripting.disconnectLabRAD()
-        self.TempControl.disconnectLabRAD()
-        self.SampleCharacterizer.disconnectLabRAD()
-        self.AttocubeCoarseControl.disconnectLabRAD()
-
-    def distributeSessionFolder(self, folder):
-        self.TFChar.setSessionFolder(folder)
-        self.ScanControl.setSessionFolder(folder)
-        self.nSOTChar.setSessionFolder(folder)
-        self.SampleCharacterizer.setSessionFolder(folder)
-
-    def updateDataVaultFolder(self):
-        self.ScanControl.updateDataVaultDirectory()
-        self.TFChar.updateDataVaultDirectory()
-        self.nSOTChar.updateDataVaultDirectory()
-        self.SampleCharacterizer.updateDataVaultDirectory()
-
-#----------------------------------------------------------------------------------------------#
-            
-    """ The following section connects actions related to setting the default layouts."""
-        
-    def setLayout1(self):
-        self.moveDefault()
-        self.hideAllWindows()
-        self.openScanControlWindow()
-        self.openApproachWindow()
-        
-            
-    def hideAllWindows(self):
-        self.ScanControl.hide()
-        self.LabRAD.hide()
-        self.nSOTChar.hide()
-        self.PlottersControl.hide()
-        self.TFChar.hide()
-        self.Approach.hide()
-        self.ApproachMonitor.hide()
-        self.JPEControl.hide()
-        self.PosCalibration.hide()
-        self.GoToSetpoint.hide()
-        self.QRreader.hide()
-        self.TempControl.hide()
-        self.SampleCharacterizer.hide()
-        self.AttocubeCoarseControl.hide()
-            
     def closeEvent(self, e):
         try:
-            self.LabRAD.close()
+            self.MeasurementWindows['LabRAD'].close()
         except Exception as inst:
             print inst
+            
     
 #----------------------------------------------------------------------------------------------#     
 """ The following runs the GUI"""

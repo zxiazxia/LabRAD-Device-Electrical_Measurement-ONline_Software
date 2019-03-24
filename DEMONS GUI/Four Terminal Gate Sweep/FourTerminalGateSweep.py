@@ -32,7 +32,12 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
         self.parent = parent
         self.setupUi(self)
 
-        self.push_Servers.clicked.connect(self.showServersList)
+        self.pushButton_Servers.clicked.connect(self.showServersList)
+
+        self.serversList = {
+            'dv': False,
+            'dac_adc': False
+        }
 
         self.Parameter = {
             'DeviceName': 'Device Name',
@@ -56,7 +61,36 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
         self.lineEdit_FourTerminal_Delay.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'FourTerminal_Delay', self.lineEdit_FourTerminal_Delay))
         self.pushButton_FourTerminal_NoSmTpTSwitch.clicked.connect(lambda: Toggle_NumberOfSteps_StepSize(self.Parameter, 'FourTerminal_Numberofstep', 'FourTerminal_MaxVoltage', 'FourTerminal_MinVoltage', 'FourTerminalSetting_Numberofsteps_Status', self.label_FourTerminalNumberofstep, 'Volt per Step', self.lineEdit_FourTerminal_Numberofstep))  
 
+    def connectServer(self, key, server):
+        self.serversList[key] = server
+        self.refreshServerIndicator()
+        
+    def disconnectServer(self, key):
+        self.serversList[key] = False
+        self.refreshServerIndicator()
 
+    def refreshServerIndicator(self):
+        flag = True
+        for key in self.serversList:
+            if self.serversList[key] == False:
+                flag = False
+        if flag:
+            self.pushButton_Servers.setStyleSheet("#pushButton_Servers{" +
+            "background: rgb(0, 170, 0);border-radius: 4px;}")
+        else:
+            self.pushButton_Servers.setStyleSheet("#pushButton_Servers{" +
+            "background: rgb(161, 0, 0);border-radius: 4px;}")
+        
+    def moveDefault(self):
+        self.move(10,170)
+        
     def showServersList(self):
         serList = serversList(self.reactor, self)
         serList.exec_()
+        
+class serversList(QtGui.QDialog, Ui_ServerList):
+    def __init__(self, reactor, parent = None):
+        super(serversList, self).__init__(parent)
+        self.setupUi(self)
+        pos = parent.pos()
+        self.move(pos + QtCore.QPoint(5,5))
