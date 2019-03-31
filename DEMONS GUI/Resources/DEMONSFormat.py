@@ -38,17 +38,6 @@ def UpdateLineEdit_Bound(dict, key, lineEdit, bound = None, datatype = float):
                 
     lineEdit[key].setText(formatNum(dict[key], 6))
 
-def UpdateLineEdit_NearestNumber(dict, key, lineEdit, Selection, datatype = float):
-    dummystr=str(lineEdit[key].text())   #read the text
-    dummyval=readNum(dummystr, None , False)
-    if isinstance(dummyval, float):
-        if bound == None:
-            dict[key] = datatype(dummyval)
-        elif (dummyval >= bound[0] and dummyval <= bound[1]):
-            dict[key] = datatype(dummyval)
-                
-    lineEdit[key].setText(formatNum(dict[key], 6))
-
 '''
 Update Number of Step value, it is special because it need to switch between stepsize and number of step
 Input: dictionary of parameters, key for the value to be changed, key for end, key for start, statuskey for status, the lineEdit where the input comes from, bound [lower, upper], datatype
