@@ -35,6 +35,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'ser_server': False,
         'DACADC'   : False,
         'SR830'   : False,
+        'SR860'   : False,		
         }
         
         self.pushButtonDictionary = {
@@ -42,7 +43,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'dv'        : self.pushButton_DataVault,
         'ser_server': self.pushButton_SerialServer,
         'DACADC'   : self.pushButton_DACADC,
-        'SR830'   : self.pushButton_SR830
+        'SR830'   : self.pushButton_SR830,
+        'SR860'   : self.pushButton_SR860
         }
 
         self.labelDictionary = {
@@ -50,7 +52,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'dv'        : self.label_DataVault,
         'ser_server': self.label_SerialServer,
         'DACADC'   : self.label_DACADC,
-        'SR830'   : self.label_SR830
+        'SR830'   : self.label_SR830,
+        'SR860'   : self.label_SR860
         }
         
         #Data vault session info
@@ -76,10 +79,10 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         self.pushButton_DACADC.clicked.connect(lambda: self.connectServer('DACADC'))
         self.pushButton_SerialServer.clicked.connect(lambda: self.connectServer('ser_server'))
         self.pushButton_SR830.clicked.connect(lambda: self.connectServer('SR830'))
+        self.pushButton_SR860.clicked.connect(lambda: self.connectServer('SR860'))
 
         self.key_list = []
         
-
         self.pushButton_DataVaultFolder.clicked.connect(self.chooseDVFolder)
         self.pushButton_SessionFolder.clicked.connect(self.chooseSessionFolder)
     
@@ -132,7 +135,13 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         connection_flag = True
                     except:
                         connection_flag = False
-
+                elif servername == 'SR860':
+                    try:
+                        sr860 = yield self.LabradDictionary['cxn'].sr860
+                        self.LabradDictionary[servername] = sr860
+                        connection_flag = True
+                    except:
+                        connection_flag = False
 
                 if connection_flag:
                     self.cxnsignal.emit(servername, self.LabradDictionary[servername])

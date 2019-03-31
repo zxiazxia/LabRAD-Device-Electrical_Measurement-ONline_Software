@@ -38,13 +38,15 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
         self.serversList = {
             'dv': False,
             'DACADC': False,
-            'SR830': False
+            'SR830': False,
+            'SR860': False
         }
 
         self.ServerDeviceList = {
             'dv': [],
             'DACADC': ['DataAquisition_Device'],
-            'SR830': ['Voltage_LI_Device', 'Current_LI_Device']
+            'SR830': ['Voltage_LI_Device', 'Current_LI_Device'],
+            'SR860': ['Voltage_LI_Device', 'Current_LI_Device']
         }
 
         self.deviceList = {
@@ -203,7 +205,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
 
     def refreshServerIndicator(self):
         try:
-            optional = ['SR830', 'DACADC']
+            optional = ['SR830', 'DACADC', 'SR860']
             flag = True
             for key in self.serversList:
                 if self.serversList[key] == False and not key in optional:

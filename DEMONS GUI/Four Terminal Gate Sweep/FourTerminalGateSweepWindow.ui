@@ -470,32 +470,6 @@ border:1px solid rgb(168,168,168)
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,1,1,1,1,1" columnstretch="2,2,0">
-            <item row="0" column="0" colspan="2">
-             <widget class="QLabel" name="label_Voltage_LI_Settings">
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">#label_ImageNum{
-color: rgb(168, 168, 168)
-}</string>
-              </property>
-              <property name="text">
-               <string>Voltage Lock In Amplifier Settings</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_9">
               <property name="minimumSize">
@@ -798,25 +772,8 @@ color: rgb(168, 168, 168)
               </property>
              </widget>
             </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="frame_Current_Lockin_Setting">
-           <property name="styleSheet">
-            <string notr="true">#frame_Current_Lockin_Setting{
-border:1px solid rgb(168,168,168)
-}</string>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,1,1,1,1,1" columnstretch="20,20,0">
-            <item row="0" column="0" colspan="2">
-             <widget class="QLabel" name="label_Current_LI_Settings">
+            <item row="0" column="0" colspan="3">
+             <widget class="QLabel" name="label_Voltage_LI_Settings">
               <property name="minimumSize">
                <size>
                 <width>60</width>
@@ -834,13 +791,30 @@ color: rgb(168, 168, 168)
 }</string>
               </property>
               <property name="text">
-               <string>Current Lock In Amplifier Settings</string>
+               <string>Voltage Lock In Amplifier Settings</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_Current_Lockin_Setting">
+           <property name="styleSheet">
+            <string notr="true">#frame_Current_Lockin_Setting{
+border:1px solid rgb(168,168,168)
+}</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,1,1,1,1,1" columnstretch="20,20,0">
             <item row="1" column="0">
              <widget class="QLabel" name="label_10">
               <property name="minimumSize">
@@ -1137,6 +1111,32 @@ color: rgb(168, 168, 168)
               </property>
               <property name="text">
                <string>(V)</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="3">
+             <widget class="QLabel" name="label_Current_LI_Settings">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#label_ImageNum{
+color: rgb(168, 168, 168)
+}</string>
+              </property>
+              <property name="text">
+               <string>Current Lock In Amplifier Settings</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
