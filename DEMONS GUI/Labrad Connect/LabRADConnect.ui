@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Labrad Connect</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../Resources/DEMONSResources.qrc">
+    <normaloff>:/Pictures/Pictures/DemonLogo.png</normaloff>:/Pictures/Pictures/DemonLogo.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
@@ -317,7 +321,7 @@ qproperty-wordWrap: true;
      </property>
      <property name="styleSheet">
       <string notr="true">#pushButton_SessionFolder{
-image:url(:/newPrefix/Pictures/SessionSelect.png);
+image:url(:/Pictures/Pictures/SessionSelect.png);
 background: black;
 }</string>
      </property>
@@ -336,7 +340,7 @@ background: black;
      </property>
      <property name="styleSheet">
       <string notr="true">#pushButton_DataVaultFolder{
-image:url(:/newPrefix/Pictures/SessionSelect.png);
+image:url(:/Pictures/Pictures/SessionSelect.png);
 background: black;
 }</string>
      </property>
@@ -405,6 +409,62 @@ background: rgb(144, 140, 9);
       <rect>
        <x>120</x>
        <y>130</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+color:rgb(168,168,168)</string>
+     </property>
+     <property name="text">
+      <string>Not connected</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_SR830">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>150</y>
+       <width>15</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">#pushButton_SR830{
+background: rgb(144, 140, 9);
+ border-radius: 4px;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>150</y>
+       <width>80</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+color:rgb(168,168,168)</string>
+     </property>
+     <property name="text">
+      <string>SR830</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_SR830">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>150</y>
        <width>121</width>
        <height>16</height>
       </rect>

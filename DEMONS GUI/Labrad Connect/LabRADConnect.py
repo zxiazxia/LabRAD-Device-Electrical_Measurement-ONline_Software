@@ -9,6 +9,7 @@ import sys
 import platform
 import datetime
 import os
+import dirExplorer
 
 path = sys.path[0] + r"\Labrad Connect"
 LabRADConnectUI, QtBaseClass = uic.loadUiType(path + r"\LabRADConnect.ui")
@@ -16,11 +17,8 @@ LabRADConnectUI, QtBaseClass = uic.loadUiType(path + r"\LabRADConnect.ui")
 class Window(QtGui.QMainWindow, LabRADConnectUI):
     cxnsignal = QtCore.pyqtSignal(str, object)
     discxnsignal = QtCore.pyqtSignal(str)
-    cxnLocal = QtCore.pyqtSignal(dict)
-    cxnRemote = QtCore.pyqtSignal(dict)
-    cxnDisconnected = QtCore.pyqtSignal()
     newSessionFolder = QtCore.pyqtSignal(str)
-    newDVFolder = QtCore.pyqtSignal()
+    newDVFolder = QtCore.pyqtSignal(list)
     
     def __init__(self, reactor, parent=None):
         super(Window, self).__init__(parent)
@@ -35,21 +33,24 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'cxn'       : False,
         'dv'        : False,
         'ser_server': False,
-        'dac_adc'   : False
+        'DACADC'   : False,
+        'SR830'   : False,
         }
         
         self.pushButtonDictionary = {
         'cxn'       : self.pushButton_LabRAD,
         'dv'        : self.pushButton_DataVault,
         'ser_server': self.pushButton_SerialServer,
-        'dac_adc'   : self.pushButton_DACADC
+        'DACADC'   : self.pushButton_DACADC,
+        'SR830'   : self.pushButton_SR830
         }
 
         self.labelDictionary = {
         'cxn'       : self.label_Labrad,
         'dv'        : self.label_DataVault,
         'ser_server': self.label_SerialServer,
-        'dac_adc'   : self.label_DACADC
+        'DACADC'   : self.label_DACADC,
+        'SR830'   : self.label_SR830
         }
         
         #Data vault session info
@@ -72,14 +73,15 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
 
         self.pushButton_LabRAD.clicked.connect(lambda: self.connectServer('cxn'))
         self.pushButton_DataVault.clicked.connect(lambda: self.connectServer('dv'))
-        self.pushButton_DACADC.clicked.connect(lambda: self.connectServer('dac_adc'))
+        self.pushButton_DACADC.clicked.connect(lambda: self.connectServer('DACADC'))
         self.pushButton_SerialServer.clicked.connect(lambda: self.connectServer('ser_server'))
+        self.pushButton_SR830.clicked.connect(lambda: self.connectServer('SR830'))
 
         self.key_list = []
         
 
-        # self.pushButton_DataVaultFolder.clicked.connect(self.chooseSession)
-        # self.pushButton_SessionFolder.clicked.connect(self.chooseSession_2)
+        self.pushButton_DataVaultFolder.clicked.connect(self.chooseDVFolder)
+        self.pushButton_SessionFolder.clicked.connect(self.chooseSessionFolder)
     
     def setupAdditionalUi(self):
         pass
@@ -101,6 +103,9 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                     try:
                         dv = yield self.LabradDictionary['cxn'].data_vault
                         self.LabradDictionary[servername] = dv
+                        self.DVFolder = r'\.dataVault'
+                        self.lineEdit_DataVaultFolder.setText(self.DVFolder)
+
                         connection_flag = True
                     except:
                         connection_flag = False
@@ -113,19 +118,26 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         connection_flag = True
                     except:
                         connection_flag = False
-                elif servername == 'dac_adc':
+                elif servername == 'DACADC':
                     try:
-                        dv = yield self.LabradDictionary['cxn'].dac_adc
-                        self.LabradDictionary[servername] = dv
+                        dac = yield self.LabradDictionary['cxn'].dac_adc
+                        self.LabradDictionary[servername] = dac
                         connection_flag = True
                     except:
                         connection_flag = False
+                elif servername == 'SR830':
+                    try:
+                        sr830 = yield self.LabradDictionary['cxn'].sr830
+                        self.LabradDictionary[servername] = sr830
+                        connection_flag = True
+                    except:
+                        connection_flag = False
+
 
                 if connection_flag:
                     self.cxnsignal.emit(servername, self.LabradDictionary[servername])
                     self.labelDictionary[servername].setText('Connected')
                     self.pushButtonDictionary[servername].setStyleSheet('#' + str(self.pushButtonDictionary[servername].objectName()) + '{background: rgb(0, 170, 0);border-radius: 4px;}')
-                    self.cxnsignal.emit(servername, self.LabradDictionary[servername])
                 else:
                     self.labelDictionary[servername].setText('Connection Failed.')
                     self.pushButtonDictionary[servername].setStyleSheet('#' + str(self.pushButtonDictionary[servername].objectName()) + '{background: rgb(161, 0, 0);border-radius: 4px;}')
@@ -140,7 +152,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
             self.LabradDictionary[servername] = False
             self.labelDictionary[servername].setText('Disconnected.')
             self.pushButtonDictionary[servername].setStyleSheet('#' + str(self.pushButtonDictionary[servername].objectName()) + '{background: rgb(161, 0, 0);border-radius: 4px;}')
-            discxnsignal = QtCore.pyqtSignal(str)
+            self.discxnsignal.emit(servername)
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
     
@@ -158,9 +170,57 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         for name in self.LabradDictionary:
             self.disconnectServer(name)
 
-    def moveDefault(self):    
-        self.move(10,170)
+    @inlineCallbacks
+    def chooseDVFolder(self, c = None):
+        try:
+            if self.LabradDictionary['dv'] is False:
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setIcon(QtGui.QMessageBox.Information)
+                msgBox.setWindowTitle('Data Vault Connection Missing')
+                msgBox.setText("\r\n Cannot choose data vault folder until connected to data vault.")
+                msgBox.setStandardButtons(QtGui.QMessageBox.Ok)
+                msgBox.setStyleSheet("background-color:black; color:rgb(168,168,168)")
+                msgBox.exec_()
+            else: 
+                dv = self.LabradDictionary['dv']
+                dvExplorer = dirExplorer.dataVaultExplorer(dv, self.reactor, self)
+                yield dvExplorer.popDirs()
+                dvExplorer.show()
+                dvExplorer.raise_()
+                dvExplorer.accepted.connect(lambda: self.OpenDataVaultFolder(self.reactor, dv, dvExplorer.directory)) 
+
+        except Exception as inst:
+            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno                    
+   
+    @inlineCallbacks
+    def OpenDataVaultFolder(self, c, datavault, directory):
+        try:
+            yield datavault.cd(directory)
+            directory = directory[1:]
+            DVFolder  = ''
+            DVList = []
+            for i in directory:
+                DVList.append(i)
+                DVFolder = DVFolder + '\\' + i
+            self.DVFolder = r'\.datavault' + DVFolder
+            self.lineEdit_DataVaultFolder.setText(self.DVFolder)
+            self.newDVFolder.emit(DVList)
+        except Exception as inst:
+            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno                    
+              
+    def chooseSessionFolder(self):
+        home = os.path.expanduser("~")
+        folder = str(QtGui.QFileDialog.getExistingDirectory(self, directory = home + '\\Data Sets\\DEMONSData'))
+        if folder:
+            self.SessionFolder = folder
+            self.lineEdit_SessionFolder.setText(self.SessionFolder)
+            self.newSessionFolder.emit(self.SessionFolder)
         
+    def moveDefault(self):    
+        self.move(650, 10)
+
+
+
     def sleep(self,secs):
         """Asynchronous compatible sleep command. Sleeps for given time in seconds, but allows
         other operations to be done elsewhere while paused."""

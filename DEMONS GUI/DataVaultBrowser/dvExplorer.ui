@@ -20,8 +20,8 @@
    <string>Data Vault Explorer</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../Resources/nSOTScannerResources.qrc">
-    <normaloff>:/nSOTScanner/Pictures/jj_schema.svg</normaloff>:/nSOTScanner/Pictures/jj_schema.svg</iconset>
+   <iconset resource="../Resources/DEMONSResources.qrc">
+    <normaloff>:/Pictures/Pictures/DemonLogo.png</normaloff>:/Pictures/Pictures/DemonLogo.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
@@ -390,15 +390,15 @@ border-radius: 5px
       </property>
       <property name="styleSheet">
        <string notr="true">#addDir{
-image:url(:/nSOTScanner/Pictures/addPlotIcon.png);
+image:url(:/Pictures/Pictures/addPlotIcon.png);
 background: black;
 border: 0px solid rgb(95,107,166);
 }
 
 QPushButton:pressed#addDir{
-image:url(:/nSOTScanner/Pictures/addPlotIcon.png);
+image:url(:/Pictures/Pictures/addPlotIcon.png);
 background: black;
-border: 2px solid white;
+border: 2px solid black;
 border-radius: 5px
 }</string>
       </property>
@@ -420,15 +420,15 @@ border-radius: 5px
       </property>
       <property name="styleSheet">
        <string notr="true">#home{
-image:url(:/nSOTScanner/Pictures/homeIcon.png);
+image:url(:/Pictures/Pictures/homeIcon.png);
 background: black;
 border: 0px solid rgb(95,107,166);
 }
 
 QPushButton:pressed#home{
-image:url(:/nSOTScanner/Pictures/homeIcon.png);
+image:url(:/Pictures/Pictures/homeIcon.png);
 background: black;
-border: 2px solid white;
+border: 2px solid black;
 border-radius: 5px
 }</string>
       </property>
@@ -450,15 +450,15 @@ border-radius: 5px
       </property>
       <property name="styleSheet">
        <string notr="true">#back{
-image:url(:/nSOTScanner/Pictures/backIcon.png);
+image:url(:/Pictures/Pictures/backIcon.png);
 background: black;
 border: 0px solid rgb(95,107,166);
 }
 
 QPushButton:pressed#back{
-image:url(:/nSOTScanner/Pictures/backIcon.png);
+image:url(:/Pictures/Pictures/backIcon.png);
 background: black;
-border: 2px solid white;
+border: 2px solid black;
 border-radius: 5px
 }</string>
       </property>
@@ -480,15 +480,15 @@ border-radius: 5px
       </property>
       <property name="styleSheet">
        <string notr="true">#pushButton_dvexplorer_refresh{
-image:url(:/nSOTScanner/Pictures/refreshIcon.png);
+image:url(:/Pictures/Pictures/refreshIcon.png);
 background: black;
 border: 0px solid rgb(95,107,166);
 }
 
-QPushButton:pressed#refresh{
-image:url(:/nSOTScanner/Pictures/refreshIcon.png);
+QPushButton:pressed#pushButton_dvexplorer_refresh{
+image:url(:/Pictures/Pictures/refreshIcon.png);
 background: black;
-border: 2px solid white;
+border: 2px solid black;
 border-radius: 5px
 }</string>
       </property>
@@ -564,7 +564,7 @@ border-radius: 5px
   </widget>
  </widget>
  <resources>
-  <include location="../Resources/nSOTScannerResources.qrc"/>
+  <include location="../Resources/DEMONSResources.qrc"/>
  </resources>
  <connections/>
 </ui>

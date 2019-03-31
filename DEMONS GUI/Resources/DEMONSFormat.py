@@ -1,16 +1,26 @@
+import numpy as np
+from itertools import product
+import sys
+import twisted
+from twisted.internet.defer import inlineCallbacks, Deferred , returnValue
+import pyqtgraph as pg
+import exceptions
+import time
+
 #---------------------------------------------------------------------------------------------------------#         
 """ The following section describes how to read and write values to various lineEdits on the GUI."""
 
-import numpy as np
-from itertools import product
+#Registry
+def DACADC_Registry():
+    return ['DA16_16_02']
 
 '''
 Update parameter, normally just text
 Input: dictionary of parameters, key for the value to be changed, the lineEdit where the input comes from
 Output: Change the parameter
 '''
-def UpdateLineEdit_String(dict, key, lineEdit):
-    dict[key] = str(lineEdit.text())
+def UpdateLineEdit_String(parameterdict, key, lineEdit):
+    parameterdict[key] = str(lineEdit[key].text())
 
 '''
 Update parameter with a bound
@@ -18,61 +28,305 @@ Input: dictionary of parameters, key for the value to be changed, the lineEdit w
 Output: Change the parameter based on the validity of input value
 '''
 def UpdateLineEdit_Bound(dict, key, lineEdit, bound = None, datatype = float):
-    dummystr=str(lineEdit.text())   #read the text
+    dummystr=str(lineEdit[key].text())   #read the text
     dummyval=readNum(dummystr, None , False)
-    if isinstance(dummyval, datatype):
-        if range == None or (dummyval >= range[0] and dummyval <= range[1]):
-            dict[key] = dummyval
-    lineEdit.setText(formatNum(dict[key], 6))
+    if isinstance(dummyval, float):
+        if bound == None:
+            dict[key] = datatype(dummyval)
+        elif (dummyval >= bound[0] and dummyval <= bound[1]):
+            dict[key] = datatype(dummyval)
+                
+    lineEdit[key].setText(formatNum(dict[key], 6))
+
+def UpdateLineEdit_NearestNumber(dict, key, lineEdit, Selection, datatype = float):
+    dummystr=str(lineEdit[key].text())   #read the text
+    dummyval=readNum(dummystr, None , False)
+    if isinstance(dummyval, float):
+        if bound == None:
+            dict[key] = datatype(dummyval)
+        elif (dummyval >= bound[0] and dummyval <= bound[1]):
+            dict[key] = datatype(dummyval)
+                
+    lineEdit[key].setText(formatNum(dict[key], 6))
 
 '''
 Update Number of Step value, it is special because it need to switch between stepsize and number of step
-Input: dictionary of parameters, key for the value to be changed, key for max, key for min, statuskey for status, the lineEdit where the input comes from, bound [lower, upper], datatype
+Input: dictionary of parameters, key for the value to be changed, key for end, key for start, statuskey for status, the lineEdit where the input comes from, bound [lower, upper], datatype
 Output: Change the parameter based on the validity of input value
 '''
-def UpdateLineEdit_NumberOfStep(dict, key, maxkey, minkey, statuskey, lineEdit, bound = None, datatype = float):
-    dummystr=str(lineEdit.text())   #read the text
+def UpdateLineEdit_NumberOfStep(dict, key, endkey, startkey, statuskey, lineEdit, bound = None, datatype = float):
+    dummystr=str(lineEdit[key].text())   #read the text
     dummyval=readNum(dummystr, None , False)
     if isinstance(dummyval, datatype):
         if dict[statuskey] == "Numberofsteps":   #based on status, dummyval is deterimined and update the Numberof steps parameters
             dict[key] = int(round(dummyval)) #round here is necessary, without round it cannot do 1001 steps back and force
-        if dict[statuskey] == "StepSize":
-            dict[key] = int(StepSize_NumberOfSteps_Convert(dict[maxkey], dict[minkey], float(dummyval)))
-    lineEdit.setText(formatNum(dict[key], 6))
+        elif dict[statuskey] == "StepSize":
+            dict[key] = int(StepSizeToNumberOfSteps(dict[endkey], dict[startkey], float(dummyval)))
+    if dict[statuskey] == "Numberofsteps":
+        lineEdit[key].setText(formatNum(dict[key], 6))
+    elif dict[statuskey] == "StepSize":
+        lineEdit[key].setText(formatNum(NumberOfStepsToStepSize(dict[endkey], dict[startkey], float(dict[key])),6))
 
 '''
 Toggle between Number of Step and Step Size
 Input: dictionary of parameters, key for the value to be changed, key for max, key for min, statuskey for status, label, the correct label unit like 'tesla per step', the lineEdit where the input comes from
 Output: Change the parameter based on the validity of input value
 '''
-def Toggle_NumberOfSteps_StepSize(dict, key, maxkey, minkey, statuskey, label, labelunit, lineEdit):
+def Toggle_NumberOfSteps_StepSize(dict, key, endkey, startkey, statuskey, label, labelunit, lineEdit):
     if dict[statuskey] == "Numberofsteps":
         label.setText(labelunit)
         dict[statuskey] = "StepSize"
-        if dict[statuskey] == "Numberofsteps":
-            lineEdit.setText(formatNum(dict[statuskey],6))
-        else:
-            lineEdit.setText(formatNum(StepSize_NumberOfSteps_Convert(dict[maxkey], dict[minkey], float(dict[key])),6))
-        UpdateLineEdit_NumberOfStep(dict, key, maxkey, minkey, statuskey, lineEdit)
+        lineEdit[key].setText(formatNum(NumberOfStepsToStepSize(dict[endkey], dict[startkey], float(dict[key])),6))
+        UpdateLineEdit_NumberOfStep(dict, key, endkey, startkey, statuskey, lineEdit)
     else:
         label.setText('Number of Steps')
         dict[statuskey] = "Numberofsteps"
-        if dict[statuskey] == "Numberofsteps":
-            lineEdit.setText(formatNum(dict[statuskey],6))
-        else:
-            lineEdit.setText(formatNum(StepSize_NumberOfSteps_Convert(dict[maxkey], dict[minkey], float(dict[key])),6))
-        UpdateLineEdit_NumberOfStep(dict, key, maxkey, minkey, statuskey, lineEdit)
-
+        lineEdit[key].setText(formatNum(dict[key],6))
+        UpdateLineEdit_NumberOfStep(dict, key, endkey, startkey, statuskey, lineEdit)
 
 '''
-Takes in Max and Min along with stepsize, return the calculated number of step
-Input: Max of Range, Min of Range, StepSize
-Output: Number of Steps
+Simple StepSize to Number of Step Converters
 '''
-def StepSize_NumberOfSteps_Convert(self, Max, Min, SS): 
-    Numberofsteps=int((Max-Min)/float(SS)+1)
+def StepSizeToNumberOfSteps(End, Start, SS):  #Conver stepsize to number of steps
+    Numberofsteps=int(abs(End - Start)/float(SS)+1)
     return Numberofsteps
 
+def NumberOfStepsToStepSize(Start, End, NoS):
+    StepSize=float(abs(Start - End)/float(NoS - 1.0))
+    return StepSize
+
+
+'''
+Takes devicelist, server name(str), device name(str), target which is the name of the device in list_devices() and the indicator pushbutton
+Then save the selected device object to devicelist.
+'''
+@inlineCallbacks
+def SelectDevice(devicelist, server, device, target, indicator, SequentialFunction = None):
+    try:
+        dummyserver = []
+        if target != 'Offline' and server != False and target != '':#target can be blank when reconstruct the combobox
+            try:
+                devicelist[str(device)] = server
+                yield devicelist[str(device)].select_device(str(target))
+            except Exception as inst:
+                print 'Connection to ' + device +  ' failed: ', inst, ' on line: ', sys.exc_traceback.tb_lineno
+                devicelist[device] = False
+
+        else:
+            devicelist[device] = False
+        RefreshIndicator(indicator, devicelist[device])
+        if not SequentialFunction is None:
+            SequentialFunction()
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+def RefreshIndicator(indicator, device):
+    if device != False:
+        setIndicator(indicator, 'rgb(0, 170, 0)')
+    else:
+        setIndicator(indicator, 'rgb(161, 0, 0)')
+
+'''
+change stylesheet of a pushbutton to certain color
+'''
+def setIndicator(indicator, color):
+    indicator.setStyleSheet('#' + indicator.objectName() + '{background:' + color + ';border-radius: 4px;}')
+
+
+'''
+From server, query the list of device, post that on combobox and select the device to be offline.
+It is useful for refreshing the list.
+'''
+@inlineCallbacks
+def RedefineComboBox(combobox, server, devicelist, device, reconnect = True):
+    try:
+        if server != False:
+            itemlist = yield QueryDeviceList(server)
+        else:
+            itemlist = []
+        itemlist = ['Offline'] + itemlist
+        if len(itemlist) != 1:
+            defaultdevice = itemlist[1]
+            defaultindex = 1
+        else:
+            defaultdevice = 'Offline'
+            defaultindex = 0
+        ReconstructComboBox(combobox, itemlist)
+        if reconnect:
+            combobox.setCurrentIndex(defaultindex)#This part change the index which should be connect to select device.
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+def ReconstructComboBox(combobox, list):
+    combobox.clear()
+    for name in list:
+        combobox.addItem(name)
+
+def RefreshButtonStatus(ButtonsCondition):
+    for button in ButtonsCondition:
+        button.setEnabled(ButtonsCondition[button])
+
+'''
+takes in server object and return a list of selectable device.
+'''
+@inlineCallbacks
+def QueryDeviceList(server):
+    devicelist = yield server.list_devices()
+    namelist = []
+    for combo in devicelist:
+        namelist.append(combo[1])
+    returnValue(namelist) 
+
+'''
+return True or False based on whether the pushbutton is green or red
+'''
+def JudgeIndicator(indicator): #based on stylesheet of indicator, return True or False
+    color = 'rgb(0, 170, 0)'
+    green = '#' + indicator.objectName() + '{background:' + color + ';border-radius: 4px;}'
+    stylesheet = indicator.styleSheet()
+    if stylesheet == green:
+        return True
+    else:
+        return False
+
+'''
+Takes in parameter dictionary, key(str) of parameter, lineEdit that is related, device object for sending command, functionlist(list that guide to the correct function)
+'''
+@inlineCallbacks
+def UpdateSetlineEdit(dict, key, lineEdit, device, function, bound = None, datatype = float):
+    dummystr=str(lineEdit[key].text())   #read the text
+    dummyval=readNum(dummystr, None , False)
+    if isinstance(dummyval, float):
+        if bound == None:
+            dummyval = datatype(dummyval)
+        elif (dummyval >= bound[0] and dummyval <= bound[1]):
+            dummyval = datatype(dummyval)
+    if device != False:
+        try: 
+            if function[0] == 'SR860':
+                if function[1] == 'sensitivity':
+                    yield device.sensitivity(dummyval)
+                elif function[1] == 'timeconstant':
+                    yield device.time_constant(dummyval)
+                elif function[1] == 'frequency':
+                    yield device.frequency(dummyval)
+            flag = True
+        except:
+            flag = False
+        if flag:
+            dict[key] = dummyval
+    else:
+        dict[key] = dummyval
+    lineEdit[key].setText(formatNum(dict[key], 6))
+
+'''
+Functions for each module to upload their datavault directory
+'''
+@inlineCallbacks
+def updateDataVaultDirectory(window, directory):
+    try:
+        yield window.serversList['dv'].cd('')
+        yield window.serversList['dv'].cd(directory)
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+'''
+Clear Plots, can take a list/dict or single plot
+'''
+def ClearPlots(Plots):
+    if isinstance(Plots, list):
+        for plot in Plots:
+            plot.clear()
+    elif isinstance(Plots, dict):
+        for name, plot in Plots.iteritems():
+            plot.clear()
+    else:
+        Plots.clear()
+
+'''
+Input: PlotItem, Layout of Plot and Plot properties
+'''
+def Setup1DPlot(Plot, Layout, Title, yaxis, yunit, xaxis, xunit):
+    Plot.setGeometry(QtCore.QRect(0, 0, 10, 10))
+    Plot.setTitle( Title)
+    Plot.setLabel('left', yaxis, units = yunit)
+    Plot.setLabel('bottom', xaxis, units = xunit)
+    Plot.showAxis('right', show = True)
+    Plot.showAxis('top', show = True)
+    Plot.setXRange(0,1) #Default Range
+    Plot.setYRange(0,2) #Default Range
+    Plot.enableAutoRange(enable = True)
+    Layout.addWidget(Plot)
+
+'''
+Input: Data for Xaxis, Yaxis and plot object
+'''
+def Plot1DData(xaxis, yaxis, plot, color = 0.5):
+    plot.plot(x = xaxis, y = yaxis, pen = color)
+
+def Division(voltage, current, multiplier = 1):
+    if current != 0.0:
+        resistance = float(voltage / current) * multiplier
+    else:
+        resistance = float(voltage / 0.0000000001) * multiplier
+    return resistance
+
+'''
+Attach Attach_Data to the front of data
+'''
+def AttachData_Front(data, attached_data):
+    Data_Combined = np.insert(data, 0, attached_data, axis = 1)
+    return Data_Combined
+
+'''
+Attach Attach_Data to the back of data
+'''
+def AttachData_Back(data, attached_data):
+    column = data.shape[1]
+    Data_Combined = np.insert(data, column, attached_data, axis = 1)
+    return Data_Combined
+
+def Attach_ResistanceConductance(data, VoltageIndex, CurrentIndex, multiplier = 1):
+    Voltage, Current = data[:, VoltageIndex], data[:, CurrentIndex]
+    Resistance = np.transpose(map(Division, Voltage, Current))
+    Conductance = np.transpose(map(Division, Current, Voltage))
+    Data_Attached1 = AttachData_Back(data, Resistance)
+    Data_Attached = AttachData_Back(Data_Attached1, Conductance)
+    
+    return Data_Attached
+
+
+'''
+Multiply array with the input list
+'''
+def Multiply(Data, Multiplierlist):
+    multiplymatrix = np.diag(Multiplierlist)
+    MultipliedData = np.dot(Data, multiplymatrix)
+    return MultipliedData
+
+"""Asynchronous compatible sleep command. Sleeps for given time in seconds, but allows
+other operations to be done elsewhere while paused."""
+def SleepAsync(reactor, secs):
+        d = Deferred()
+        reactor.callLater(secs, d.callback, 'Sleeping')
+        return d
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+nSOT Scanner Session
+'''
 def formatNum(val, decimal_values = 2):
     if val != val:
         return 'nan'
@@ -257,11 +511,8 @@ def processImageData(image, process):
         A = np.array([X*0+1, X, Y]).T
         B = image.flatten('F')
         
-        print "Print A: ", A
-        print "Print B: ", B
 
         coeff, r, rank, s = np.linalg.lstsq(A, B)
-        print "Print coeff: ", coeff
         
         for i in xrange(length):
             for j in xrange(width):

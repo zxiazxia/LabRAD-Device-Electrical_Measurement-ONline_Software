@@ -1,3 +1,4 @@
+#Written by Raymond
 import sys
 from PyQt4 import Qt, QtGui, QtCore, uic
 import time 
@@ -10,6 +11,7 @@ sys.path.append(path + r'\Resources')
 sys.path.append(path + r'\Labrad Connect')
 sys.path.append(path + r'\DataVaultBrowser')
 sys.path.append(path + r'\Four Terminal Gate Sweep')
+sys.path.append(path + r'\DAC Controler')
 
 UI_path = path + r"\MainWindow.ui"
 MainWindowUI, QtBaseClass = uic.loadUiType(UI_path)
@@ -17,6 +19,7 @@ MainWindowUI, QtBaseClass = uic.loadUiType(UI_path)
 #import all windows for gui
 import LabRADConnect
 import FourTerminalGateSweep
+import DACControler
 
 import exceptions
 
@@ -30,6 +33,7 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
         self.reactor = reactor
         self.setupUi(self)
         self.setupAdditionalUi()
+        self.Scanning_Flag = False
         
         #Move to default position
         self.moveDefault()
@@ -37,15 +41,17 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
         #Intialize all widgets. 
         self.MeasurementWindows = {
             'LabRAD': LabRADConnect.Window(self.reactor, None),
-            'FourTerminalGateSweepWindow': FourTerminalGateSweep.Window(self.reactor, None)
+            'FourTerminalGateSweepWindow': FourTerminalGateSweep.Window(self.reactor, self, None),
+            'DACTrackerWindow': DACControler.Window(self.reactor, None)
         }
-        
         
         self.pushButton_LabRADConnect.clicked.connect(lambda: self.openWindow('LabRAD'))
         self.pushButton_FourTerminalGateSweep.clicked.connect(lambda: self.openWindow('FourTerminalGateSweepWindow'))
+        self.pushButton_DACADC_Tracker.clicked.connect(lambda: self.openWindow('DACTrackerWindow'))
         
         self.MeasurementWindows['LabRAD'].cxnsignal.connect(self.connect)
         self.MeasurementWindows['LabRAD'].discxnsignal.connect(self.disconnect)
+        self.MeasurementWindows['LabRAD'].newSessionFolder.connect(self.distributeSessionFolder)
         
         
         #Open by default the LabRAD Connect Module and Device Select
@@ -70,13 +76,32 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
     def disconnect(self, key):
         try:
             for name, window in self.MeasurementWindows.iteritems():
-                if key in window.serversList:
-                    window.disconnectServer(key)
+                if name != 'LabRAD': #No module need cxn
+                    if str(key) in window.serversList:
+                        window.disconnectServer(key)
+        except Exception as inst:
+            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+    def updateDataVaultFolder(self, DVfolder):
+        try:
+            for name, window in self.MeasurementWindows.iteritems():
+                if 'dv' in window.serversList:
+                    window.updateDataVaultDirectory(window, DVfolder)
+        except Exception as inst:
+            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+    def distributeSessionFolder(self, folder):
+        try:
+            for name, window in self.MeasurementWindows.iteritems():
+                setSessionFolder = getattr(window, 'setSessionFolder', None)
+                if callable(setSessionFolder):
+                    window.setSessionFolder(folder)
+        
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
     def openWindow(self, key):
-        self.MeasurementWindows[key].showNormal()
+        self.MeasurementWindows[key].show()
         self.MeasurementWindows[key].moveDefault()
         self.MeasurementWindows[key].raise_()
     
@@ -89,7 +114,6 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
         except Exception as inst:
             print inst
             
-    
 #----------------------------------------------------------------------------------------------#     
 """ The following runs the GUI"""
 

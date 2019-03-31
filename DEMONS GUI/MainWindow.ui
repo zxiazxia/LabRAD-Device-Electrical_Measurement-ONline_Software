@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Device Electrical Measurement ONline Software</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="Resources/DEMONSResources.qrc">
+    <normaloff>:/Pictures/Pictures/DemonLogo.png</normaloff>:/Pictures/Pictures/DemonLogo.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
@@ -37,16 +41,16 @@ background-color: rgb(0, 0, 0);
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton:pressed#pushButton_LabRADConnect{
-color: rgb(0,0,0);
-background-color:rgb(131,131,131);
-border: 1px solid rgb(0,0,0);
+color: rgb(0,255,0);
+background-color:rgb(150,150,150);
+border: 1px solid rgb(0,255,0);
 border-radius: 5px
 }
 
 QPushButton#pushButton_LabRADConnect{
-color: rgb(131,131,131);
+color: rgb(0,255,0);
 background-color:rgb(0,0,0);
-border: 2px solid  rgb(131,131,131);
+border: 2px solid rgb(0,255,0);
 border-radius: 5px
 }</string>
     </property>
@@ -59,7 +63,7 @@ border-radius: 5px
      <rect>
       <x>80</x>
       <y>160</y>
-      <width>111</width>
+      <width>151</width>
       <height>36</height>
      </rect>
     </property>
@@ -70,14 +74,14 @@ border-radius: 5px
      </sizepolicy>
     </property>
     <property name="styleSheet">
-     <string notr="true">QPushButton:pressed#pushButton_LabRADConnect{
+     <string notr="true">QPushButton:pressed#pushButton_FourTerminalGateSweep{
 color: rgb(0,0,0);
 background-color:rgb(131,131,131);
 border: 1px solid rgb(0,0,0);
 border-radius: 5px
 }
 
-QPushButton#pushButton_LabRADConnect{
+QPushButton#pushButton_FourTerminalGateSweep{
 color: rgb(131,131,131);
 background-color:rgb(0,0,0);
 border: 2px solid  rgb(131,131,131);
@@ -85,7 +89,59 @@ border-radius: 5px
 }</string>
     </property>
     <property name="text">
-     <string>4tgs</string>
+     <string>Four Terminal Gate Sweep</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_Logo">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>30</y>
+      <width>181</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#pushButton_Logo{
+image:url(:/Pictures/Pictures/DemonPicture.png);
+background: black;\n}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_DACADC_Tracker">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>20</y>
+      <width>151</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton:pressed#pushButton_DACADC_Tracker{
+color: rgb(0,0,0);
+background-color:rgb(131,131,131);
+border: 1px solid rgb(0,0,0);
+border-radius: 5px
+}
+
+QPushButton#pushButton_DACADC_Tracker{
+color: rgb(131,131,131);
+background-color:rgb(0,0,0);
+border: 2px solid  rgb(131,131,131);
+border-radius: 5px
+}</string>
+    </property>
+    <property name="text">
+     <string>DAC ADC Tracker</string>
     </property>
    </widget>
   </widget>

@@ -1,5 +1,12 @@
 <RCC>
-  <qresource prefix="newPrefix">
+  <qresource prefix="Pictures">
+    <file>Pictures/addPlotIcon.png</file>
+    <file>Pictures/backIcon.png</file>
+    <file>Pictures/DemonPicture.png</file>
+    <file>Pictures/homeIcon.png</file>
+    <file>Pictures/refreshIcon.png</file>
+    <file>Pictures/DemonLogo.png</file>
+    <file>Pictures/Four Terminal.png</file>
     <file>Pictures/Landaul Fan.PNG</file>
     <file>Pictures/SessionSelect.png</file>
   </qresource>
