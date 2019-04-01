@@ -17,7 +17,7 @@
 ### BEGIN NODE INFO
 [info]
 name = sr860
-version = 0.0
+version = 2.7
 description =
 [startup]
 cmdline = %PYTHON% %FILE%
@@ -49,8 +49,10 @@ def getTC(i):
     else:
         return 3*10**(-6 + i/2)
 
-def getSensitivity(i):
-    ''' converts form the integer label used by the SR860 to a sensitivity '''
+def getSensitivity(i, mode):
+    '''
+	Converts form the integer label used by the SR860 to a sensitivity 
+	'''
     if i < 0:
         return getSensitivity(0)
     elif i > 27:
@@ -61,6 +63,29 @@ def getSensitivity(i):
         return 5 * 10**(-i/3)
     else:
         return 2 * 10**(-i/3)
+
+def getSensitivityInt(v, mode):
+    '''
+	Convert from real sensitivity to an integer value taken by the sr860
+	Voltage mode (0), Current Mode (1)
+	'''
+    try:
+        if mode == 0:
+			if v >= 1.0:
+				sens = 0
+			elif v <= 10**-9:
+				sens = 27
+			else:
+	            sens = -int(round(3*log10(v)))
+        return sens
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+def getTCInt(t):
+    ''' convert from real sensitivity values to an integer value taken by the sr860'''
+    timeconstant = int(2+round(2*log10(t)))+10
+    return timeconstant
+
 
 class sr860Wrapper(GPIBDeviceWrapper):
     @inlineCallbacks
@@ -212,7 +237,7 @@ class sr860Wrapper(GPIBDeviceWrapper):
             returnValue(int(resp))
 
     @inlineCallbacks
-    def input_mode(self, mode = None): #Voltage is zero, Current is 1
+    def input_mode(self, mode = None):
         if mode is None:
             resp = yield self.query('IVMD?')
             returnValue(int(resp))
@@ -757,6 +782,7 @@ class sr860Server(GPIBManagedServer):
             resp = yield dev.query("OFLT?")
             returnValue(getTC(int(resp)))
         else:
+            tc = getTCInt(tc)
             yield dev.write('OFLT {}'.format(tc))
             resp = yield dev.query("OFLT?")
             returnValue(getTC(int(resp)))
@@ -783,7 +809,8 @@ class sr860Server(GPIBManagedServer):
                 else:
                     returnValue(resp)
             else:
-                resp = yield dev.sensitivity(i)
+                jj = getSensitivityInt(i, int(iv_mode))
+                resp = yield dev.sensitivity(jj)
                 if u != 'none':
                     returnValue(resp * u)
                 else:
