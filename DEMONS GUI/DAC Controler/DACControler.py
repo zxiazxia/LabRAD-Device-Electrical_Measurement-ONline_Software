@@ -13,7 +13,6 @@ from scipy.signal import detrend
 
 
 path = sys.path[0] + r"\DAC Controler"
-print path
 ControlerWindowUI, QtBaseClass = uic.loadUiType(path + r"\DACControlerWindow.ui")
 Ui_ServerList, QtBaseClass = uic.loadUiType(path + r"\requiredServers.ui")
 
@@ -33,16 +32,20 @@ class Window(QtGui.QMainWindow, ControlerWindowUI):
 
         self.pushButton_Servers.clicked.connect(self.showServersList)
 
-        self.serversList = {
+        self.serversList = { #Dictionary including toplevel server received from labrad connect
             'DACADC': False
         }
 
-        self.ServerDeviceList = {
-            'DACADC': ['DataAquisition_Device']
-        }
+        self.DeviceList = {}#self.DeviceList['Device Name'][Device Property]
 
-        self.deviceList = {
-            'DataAquisition_Device': False
+        self.DeviceList['DataAquisition_Device'] = {
+            'DeviceObject': False,
+            'ServerObject': False,
+            'ComboBoxServer': self.comboBox_DAQ_SelectServer,
+            'ComboBoxDevice': self.comboBox_DAQ_SelectDevice,
+            'ServerIndicator': self.pushButton_DAQ_ServerIndicator,
+            'DeviceIndicator': self.pushButton_DAQ_DeviceIndicator,            
+            'ServerNeeded': ['DACADC'],
         }
 
         self.targetnumber = {
@@ -65,32 +68,33 @@ class Window(QtGui.QMainWindow, ControlerWindowUI):
 
         self.DetermineEnableConditions()
 
-        self.comboBox_Tracker_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.deviceList, self.serversList['DACADC'], 'DataAquisition_Device', str(self.comboBox_Tracker_SelectDevice.currentText()), self.pushButton_Device_Indicator, self.Refreshinterface))
+        self.comboBox_DAQ_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceList, 'DataAquisition_Device', self.serversList, str(self.DeviceList['DataAquisition_Device']['ComboBoxServer'].currentText())))
+        self.comboBox_DAQ_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.DeviceList, 'DataAquisition_Device', str(self.DeviceList['DataAquisition_Device']['ComboBoxDevice'].currentText()), self.Refreshinterface))
         self.lineEdit_TargetNumber_1.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.targetnumber, 'Output1', self.lineEdit, [-10.0, 10.0]))
         self.lineEdit_TargetNumber_2.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.targetnumber, 'Output2', self.lineEdit, [-10.0, 10.0]))
         self.lineEdit_TargetNumber_3.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.targetnumber, 'Output3', self.lineEdit, [-10.0, 10.0]))
         self.lineEdit_TargetNumber_4.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.targetnumber, 'Output4', self.lineEdit, [-10.0, 10.0]))
 
-        self.pushButton_SET_1.clicked.connect(lambda: Set_DAC(self.deviceList['DataAquisition_Device'], 0, self.targetnumber['Output1']))
-        self.pushButton_SET_2.clicked.connect(lambda: Set_DAC(self.deviceList['DataAquisition_Device'], 1, self.targetnumber['Output2']))
-        self.pushButton_SET_3.clicked.connect(lambda: Set_DAC(self.deviceList['DataAquisition_Device'], 2, self.targetnumber['Output3']))
-        self.pushButton_SET_4.clicked.connect(lambda: Set_DAC(self.deviceList['DataAquisition_Device'], 3, self.targetnumber['Output4']))
+        self.pushButton_SET_1.clicked.connect(lambda: Set_DAC(self.DeviceList['DataAquisition_Device']['DeviceObject'], 0, self.targetnumber['Output1']))
+        self.pushButton_SET_2.clicked.connect(lambda: Set_DAC(self.DeviceList['DataAquisition_Device']['DeviceObject'], 1, self.targetnumber['Output2']))
+        self.pushButton_SET_3.clicked.connect(lambda: Set_DAC(self.DeviceList['DataAquisition_Device']['DeviceObject'], 2, self.targetnumber['Output3']))
+        self.pushButton_SET_4.clicked.connect(lambda: Set_DAC(self.DeviceList['DataAquisition_Device']['DeviceObject'], 3, self.targetnumber['Output4']))
 
-        self.pushButton_Read_1.clicked.connect(lambda: Read_ADC_SetLabel(self.deviceList['DataAquisition_Device'], 0, self.label_ADC_1))
-        self.pushButton_Read_2.clicked.connect(lambda: Read_ADC_SetLabel(self.deviceList['DataAquisition_Device'], 1, self.label_ADC_2))
-        self.pushButton_Read_3.clicked.connect(lambda: Read_ADC_SetLabel(self.deviceList['DataAquisition_Device'], 2, self.label_ADC_3))
-        self.pushButton_Read_4.clicked.connect(lambda: Read_ADC_SetLabel(self.deviceList['DataAquisition_Device'], 3, self.label_ADC_4))
+        self.pushButton_Read_1.clicked.connect(lambda: Read_ADC_SetLabel(self.DeviceList['DataAquisition_Device']['DeviceObject'], 0, self.label_ADC_1))
+        self.pushButton_Read_2.clicked.connect(lambda: Read_ADC_SetLabel(self.DeviceList['DataAquisition_Device']['DeviceObject'], 1, self.label_ADC_2))
+        self.pushButton_Read_3.clicked.connect(lambda: Read_ADC_SetLabel(self.DeviceList['DataAquisition_Device']['DeviceObject'], 2, self.label_ADC_3))
+        self.pushButton_Read_4.clicked.connect(lambda: Read_ADC_SetLabel(self.DeviceList['DataAquisition_Device']['DeviceObject'], 3, self.label_ADC_4))
 
     def DetermineEnableConditions(self):
         self.ButtonsCondition={
-            self.pushButton_SET_1: not self.deviceList['DataAquisition_Device'] == False,
-            self.pushButton_SET_2: not self.deviceList['DataAquisition_Device'] == False,
-            self.pushButton_SET_3: not self.deviceList['DataAquisition_Device'] == False,
-            self.pushButton_SET_4: not self.deviceList['DataAquisition_Device'] == False,
-            self.pushButton_Read_1: not self.deviceList['DataAquisition_Device'] == False,
-            self.pushButton_Read_2: not self.deviceList['DataAquisition_Device'] == False,
-            self.pushButton_Read_3: not self.deviceList['DataAquisition_Device'] == False,
-            self.pushButton_Read_4: not self.deviceList['DataAquisition_Device'] == False,
+            self.pushButton_SET_1: not self.DeviceList['DataAquisition_Device']['DeviceObject'] == False,
+            self.pushButton_SET_2: not self.DeviceList['DataAquisition_Device']['DeviceObject'] == False,
+            self.pushButton_SET_3: not self.DeviceList['DataAquisition_Device']['DeviceObject'] == False,
+            self.pushButton_SET_4: not self.DeviceList['DataAquisition_Device']['DeviceObject'] == False,
+            self.pushButton_Read_1: not self.DeviceList['DataAquisition_Device']['DeviceObject'] == False,
+            self.pushButton_Read_2: not self.DeviceList['DataAquisition_Device']['DeviceObject'] == False,
+            self.pushButton_Read_3: not self.DeviceList['DataAquisition_Device']['DeviceObject'] == False,
+            self.pushButton_Read_4: not self.DeviceList['DataAquisition_Device']['DeviceObject'] == False,
         }
 
     def connectServer(self, key, server):
@@ -100,12 +104,14 @@ class Window(QtGui.QMainWindow, ControlerWindowUI):
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
-    def disconnectServer(self, key):
+    def disconnectServer(self, ServerName):
         try:
-            self.serversList[str(key)] = False
-            for key, listdevice in self.ServerDeviceList.iteritems():
-                for devicename in listdevice:
-                    self.deviceList[str(devicename)] = False
+            self.serversList[str(ServerName)] = False
+
+            for key, DevicePropertyList in self.DeviceList.iteritems():
+                if str(ServerName) == str(DevicePropertyList['ComboBoxServer'].currentText()):
+                    DevicePropertyList['ServerObject'] = False
+                    DevicePropertyList['DeviceObject'] = False
             self.refreshServerIndicator()
             self.Refreshinterface()
         except Exception as inst:
@@ -113,26 +119,31 @@ class Window(QtGui.QMainWindow, ControlerWindowUI):
 
     def refreshServerIndicator(self):
         try:
-            optional = []
+            optional = []#This optional will reconstruct combobox multiple time when you disconnect/connect server individually
             flag = True
             for key in self.serversList:
                 if self.serversList[str(key)] == False and not str(key) in optional:
                     flag = False
+                    
             if flag:
                 setIndicator(self.pushButton_Servers, 'rgb(0, 170, 0)')
 
-                #When all servers are connected, automatically select default device.
-                RedefineComboBox(self.comboBox_Tracker_SelectDevice, self.serversList['DACADC'])
+                for key, DevicePropertyList in self.DeviceList.iteritems():#Reconstruct all combobox when all servers are connected
+                    ReconstructComboBox(DevicePropertyList['ComboBoxServer'], DevicePropertyList['ServerNeeded'])
+
                 self.Refreshinterface()
             else:
                 setIndicator(self.pushButton_Servers, 'rgb(161, 0, 0)')
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
-    def Refreshinterface(self): #exclude server
+    def Refreshinterface(self):
         self.DetermineEnableConditions()
         RefreshButtonStatus(self.ButtonsCondition)
-        RefreshIndicator(self.pushButton_Device_Indicator, self.deviceList['DataAquisition_Device'])
+
+        for key, DevicePropertyList in self.DeviceList.iteritems():
+            RefreshIndicator(DevicePropertyList['ServerIndicator'], DevicePropertyList['ServerObject'])
+            RefreshIndicator(DevicePropertyList['DeviceIndicator'], DevicePropertyList['DeviceObject'])
             
     def moveDefault(self):
         self.move(10,170)
