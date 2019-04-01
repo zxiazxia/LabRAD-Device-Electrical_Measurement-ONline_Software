@@ -35,21 +35,33 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
 
         self.pushButton_Servers.clicked.connect(self.showServersList)
 
-        self.serversList = {
+        self.serversList = { #Dictionary including toplevel server received from labrad connect
             'dv': False,
             'DACADC': False,
             'SR830': False,
-            'SR860': False
+            'SR860': False,
         }
 
-        self.ServerDeviceList = {
+        self.DeviceServersList = { #Dictionary including device server that is connected in this module
+            'Voltage_LI_Server': False,
+            'Current_LI_Server': False,
+            'DataAquisition_Server': False
+        }
+
+        self.ComboBoxList = {
+            'Voltage_LI_Server': self.comboBox_Voltage_LI_SelectServer,
+            'Current_LI_Server': self.comboBox_Current_LI_SelectServer,
+            'DataAquisition_Server': self.comboBox_DataAquisition_SelectServer
+        }
+
+        self.ServerUsedInDevice = { #Info about which devices need the server
             'dv': [],
             'DACADC': ['DataAquisition_Device'],
             'SR830': ['Voltage_LI_Device', 'Current_LI_Device'],
             'SR860': ['Voltage_LI_Device', 'Current_LI_Device']
         }
 
-        self.deviceList = {
+        self.deviceList = {#Dictionary containing the device
             'Voltage_LI_Device': False,
             'Current_LI_Device': False,
             'DataAquisition_Device': False
@@ -101,25 +113,27 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
 
         self.DetermineEnableConditions()
 
-
         self.FourTerminal_ChannelInput=[]
         self.FourTerminal_ChannelOutput=[]
 
         self.lineEdit_Device_Name.editingFinished.connect(lambda: UpdateLineEdit_String(self.Parameter, 'DeviceName', self.lineEdit))
 
-        self.comboBox_Voltage_LI_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.deviceList, self.serversList['SR830'], 'Voltage_LI_Device', str(self.comboBox_Voltage_LI_SelectDevice.currentText()), self.pushButton_Voltage_LI_Indicator, self.Refreshinterface))
+        self.comboBox_Voltage_LI_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceServersList, 'Voltage_LI_Server', self.serversList, str(self.comboBox_Voltage_LI_SelectServer.currentText()), self.pushButton_Voltage_LI_ServerIndicator, self.comboBox_Voltage_LI_SelectDevice))
+        self.comboBox_Voltage_LI_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.deviceList, self.DeviceServersList['Voltage_LI_Server'], 'Voltage_LI_Device', str(self.comboBox_Voltage_LI_SelectDevice.currentText()), self.pushButton_Voltage_LI_DeviceIndicator, self.Refreshinterface))
         self.lineEdit_Voltage_LI_Sensitivity.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Voltage_LI_Sensitivity', self.lineEdit, self.deviceList['Voltage_LI_Device'], ['SR830', 'sensitivity'], [0, 26], int))
         self.lineEdit_Voltage_LI_Timeconstant.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Voltage_LI_Timeconstant', self.lineEdit, self.deviceList['Voltage_LI_Device'], ['SR830', 'timeconstant'], [0, 19], int))
         self.lineEdit_Voltage_LI_Frequency.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Voltage_LI_Frequency', self.lineEdit, self.deviceList['Voltage_LI_Device'], ['SR830', 'frequency'], None, float))
         self.lineEdit_Voltage_LI_Gain.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Voltage_LI_Gain', self.lineEdit))
 
-        self.comboBox_Current_LI_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.deviceList, self.serversList['SR830'], 'Current_LI_Device', str(self.comboBox_Voltage_LI_SelectDevice.currentText()), self.pushButton_Current_LI_Indicator, self.Refreshinterface))
+        self.comboBox_Current_LI_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceServersList, 'Current_LI_Server', self.serversList, str(self.comboBox_Current_LI_SelectServer.currentText()), self.pushButton_Current_LI_ServerIndicator, self.comboBox_Current_LI_SelectDevice))
+        self.comboBox_Current_LI_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.deviceList, self.DeviceServersList['Current_LI_Server'], 'Current_LI_Device', str(self.comboBox_Current_LI_SelectDevice.currentText()), self.pushButton_Current_LI_DeviceIndicator, self.Refreshinterface))
         self.lineEdit_Current_LI_Sensitivity.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Current_LI_Sensitivity', self.lineEdit, self.deviceList['Current_LI_Device'], ['SR830', 'sensitivity'], [0, 26], int))
         self.lineEdit_Current_LI_Timeconstant.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Current_LI_Timeconstant', self.lineEdit, self.deviceList['Current_LI_Device'], ['SR830', 'timeconstant'], [0, 19], int))
         self.lineEdit_Current_LI_Frequency.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Current_LI_Frequency', self.lineEdit, self.deviceList['Current_LI_Device'], ['SR830', 'frequency'], None, float))
         self.lineEdit_Current_LI_Gain.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Current_LI_Gain', self.lineEdit))
 
-        self.comboBox_DataAquisition.currentIndexChanged.connect(lambda: SelectDevice(self.deviceList, self.serversList['DACADC'], 'DataAquisition_Device', str(self.comboBox_DataAquisition.currentText()), self.pushButton_DataAquisition_Indicator, self.Refreshinterface))
+        self.comboBox_DataAquisition_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceServersList, 'DataAquisition_Server', self.serversList, str(self.comboBox_DataAquisition_SelectServer.currentText()), self.pushButton_DataAquisition_ServerIndicator, self.comboBox_DataAquisition_SelectDevice))
+        self.comboBox_DataAquisition_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.deviceList, self.DeviceServersList['DataAquisition_Server'], 'DataAquisition_Device', str(self.comboBox_DataAquisition_SelectDevice.currentText()), self.pushButton_DataAquisition_DeviceIndicator, self.Refreshinterface))
         self.lineEdit_FourTerminal_StartVoltage.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'FourTerminal_StartVoltage', self.lineEdit, [-10.0, 10.0]))
         self.lineEdit_FourTerminal_StartVoltage.editingFinished.connect(lambda: UpdateLineEdit_NumberOfStep(self.Parameter, 'FourTerminal_Numberofstep', 'FourTerminal_EndVoltage', 'FourTerminal_StartVoltage', 'FourTerminalSetting_Numberofsteps_Status', self.lineEdit))
         self.lineEdit_FourTerminal_EndVoltage.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'FourTerminal_EndVoltage', self.lineEdit, [-10.0, 10.0]))
@@ -146,16 +160,16 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
             self.lineEdit_Current_LI_Timeconstant: True,
             self.lineEdit_Current_LI_Frequency: True,
             self.lineEdit_Current_LI_Gain: True,
-            self.comboBox_DataAquisition: True,
-            self.lineEdit_DataAquisition_GateChannel: any(device in self.comboBox_DataAquisition.currentText() for device in DACADC_Registry()),
-            self.lineEdit_DataAquisition_VoltageChannel: any(device in self.comboBox_DataAquisition.currentText() for device in DACADC_Registry()),
-            self.lineEdit_DataAquisition_CurrentChannel: any(device in self.comboBox_DataAquisition.currentText() for device in DACADC_Registry()),
+            self.comboBox_DataAquisition_SelectDevice: True,
+            self.lineEdit_DataAquisition_GateChannel: any(device in self.comboBox_DataAquisition_SelectDevice.currentText() for device in DACADC_Registry()),
+            self.lineEdit_DataAquisition_VoltageChannel: any(device in self.comboBox_DataAquisition_SelectDevice.currentText() for device in DACADC_Registry()),
+            self.lineEdit_DataAquisition_CurrentChannel: any(device in self.comboBox_DataAquisition_SelectDevice.currentText() for device in DACADC_Registry()),
             
         }
 
     @inlineCallbacks
     def StartMeasurement(self, c):
-        if any(device in self.comboBox_DataAquisition.currentText() for device in DACADC_Registry()): #Determine if seclected device include DACADC in registry
+        if any(device in self.comboBox_DataAquisition_SelectDevice.currentText() for device in DACADC_Registry()): #Determine if seclected device include DACADC in registry
             try:
                 ImageNumber, ImageDir = yield CreateDataVaultFile(self.serversList['dv'], 'FourTerminalGateSweep ' + str(self.Parameter['DeviceName']), ('Gate Index', 'Gate Voltage'), ('Voltage', 'Current', 'Resistance', 'Conductance'))
                 self.lineEdit_ImageNumber.setText(ImageNumber)
@@ -192,32 +206,35 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
+    '''
+    When a server is disconnected, look up which device use the server and disconnect it
+    '''
     def disconnectServer(self, key):
         try:
-            self.serversList[key] = False
-            for key, listdevice in self.ServerDeviceList.iteritems():
+            print 'disconnect: ', key
+            self.serversList[str(key)] = False
+            for key, listdevice in self.ServerUsedInDevice.iteritems():
                 for devicename in listdevice:
-                    self.deviceList[devicename] = False
+                    self.deviceList[str(devicename)] = False
             self.refreshServerIndicator()
-            self.Refreshinterface()
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
     def refreshServerIndicator(self):
         try:
-            optional = ['SR830', 'DACADC', 'SR860']
+            optional = []#This optional will reconstruct combobox multiple time when you disconnect/connect server individually
             flag = True
             for key in self.serversList:
                 if self.serversList[key] == False and not key in optional:
                     flag = False
 
             if flag:
+                print 'here'
                 setIndicator(self.pushButton_Servers, 'rgb(0, 170, 0)')
 
-                #When all servers are connected, automatically select default device.
-                RedefineComboBox(self.comboBox_Voltage_LI_SelectDevice, self.serversList['SR830'], self.deviceList, 'Voltage_LI_Device')
-                RedefineComboBox(self.comboBox_Current_LI_SelectDevice, self.serversList['SR830'], self.deviceList, 'Current_LI_Device')
-                RedefineComboBox(self.comboBox_DataAquisition, self.serversList['DACADC'], self.deviceList, 'DataAquisition_Device')
+                ReconstructComboBox(self.comboBox_Voltage_LI_SelectServer, ['SR860', 'SR830'])
+                ReconstructComboBox(self.comboBox_Current_LI_SelectServer, ['SR830', 'SR860'])
+                ReconstructComboBox(self.comboBox_DataAquisition_SelectServer, ['DACADC'])
 
                 self.Refreshinterface()
             else:
@@ -226,11 +243,16 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
     def Refreshinterface(self):
+        print self.serversList
+        print self.DeviceServersList
         self.DetermineEnableConditions()
         RefreshButtonStatus(self.ButtonsCondition)
-        RefreshIndicator(self.pushButton_Voltage_LI_Indicator, self.deviceList['Voltage_LI_Device'])
-        RefreshIndicator(self.pushButton_Current_LI_Indicator, self.deviceList['Current_LI_Device'])
-        RefreshIndicator(self.pushButton_DataAquisition_Indicator, self.deviceList['DataAquisition_Device'])
+        RefreshIndicator(self.pushButton_Voltage_LI_ServerIndicator, self.DeviceServersList['Voltage_LI_Server'])
+        RefreshIndicator(self.pushButton_Current_LI_ServerIndicator, self.DeviceServersList['Current_LI_Server'])
+        RefreshIndicator(self.pushButton_DataAquisition_ServerIndicator, self.DeviceServersList['DataAquisition_Server'])
+        RefreshIndicator(self.pushButton_Voltage_LI_DeviceIndicator, self.deviceList['Voltage_LI_Device'])
+        RefreshIndicator(self.pushButton_Current_LI_DeviceIndicator, self.deviceList['Current_LI_Device'])
+        RefreshIndicator(self.pushButton_DataAquisition_DeviceIndicator, self.deviceList['DataAquisition_Device'])
 
     def SetupPlots(self):
         self.Plotlist = {

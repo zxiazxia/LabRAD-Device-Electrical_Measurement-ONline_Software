@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>265</width>
-    <height>120</height>
+    <width>267</width>
+    <height>158</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Server List</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../Resources/DEMONSResources.qrc">
+   <iconset>
     <normaloff>:/newPrefix/Pictures/DemonLogo.png</normaloff>:/newPrefix/Pictures/DemonLogo.png</iconset>
   </property>
   <property name="styleSheet">
@@ -93,6 +93,42 @@ color: rgb(168,168,168)
    </property>
    <property name="text">
     <string>•  DAC ADC</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>110</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+color: rgb(168,168,168)
+</string>
+   </property>
+   <property name="text">
+    <string>•  SR830</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>130</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+color: rgb(168,168,168)
+</string>
+   </property>
+   <property name="text">
+    <string>•  SR860</string>
    </property>
   </widget>
  </widget>

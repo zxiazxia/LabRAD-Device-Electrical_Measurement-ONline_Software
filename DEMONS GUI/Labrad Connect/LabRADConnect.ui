@@ -494,7 +494,7 @@ color:rgb(168,168,168)</string>
 color:rgb(168,168,168)</string>
      </property>
      <property name="text">
-      <string>SR830</string>
+      <string>SR860</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_SR860">

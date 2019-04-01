@@ -84,6 +84,21 @@ def NumberOfStepsToStepSize(Start, End, NoS):
     StepSize=float(abs(Start - End)/float(NoS - 1.0))
     return StepSize
 
+'''
+Takes in the Serverlist, based on the name(str) of deviceserver and servername, connect it.
+'''
+def SelectServer(DeviceServerlist, DeviceServerName, Serverlist, ServerName, indicator, DeviceComboBox):
+    try:
+        print ServerName
+        if str(ServerName) != '':
+            DeviceServerlist[str(DeviceServerName)] = Serverlist[str(ServerName)]
+            if Serverlist[str(ServerName)] != False:
+                setIndicator(indicator, 'rgb(0, 170, 0)')
+                RedefineComboBox(DeviceComboBox, Serverlist[str(ServerName)])
+            else:
+                setIndicator(indicator, 'rgb(161, 0, 0)')
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
 '''
 Takes devicelist, server name(str), device name(str), target which is the name of the device in list_devices() and the indicator pushbutton
@@ -99,11 +114,11 @@ def SelectDevice(devicelist, server, device, target, indicator, SequentialFuncti
                 yield devicelist[str(device)].select_device(str(target))
             except Exception as inst:
                 print 'Connection to ' + device +  ' failed: ', inst, ' on line: ', sys.exc_traceback.tb_lineno
-                devicelist[device] = False
+                devicelist[str(device)] = False
 
         else:
-            devicelist[device] = False
-        RefreshIndicator(indicator, devicelist[device])
+            devicelist[str(device)] = False
+        RefreshIndicator(indicator, devicelist[str(device)])
         if not SequentialFunction is None:
             SequentialFunction()
     except Exception as inst:
@@ -127,7 +142,7 @@ From server, query the list of device, post that on combobox and select the devi
 It is useful for refreshing the list.
 '''
 @inlineCallbacks
-def RedefineComboBox(combobox, server, devicelist, device, reconnect = True):
+def RedefineComboBox(combobox, server, reconnect = True):
     try:
         if server != False:
             itemlist = yield QueryDeviceList(server)

@@ -122,7 +122,7 @@ class Window(QtGui.QMainWindow, ControlerWindowUI):
                 setIndicator(self.pushButton_Servers, 'rgb(0, 170, 0)')
 
                 #When all servers are connected, automatically select default device.
-                RedefineComboBox(self.comboBox_Tracker_SelectDevice, self.serversList['DACADC'], self.deviceList, 'DataAquisition_Device')
+                RedefineComboBox(self.comboBox_Tracker_SelectDevice, self.serversList['DACADC'])
                 self.Refreshinterface()
             else:
                 setIndicator(self.pushButton_Servers, 'rgb(161, 0, 0)')
