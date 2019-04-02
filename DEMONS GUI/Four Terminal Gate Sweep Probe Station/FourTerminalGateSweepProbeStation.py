@@ -51,7 +51,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             'ComboBoxDevice': self.comboBox_Voltage_LI_SelectDevice,
             'ServerIndicator': self.pushButton_Voltage_LI_ServerIndicator,
             'DeviceIndicator': self.pushButton_Voltage_LI_DeviceIndicator,
-            'ServerNeeded': ['SR830', 'SR860'],
+            'ServerNeeded': ['SR860', 'SR830'],
         }
 
         self.DeviceList['Current_LI_Device'] = {
@@ -61,7 +61,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             'ComboBoxDevice': self.comboBox_Current_LI_SelectDevice,
             'ServerIndicator': self.pushButton_Current_LI_ServerIndicator,
             'DeviceIndicator': self.pushButton_Current_LI_DeviceIndicator, 
-            'ServerNeeded': ['SR860', 'SR830'],
+            'ServerNeeded': ['SR830', 'SR860'],
         }
 
         self.DeviceList['DataAquisition_Device'] = {
@@ -89,6 +89,8 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             'FourTerminal_Numberofstep': 1000,
             'FourTerminal_GateChannel': 3,
         } 
+
+        self.Abort_Flag = False
 
         self.lineEdit = {
             'DeviceName': self.lineEdit_Device_Name,
@@ -184,35 +186,35 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             StartVoltage, EndVoltage = self.Parameter['FourTerminal_StartVoltage'], self.Parameter['FourTerminal_EndVoltage']
             NumberOfSteps, Delay = self.Parameter['FourTerminal_Numberofstep'], self.Parameter['FourTerminal_Delay']
 
-            yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, NumberOfSteps, Delay)
+            yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, NumberOfSteps, Delay, self.reactor)
             yield SleepAsync(self.reactor, 1)
 
-            Data = np.empyty((0,6))
+            Data = np.empty((0,6))
             GateVoltageSet = np.linspace(StartVoltage, EndVoltage, NumberOfSteps)
             for GateIndex in range(NumberOfSteps):
                 if self.Abort_Flag:
                     print 'Abort the Sweep'
                     self.Abort_Flag = False
-                    yield FinishSweep(GateVoltageSet[GateIndex])
+                    yield self.FinishSweep(GateVoltageSet[GateIndex])
                     break
-                yield Set_SIM900_VoltageOutput(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, gatevoltage)
+                yield Set_SIM900_VoltageOutput(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, GateVoltageSet[GateIndex])
                 yield SleepAsync(self.reactor, Delay)
-                Voltage = yield Get_SR_LI_R(DeviceList['Voltage_LI_Device']['DeviceObject'])
-                Current = yield Get_SR_LI_R(DeviceList['Current_LI_Device']['DeviceObject'])
+                Voltage = yield Get_SR_LI_R(self.DeviceList['Voltage_LI_Device']['DeviceObject'])
+                Current = yield Get_SR_LI_R(self.DeviceList['Current_LI_Device']['DeviceObject'])
                 Data_Line = np.array([Voltage, Current])
                 Data_Line = Multiply(Data_Line, Multiplier)
                 Data_Line = AttachData_Front(Data_Line, GateVoltageSet[GateIndex])
                 Data_Line = AttachData_Front(Data_Line, GateIndex)
                 Data_Line = Attach_ResistanceConductance(Data_Line, 2, 3)
                 self.serversList['dv'].add(Data_Line)
-                Data = np.append((Data, [Data_Line]), axis = 0)
+                Data = np.append(Data, [Data_Line], axis = 0)
                 XData, VoltageData, CurrentData, ResistanceData, ConductanceData = Data[:,1], Data[:,2], Data[:,3], Data[:,4], Data[:,5]
                 ClearPlots(self.Plotlist)
                 Plot1DData(XData, VoltageData, self.Plotlist['VoltagePlot'])
                 Plot1DData(XData, CurrentData, self.Plotlist['CurrentPlot'])
                 Plot1DData(XData, ResistanceData, self.Plotlist['ResistancePlot'])
 
-            yield FinishSweep(EndVoltage)
+            yield self.FinishSweep(EndVoltage)
             
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
@@ -221,7 +223,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
     def FinishSweep(self, currentvoltage):
         try:
             yield SleepAsync(self.reactor, 1)
-            yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], self.Parameter['FourTerminal_GateChannel'], currentvoltage, 0.0, self.Parameter['FourTerminal_Numberofstep'], self.Parameter['FourTerminal_Delay'])
+            yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], self.Parameter['FourTerminal_GateChannel'], currentvoltage, 0.0, self.Parameter['FourTerminal_Numberofstep'], self.Parameter['FourTerminal_Delay'], self.reactor)
             self.dv.add_comment(str(self.textEdit_AddComments.toPlainText()))
             saveDataToSessionFolder()
         except Exception as inst:

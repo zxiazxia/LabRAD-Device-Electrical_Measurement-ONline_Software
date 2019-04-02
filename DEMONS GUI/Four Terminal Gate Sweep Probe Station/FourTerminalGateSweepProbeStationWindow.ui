@@ -1200,7 +1200,7 @@ background: rgb(144, 140, 9);
                <string notr="true"/>
               </property>
               <property name="text">
-               <string>(A)</string>
+               <string>(V)</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>

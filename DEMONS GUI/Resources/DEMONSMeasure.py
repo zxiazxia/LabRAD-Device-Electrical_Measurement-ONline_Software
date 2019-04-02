@@ -29,19 +29,19 @@ Set SIM900 Voltage Source.
 @inlineCallbacks
 def Set_SIM900_VoltageOutput(SIM900Device, VoltageSourceSlot, Voltage):
     try:
-        yield SIM900Device.DC_set_voltage(VoltageSourceSlot, Voltage)
+        yield SIM900Device.dc_set_voltage(VoltageSourceSlot, Voltage)
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
 '''
-Ramp the DACADC without taking data, usually used to ramp to initial voltage.
+Ramp the DACADC without taking data, usually used to ramp to initial voltage. It also require a reactor to sleep asynchronously
 '''
 @inlineCallbacks
-def Ramp_SIM900_VoltageSource(SIM900Device, VoltageSourceSlot, StartingVoltage, EndVoltage, Numberofsteps, Delay, c = None):
+def Ramp_SIM900_VoltageSource(SIM900Device, VoltageSourceSlot, StartingVoltage, EndVoltage, Numberofsteps, Delay, reactor = None, c = None):
     try:
         for voltage in np.linspace(StartingVoltage, EndVoltage, Numberofsteps):
-            yield SIM900Device.DC_set_voltage(VoltageSourceSlot, voltage)
-            SleepAsync(Delay)
+            yield SIM900Device.dc_set_voltage(VoltageSourceSlot, voltage)
+            SleepAsync(reactor, Delay)
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 

@@ -276,26 +276,42 @@ def Division(voltage, current, multiplier = 1):
 Attach Attach_Data to the front of data
 '''
 def AttachData_Front(data, attached_data):
-    Data_Combined = np.insert(data, 0, attached_data, axis = 1)
+    if len(data.shape) == 1: # 1D array
+        axisnumber = 0
+    else:
+        axisnumber = 1
+    Data_Combined = np.insert(data, 0, attached_data, axis = axisnumber)
     return Data_Combined
 
 '''
 Attach Attach_Data to the back of data
 '''
 def AttachData_Back(data, attached_data):
-    column = data.shape[1]
-    Data_Combined = np.insert(data, column, attached_data, axis = 1)
+    if len(data.shape) == 1: # 1D array
+        axisnumber = 0
+        column = len(data)
+    else:
+        axisnumber = 1
+        column = data.shape[1]
+    Data_Combined = np.insert(data, column, attached_data, axis = axisnumber)
     return Data_Combined
 
 def Attach_ResistanceConductance(data, VoltageIndex, CurrentIndex, multiplier = 1):
-    Voltage, Current = data[:, VoltageIndex], data[:, CurrentIndex]
-    Resistance = np.transpose(map(Division, Voltage, Current))
-    Conductance = np.transpose(map(Division, Current, Voltage))
-    Data_Attached1 = AttachData_Back(data, Resistance)
-    Data_Attached = AttachData_Back(Data_Attached1, Conductance)
-    
-    return Data_Attached
-
+    try:
+        if len(data.shape) == 1: # 1D array
+            Voltage, Current = data[VoltageIndex], data[CurrentIndex]
+            Resistance = Division(Voltage, Current)
+            Conductance = Division(Current, Voltage)
+        else:
+            Voltage, Current = data[:, VoltageIndex], data[:, CurrentIndex]
+            Resistance = np.transpose(map(Division, Voltage, Current))
+            Conductance = np.transpose(map(Division, Current, Voltage))
+        Data_Attached1 = AttachData_Back(data, Resistance)
+        Data_Attached = AttachData_Back(Data_Attached1, Conductance)
+        
+        return Data_Attached
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 '''
 Multiply array with the input list
 '''
