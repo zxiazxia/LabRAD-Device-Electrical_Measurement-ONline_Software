@@ -66,17 +66,17 @@ def getSensitivity(i, mode):
 
 def getSensitivityInt(v, mode):
     '''
-	Convert from real sensitivity to an integer value taken by the sr860
-	Voltage mode (0), Current Mode (1)
-	'''
+    Convert from real sensitivity to an integer value taken by the sr860
+    Voltage mode (0), Current Mode (1)
+    '''
     try:
         if mode == 0:
-			if v >= 1.0:
-				sens = 0
-			elif v <= 10**-9:
-				sens = 27
-			else:
-	            sens = -int(round(3*log10(v)))
+            if v >= 1.0:
+                sens = 0
+            elif v <= 10**-9:
+                sens = 27
+            else:
+                sens = -int(round(3*log10(v)))
         return sens
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno

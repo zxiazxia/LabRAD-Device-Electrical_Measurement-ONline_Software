@@ -36,6 +36,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'DACADC'   : False,
         'SR830'   : False,
         'SR860'   : False,		
+        'SIM900'   : False,		
         }
         
         self.pushButtonDictionary = {
@@ -44,7 +45,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'ser_server': self.pushButton_SerialServer,
         'DACADC'   : self.pushButton_DACADC,
         'SR830'   : self.pushButton_SR830,
-        'SR860'   : self.pushButton_SR860
+        'SR860'   : self.pushButton_SR860,
+        'SIM900'   : self.pushButton_SIM900,
         }
 
         self.labelDictionary = {
@@ -53,7 +55,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'ser_server': self.label_SerialServer,
         'DACADC'   : self.label_DACADC,
         'SR830'   : self.label_SR830,
-        'SR860'   : self.label_SR860
+        'SR860'   : self.label_SR860,
+        'SIM900'   : self.label_SIM900,
         }
         
         #Data vault session info
@@ -80,6 +83,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         self.pushButton_SerialServer.clicked.connect(lambda: self.connectServer('ser_server'))
         self.pushButton_SR830.clicked.connect(lambda: self.connectServer('SR830'))
         self.pushButton_SR860.clicked.connect(lambda: self.connectServer('SR860'))
+        self.pushButton_SIM900.clicked.connect(lambda: self.connectServer('SIM900'))
 
         self.key_list = []
         
@@ -88,7 +92,6 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
     
     def setupAdditionalUi(self):
         pass
-
 
     @inlineCallbacks
     def connectServer(self, servername, disconnect = True): #Click to toggle connection to a server
@@ -142,7 +145,14 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         connection_flag = True
                     except:
                         connection_flag = False
-
+                elif servername == 'SIM900':
+                    try:
+                        sim900 = yield self.LabradDictionary['cxn'].sim900
+                        self.LabradDictionary[servername] = sim900
+                        connection_flag = True
+                    except:
+                        connection_flag = False
+                        
                 if connection_flag:
                     self.cxnsignal.emit(servername, self.LabradDictionary[servername])
                     self.labelDictionary[servername].setText('Connected')

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>629</width>
-    <height>600</height>
+    <width>718</width>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,64 +24,30 @@
 background-color: rgb(0, 0, 0);
 }</string>
    </property>
-   <widget class="QFrame" name="frame_LabradConnect">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>20</y>
-      <width>571</width>
-      <height>341</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">#frame_LabradConnect{
-border: 1px solid rgb(168,168,168);
-border-radius: 5px
-}</string>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-    <widget class="QPushButton" name="pushButton_DisconnectAll">
-     <property name="geometry">
-      <rect>
-       <x>320</x>
-       <y>20</y>
-       <width>121</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#pushButton_DisconnectAll{
-color: rgb(168,168,168);
-background: rgb(60, 60, 60);
-border-radius: 4px;
-}
-
-QPushButton:pressed#pushButton_DisconnectAll{
-color: rgb(168,168,168);
-background-color:rgb(100,100,100);
-border-radius: 4px
-}</string>
-     </property>
-     <property name="text">
-      <string>Disconnect All Servers</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_ConnectAll">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>20</y>
-       <width>121</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#pushButton_ConnectAll{
+   <layout class="QGridLayout" name="gridLayout" rowstretch="1,4,1,1" columnstretch="1,2,1,1,2,1">
+    <item row="0" column="0">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>81</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="pushButton_ConnectAll">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">#pushButton_ConnectAll{
 color: rgb(168,168,168);
 background: rgb(60, 60, 60);
 border-radius: 4px;
@@ -92,451 +58,522 @@ color: rgb(168,168,168);
 background-color:rgb(100,100,100);
 border-radius: 4px
 }</string>
-     </property>
-     <property name="text">
-      <string>Connect All Servers</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_Labrad">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>70</y>
-       <width>121</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
+      </property>
+      <property name="text">
+       <string>Connect All Servers</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>81</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="3">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>81</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="4">
+     <widget class="QPushButton" name="pushButton_DisconnectAll">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">#pushButton_DisconnectAll{
+color: rgb(168,168,168);
+background: rgb(60, 60, 60);
+border-radius: 4px;
+}
+
+QPushButton:pressed#pushButton_DisconnectAll{
+color: rgb(168,168,168);
+background-color:rgb(100,100,100);
+border-radius: 4px
+}</string>
+      </property>
+      <property name="text">
+       <string>Disconnect All Servers</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5">
+     <spacer name="horizontalSpacer_4">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>81</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="0" colspan="6">
+     <widget class="QFrame" name="frame">
+      <property name="styleSheet">
+       <string notr="true">#frame{
+border: 1px solid rgb(168,168,168);
+border-radius: 5px
+}</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,1,1,1" columnstretch="3,1,3,3,1,3">
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="styleSheet">
+          <string notr="true">
 color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>Not connected</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>70</y>
-       <width>80</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
+         </property>
+         <property name="text">
+          <string>DAC ADC:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLabel" name="label_6">
+         <property name="styleSheet">
+          <string notr="true">
 color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>LabRAD:</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_LabRAD">
-     <property name="geometry">
-      <rect>
-       <x>100</x>
-       <y>70</y>
-       <width>15</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#pushButton_LabRAD{
+         </property>
+         <property name="text">
+          <string>Serial Server:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="pushButton_DataVault">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#pushButton_DataVault{
 background:rgb(144, 140, 9);
 border-radius: 4px;
 }</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>90</y>
-       <width>80</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="styleSheet">
+          <string notr="true">
 color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>Data Vault:</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_DataVault">
-     <property name="geometry">
-      <rect>
-       <x>100</x>
-       <y>90</y>
-       <width>15</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#pushButton_DataVault{
+         </property>
+         <property name="text">
+          <string>Data Vault:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="pushButton_LabRAD">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#pushButton_LabRAD{
 background:rgb(144, 140, 9);
 border-radius: 4px;
 }</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_DataVault">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>90</y>
-       <width>121</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_Labrad">
+         <property name="styleSheet">
+          <string notr="true">
 color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>Not connected</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>110</y>
-       <width>80</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
+         </property>
+         <property name="text">
+          <string>Not connected</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QLabel" name="label_SerialServer">
+         <property name="styleSheet">
+          <string notr="true">
 color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>DAC ADC:</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_DACADC">
-     <property name="geometry">
-      <rect>
-       <x>100</x>
-       <y>110</y>
-       <width>15</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#pushButton_DACADC{
+         </property>
+         <property name="text">
+          <string>Not connected</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="styleSheet">
+          <string notr="true">
+color:rgb(168,168,168)</string>
+         </property>
+         <property name="text">
+          <string>LabRAD:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="pushButton_DACADC">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#pushButton_DACADC{
 background:rgb(144, 140, 9);
 border-radius: 4px;
 }</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_4">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>280</y>
-       <width>100</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(168, 168, 168);
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="label_DACADC">
+         <property name="styleSheet">
+          <string notr="true">
+color:rgb(168,168,168)</string>
+         </property>
+         <property name="text">
+          <string>Not connected</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pushButton_SerialServer">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#pushButton_SerialServer{
+background: rgb(144, 140, 9);
+ border-radius: 4px;
+}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label_DataVault">
+         <property name="styleSheet">
+          <string notr="true">
+color:rgb(168,168,168)</string>
+         </property>
+         <property name="text">
+          <string>Not connected</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="styleSheet">
+          <string notr="true">
+color:rgb(168,168,168)</string>
+         </property>
+         <property name="text">
+          <string>SIM900</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPushButton" name="pushButton_SIM900">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#pushButton_SIM900{
+background:rgb(144, 140, 9);
+border-radius: 4px;
+}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLabel" name="label_SIM900">
+         <property name="styleSheet">
+          <string notr="true">
+color:rgb(168,168,168)</string>
+         </property>
+         <property name="text">
+          <string>Not connected</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLabel" name="label_8">
+         <property name="styleSheet">
+          <string notr="true">
+color:rgb(168,168,168)</string>
+         </property>
+         <property name="text">
+          <string>SR860</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4">
+        <widget class="QPushButton" name="pushButton_SR860">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#pushButton_SR860{
+background: rgb(144, 140, 9);
+ border-radius: 4px;
+}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="5">
+        <widget class="QLabel" name="label_SR860">
+         <property name="styleSheet">
+          <string notr="true">
+color:rgb(168,168,168)</string>
+         </property>
+         <property name="text">
+          <string>Not connected</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QLabel" name="label_7">
+         <property name="styleSheet">
+          <string notr="true">
+color:rgb(168,168,168)</string>
+         </property>
+         <property name="text">
+          <string>SR830</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QPushButton" name="pushButton_SR830">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#pushButton_SR830{
+background: rgb(144, 140, 9);
+ border-radius: 4px;
+}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="5">
+        <widget class="QLabel" name="label_SR830">
+         <property name="styleSheet">
+          <string notr="true">
+color:rgb(168,168,168)</string>
+         </property>
+         <property name="text">
+          <string>Not connected</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="5">
+     <widget class="QPushButton" name="pushButton_DataVaultFolder">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">#pushButton_DataVaultFolder{
+image:url(:/Pictures/Pictures/SessionSelect.png);
+background: black;
+}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="5">
+     <widget class="QPushButton" name="pushButton_SessionFolder">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">#pushButton_SessionFolder{
+image:url(:/Pictures/Pictures/SessionSelect.png);
+background: black;
+}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2" colspan="3">
+     <widget class="QLineEdit" name="lineEdit_DataVaultFolder">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2" colspan="3">
+     <widget class="QLineEdit" name="lineEdit_SessionFolder">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QLabel" name="label_4">
+      <property name="styleSheet">
+       <string notr="true">color: rgb(168, 168, 168);
 font: 10pt &quot;MS Shell Dlg 2&quot;;
 qproperty-alignment: 'AlignVCenter | AlignRight';
 qproperty-wordWrap: true;
 </string>
-     </property>
-     <property name="text">
-      <string>Datavault Folder:</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_5">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>310</y>
-       <width>100</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(168, 168, 168);
+      </property>
+      <property name="text">
+       <string>Datavault Folder:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="2">
+     <widget class="QLabel" name="label_5">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(168, 168, 168);
 font: 10pt &quot;MS Shell Dlg 2&quot;;
 qproperty-alignment: 'AlignVCenter | AlignRight';
 qproperty-wordWrap: true;
 </string>
-     </property>
-     <property name="text">
-      <string>Session Folder:</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_DataVaultFolder">
-     <property name="geometry">
-      <rect>
-       <x>160</x>
-       <y>280</y>
-       <width>311</width>
-       <height>20</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_SessionFolder">
-     <property name="geometry">
-      <rect>
-       <x>160</x>
-       <y>310</y>
-       <width>311</width>
-       <height>20</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_SessionFolder">
-     <property name="geometry">
-      <rect>
-       <x>500</x>
-       <y>300</y>
-       <width>36</width>
-       <height>36</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#pushButton_SessionFolder{
-image:url(:/Pictures/Pictures/SessionSelect.png);
-background: black;
-}</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_DataVaultFolder">
-     <property name="geometry">
-      <rect>
-       <x>500</x>
-       <y>270</y>
-       <width>36</width>
-       <height>36</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#pushButton_DataVaultFolder{
-image:url(:/Pictures/Pictures/SessionSelect.png);
-background: black;
-}</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_DACADC">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>110</y>
-       <width>121</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
-color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>Not connected</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_6">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>130</y>
-       <width>80</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
-color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>Serial Server:</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_SerialServer">
-     <property name="geometry">
-      <rect>
-       <x>100</x>
-       <y>130</y>
-       <width>15</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#pushButton_SerialServer{
-background: rgb(144, 140, 9);
- border-radius: 4px;
-}</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_SerialServer">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>130</y>
-       <width>121</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
-color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>Not connected</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_SR830">
-     <property name="geometry">
-      <rect>
-       <x>100</x>
-       <y>150</y>
-       <width>15</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#pushButton_SR830{
-background: rgb(144, 140, 9);
- border-radius: 4px;
-}</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_7">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>150</y>
-       <width>80</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
-color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>SR830</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_SR830">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>150</y>
-       <width>121</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
-color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>Not connected</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_8">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>170</y>
-       <width>80</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
-color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>SR860</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_SR860">
-     <property name="geometry">
-      <rect>
-       <x>100</x>
-       <y>170</y>
-       <width>15</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#pushButton_SR860{
-background: rgb(144, 140, 9);
- border-radius: 4px;
-}</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_SR860">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>170</y>
-       <width>121</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
-color:rgb(168,168,168)</string>
-     </property>
-     <property name="text">
-      <string>Not connected</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </widget>
+      </property>
+      <property name="text">
+       <string>Session Folder:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources>

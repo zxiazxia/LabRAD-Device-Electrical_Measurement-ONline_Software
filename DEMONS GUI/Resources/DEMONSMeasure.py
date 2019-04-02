@@ -10,6 +10,42 @@ import time
 import math
 from DEMONSFormat import formatNum
 
+#Lock-in Measurement Code
+'''
+Get R from Lock In
+'''
+@inlineCallbacks
+def Get_SR_LI_R(LockInDevice):
+    try:
+        value = yield LockInDevice.r()
+        returnValue(value)
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+#SIM900 Measurement Code
+'''
+Set SIM900 Voltage Source.
+'''
+@inlineCallbacks
+def Set_SIM900_VoltageOutput(SIM900Device, VoltageSourceSlot, Voltage):
+    try:
+        yield SIM900Device.DC_set_voltage(VoltageSourceSlot, Voltage)
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+'''
+Ramp the DACADC without taking data, usually used to ramp to initial voltage.
+'''
+@inlineCallbacks
+def Ramp_SIM900_VoltageSource(SIM900Device, VoltageSourceSlot, StartingVoltage, EndVoltage, Numberofsteps, Delay, c = None):
+    try:
+        for voltage in np.linspace(StartingVoltage, EndVoltage, Numberofsteps):
+            yield SIM900Device.DC_set_voltage(VoltageSourceSlot, voltage)
+            SleepAsync(Delay)
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+#DACADC Measurement Code
 '''
 Set DAC Voltage
 '''
@@ -48,7 +84,7 @@ Ramp the DACADC without taking data, usually used to ramp to initial voltage.
 @inlineCallbacks
 def Ramp_DACADC(DACADC_Device, Port, StartingVoltage, EndVoltage, Numberofsteps, Delay, c = None):
     try:
-        Delay = int(Delay * 1000)
+        Delay = int(Delay * 1000) #Delay in DAC is in microsecond
         yield DACADC_Device.ramp1(Port, float(StartingVoltage), float(EndVoltage), Numberofsteps, Delay)
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
@@ -78,6 +114,7 @@ def Buffer_Ramp_Debug(Device, Output, Input, Min, Max, NoS, Delay):
             DebugData[i].append(i * j)
     return DebugData
 
+#Data Vault related Code
 '''
 Generate Datavault Files, using datavault object, dataname(str), list of dependent variables and independent variables
 return the imagenumber and directory number for updating GUI
@@ -114,3 +151,15 @@ def saveDataToSessionFolder(winId, SessionFolder, ScreenshotName):
             print "Error saving Scan data picture"
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+#General Stuff
+
+"""Asynchronous compatible sleep command. Sleeps for given time in seconds, but allows
+other operations to be done elsewhere while paused."""
+def SleepAsync(reactor, secs):
+    d = Deferred()
+    reactor.callLater(secs, d.callback, 'Sleeping')
+    return d
+
+def SetFlagTrue(Flag):
+    Flag = True

@@ -110,7 +110,6 @@ def SelectDevice(DeviceList, DeviceName, target, SequentialFunction = None):
             except Exception as inst:
                 print 'Connection to ' + device +  ' failed: ', inst, ' on line: ', sys.exc_traceback.tb_lineno
                 DeviceList[str(DeviceName)]['DeviceObject'] = False
-
         else:
             DeviceList[str(DeviceName)]['DeviceObject'] = False
         RefreshIndicator(DeviceList[str(DeviceName)]['DeviceIndicator'], DeviceList[str(DeviceName)]['DeviceObject'])
@@ -141,7 +140,6 @@ It is useful for refreshing the list.
 '''
 @inlineCallbacks
 def RedefineComboBox(combobox, server, reconnect = True):
-    print combobox.objectName()
     try:
         if server != False:
             itemlist = yield QueryDeviceList(server)
@@ -298,7 +296,6 @@ def Attach_ResistanceConductance(data, VoltageIndex, CurrentIndex, multiplier = 
     
     return Data_Attached
 
-
 '''
 Multiply array with the input list
 '''
@@ -306,13 +303,6 @@ def Multiply(Data, Multiplierlist):
     multiplymatrix = np.diag(Multiplierlist)
     MultipliedData = np.dot(Data, multiplymatrix)
     return MultipliedData
-
-"""Asynchronous compatible sleep command. Sleeps for given time in seconds, but allows
-other operations to be done elsewhere while paused."""
-def SleepAsync(reactor, secs):
-        d = Deferred()
-        reactor.callLater(secs, d.callback, 'Sleeping')
-        return d
 
 
 

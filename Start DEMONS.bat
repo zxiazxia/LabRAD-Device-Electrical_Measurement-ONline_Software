@@ -28,6 +28,12 @@ TIMEOUT /T 1
 
 start python "%CD%\DEMONS Servers\SR860.py"
 
+TIMEOUT /T 1
+
+start python "%CD%\DEMONS Servers\SIM_900.py"
+
+TIMEOUT /T 1
+
 python "%CD%\DEMONS GUI\DEMONS.py"
 
 pause

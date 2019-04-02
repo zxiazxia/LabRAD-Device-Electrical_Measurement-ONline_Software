@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>654</width>
-    <height>724</height>
+    <width>558</width>
+    <height>244</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,23 +24,61 @@
 background-color: rgb(0, 0, 0);
 }</string>
    </property>
-   <widget class="QPushButton" name="pushButton_LabRADConnect">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>20</y>
-      <width>111</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton:pressed#pushButton_LabRADConnect{
+   <layout class="QGridLayout" name="gridLayout" rowstretch="5,1,1" columnstretch="1,2,1,1,2,1">
+    <item row="0" column="0" colspan="6">
+     <widget class="QPushButton" name="pushButton_Logo">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">#pushButton_Logo{
+image:url(:/Pictures/Pictures/DemonPicture.png);
+background: black;\n}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>61</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="1">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>124</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="2" colspan="2">
+     <widget class="QPushButton" name="pushButton_LabRADConnect">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton:pressed#pushButton_LabRADConnect{
 color: rgb(0,255,0);
 background-color:rgb(150,150,150);
 border: 1px solid rgb(0,255,0);
@@ -53,80 +91,115 @@ background-color:rgb(0,0,0);
 border: 2px solid rgb(0,255,0);
 border-radius: 5px
 }</string>
-    </property>
-    <property name="text">
-     <string>Connect Server</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_FourTerminalGateSweep">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>160</y>
-      <width>151</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton:pressed#pushButton_FourTerminalGateSweep{
+      </property>
+      <property name="text">
+       <string>Connect Server</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>124</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="5">
+     <spacer name="horizontalSpacer_4">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>61</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="0">
+     <spacer name="horizontalSpacer_8">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>61</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="1">
+     <widget class="QPushButton" name="pushButton_FourTerminalGateSweepProbeStation">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton:pressed#pushButton_FourTerminalGateSweepProbeStation{
 color: rgb(0,0,0);
 background-color:rgb(131,131,131);
 border: 1px solid rgb(0,0,0);
 border-radius: 5px
 }
 
-QPushButton#pushButton_FourTerminalGateSweep{
+QPushButton#pushButton_FourTerminalGateSweepProbeStation{
 color: rgb(131,131,131);
 background-color:rgb(0,0,0);
 border: 2px solid  rgb(131,131,131);
 border-radius: 5px
 }</string>
-    </property>
-    <property name="text">
-     <string>Four Terminal Gate Sweep</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_Logo">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>30</y>
-      <width>181</width>
-      <height>241</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">#pushButton_Logo{
-image:url(:/Pictures/Pictures/DemonPicture.png);
-background: black;\n}</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_DACADC_Tracker">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>20</y>
-      <width>151</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton:pressed#pushButton_DACADC_Tracker{
+      </property>
+      <property name="text">
+       <string>Probe Station Screening</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <spacer name="horizontalSpacer_7">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>61</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="3">
+     <spacer name="horizontalSpacer_6">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>61</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="4">
+     <widget class="QPushButton" name="pushButton_DACADC_Tracker">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton:pressed#pushButton_DACADC_Tracker{
 color: rgb(0,0,0);
 background-color:rgb(131,131,131);
 border: 1px solid rgb(0,0,0);
@@ -139,11 +212,26 @@ background-color:rgb(0,0,0);
 border: 2px solid  rgb(131,131,131);
 border-radius: 5px
 }</string>
-    </property>
-    <property name="text">
-     <string>DAC ADC Tracker</string>
-    </property>
-   </widget>
+      </property>
+      <property name="text">
+       <string>DAC ADC Tracker</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="5">
+     <spacer name="horizontalSpacer_5">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>61</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources>
