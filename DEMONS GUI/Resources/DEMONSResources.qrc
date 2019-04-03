@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="Pictures">
+    <file>Pictures/Setting.png</file>
     <file>Pictures/addPlotIcon.png</file>
     <file>Pictures/backIcon.png</file>
     <file>Pictures/DemonPicture.png</file>

@@ -8,7 +8,7 @@ import pyqtgraph as pg
 import exceptions
 import time
 import math
-from DEMONSFormat import formatNum
+from DEMONSFormat import *
 
 #Lock-in Measurement Code
 '''
@@ -21,6 +21,26 @@ def Get_SR_LI_R(LockInDevice):
         returnValue(value)
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+@inlineCallbacks
+def Read_LockIn_TimeConstant(LockInDevice):
+    value = yield LockInDevice.time_constant()
+    returnValue(value)
+
+@inlineCallbacks
+def Set_LockIn_TimeConstant(LockInDevice, value):
+    actualvalue = yield LockInDevice.time_constant(value)
+    returnValue(actualvalue)
+
+@inlineCallbacks
+def Read_LockIn_Frequency(LockInDevice):
+    value = yield LockInDevice.frequency()
+    returnValue(value)
+
+@inlineCallbacks
+def Set_LockIn_Frequency(LockInDevice, value):
+    actualvalue = yield LockInDevice.frequency(value)
+    returnValue(actualvalue)
 
 #SIM900 Measurement Code
 '''
@@ -160,6 +180,3 @@ def SleepAsync(reactor, secs):
     d = Deferred()
     reactor.callLater(secs, d.callback, 'Sleeping')
     return d
-
-def SetFlagTrue(Flag):
-    Flag = True

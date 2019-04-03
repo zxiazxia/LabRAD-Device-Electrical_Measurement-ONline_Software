@@ -6,13 +6,29 @@ from twisted.internet.defer import inlineCallbacks, Deferred , returnValue
 import pyqtgraph as pg
 import exceptions
 import time
+from PyQt4 import QtCore, QtGui
+from DEMONSMeasure import *
 
 #---------------------------------------------------------------------------------------------------------#         
 """ The following section describes how to read and write values to various lineEdits on the GUI."""
 
-#Registry
-def DACADC_Registry():
-    return ['DA16_16_02']
+'''
+Read a funnction and update a lineEdit, use device's function and take the return value and feed it to parameter and lineEdit
+'''
+@inlineCallbacks
+def ReadEdit_Parameter(Function, Parameter, parametername, lineEdit):
+    value = yield Function()
+    Parameter[parametername] = value
+    lineEdit.setText(formatNum(Parameter[parametername], 6))
+
+'''
+Set a funnction and update a lineEdit
+'''
+@inlineCallbacks
+def SetEdit_Parameter(Function, Parameter, parametername, lineEdit):
+    value = yield Function()
+    Parameter[parametername] = value
+    lineEdit.setText(formatNum(Parameter[parametername], 6))
 
 '''
 Update parameter, normally just text
@@ -252,8 +268,8 @@ def Setup1DPlot(Plot, Layout, Title, yaxis, yunit, xaxis, xunit):
     Plot.setTitle( Title)
     Plot.setLabel('left', yaxis, units = yunit)
     Plot.setLabel('bottom', xaxis, units = xunit)
-    Plot.showAxis('right', show = True)
-    Plot.showAxis('top', show = True)
+    Plot.showAxis('right', show = False)
+    Plot.showAxis('top', show = False)
     Plot.setXRange(0,1) #Default Range
     Plot.setYRange(0,2) #Default Range
     Plot.enableAutoRange(enable = True)
@@ -467,4 +483,3 @@ class UnitWarning(QtGui.QDialog, Ui_UnitWarning):
         
     def closeEvent(self, e):
         self.reject()
-        
