@@ -26,7 +26,8 @@ Set a funnction and update a lineEdit
 '''
 @inlineCallbacks
 def SetEdit_Parameter(Function, Parameter, parametername, lineEdit):
-    value = yield Function()
+    dummyval = readNum(str(lineEdit.text()), None , False)
+    value = yield Function(dummyval)
     Parameter[parametername] = value
     lineEdit.setText(formatNum(Parameter[parametername], 6))
 
@@ -265,13 +266,13 @@ Input: PlotItem, Layout of Plot and Plot properties
 '''
 def Setup1DPlot(Plot, Layout, Title, yaxis, yunit, xaxis, xunit):
     Plot.setGeometry(QtCore.QRect(0, 0, 10, 10))
-    Plot.setTitle( Title)
+    Plot.setTitle(Title)
     Plot.setLabel('left', yaxis, units = yunit)
     Plot.setLabel('bottom', xaxis, units = xunit)
-    Plot.showAxis('right', show = False)
-    Plot.showAxis('top', show = False)
-    Plot.setXRange(0,1) #Default Range
-    Plot.setYRange(0,2) #Default Range
+    Plot.showAxis('right', show = True)
+    Plot.showAxis('top', show = True)
+    Plot.setXRange(-1, 1) #Default Range
+    Plot.setYRange(-1, 1) #Default Range
     Plot.enableAutoRange(enable = True)
     Layout.addWidget(Plot)
 

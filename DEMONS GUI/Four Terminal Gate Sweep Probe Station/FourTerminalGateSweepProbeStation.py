@@ -76,7 +76,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
 
         self.Parameter = {
             'DeviceName': 'Device Name',#This is related to the sample name like YS8
-            'LI_Timeconstant': 2,
+            'LI_Timeconstant': 0.03,
             'LI_Frequency': 17.777,
             'Voltage_LI_Gain': 1.0,
             'Current_LI_Gain': 1.0,
@@ -84,7 +84,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             'FourTerminal_EndVoltage': 1.0,
             'FourTerminal_Delay': 0.01,
             'FourTerminalSetting_Numberofsteps_Status': "Numberofsteps",
-            'FourTerminal_Numberofstep': 1000,
+            'FourTerminal_Numberofstep': 101,
             'FourTerminal_GateChannel': 3,
         } 
 
@@ -143,7 +143,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
         self.pushButton_FourTerminal_NoSmTpTSwitch.clicked.connect(lambda: Toggle_NumberOfSteps_StepSize(self.Parameter, 'FourTerminal_Numberofstep', 'FourTerminal_EndVoltage', 'FourTerminal_StartVoltage', 'FourTerminalSetting_Numberofsteps_Status', self.label_FourTerminalNumberofstep, 'Volt per Step', self.lineEdit))  
 
         self.pushButton_StartFourTerminalSweep.clicked.connect(self.StartMeasurement)
-        self.pushButton_StartFourTerminalSweep.clicked.connect(self.Abort)
+        self.pushButton_AbortFourTerminalSweep.clicked.connect(lambda: self.DEMONS.SetScanningFlag(False))
 
         self.SetupPlots()
         self.Refreshinterface()
@@ -152,23 +152,30 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
         self.ButtonsCondition={
             self.lineEdit_Device_Name: True,
             self.pushButton_StartFourTerminalSweep: (self.DeviceList['DataAquisition_Device']['DeviceObject'] != False) and self.DEMONS.Scanning_Flag == False,
-            self.comboBox_Voltage_LI_SelectDevice: True,
-            self.lineEdit_LI_Timeconstant: True,
-            self.lineEdit_LI_Frequency: True,
+            self.comboBox_Voltage_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_LI_Timeconstant: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_LI_Frequency: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_Voltage_LI_Gain: True,
-            self.comboBox_Current_LI_SelectDevice: True,
+            self.comboBox_Current_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_Current_LI_Gain: True,
-            self.comboBox_DataAquisition_SelectDevice: True,
-            self.lineEdit_DataAquisition_GateChannel: True,
+            self.comboBox_DataAquisition_SelectDevice: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_DataAquisition_GateChannel: self.DEMONS.Scanning_Flag == False,
         }
 
     @inlineCallbacks
     def StartMeasurement(self, c):
         try:
+            self.DEMONS.SetScanningFlag(True)
+
             self.Refreshinterface()
+            ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].time_constant, self.Parameter, 'LI_Timeconstant', self.lineEdit['LI_Timeconstant'])
+            ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency'])
+            yield SleepAsync(self.reactor, 1)
 
             Multiplier = [self.Parameter['Voltage_LI_Gain'], self.Parameter['Current_LI_Gain']] #Voltage, Current
+
             ImageNumber, ImageDir = yield CreateDataVaultFile(self.serversList['dv'], 'FourTerminalGateSweep ' + str(self.Parameter['DeviceName']), ('Gate Index', 'Gate Voltage'), ('Voltage', 'Current', 'Resistance', 'Conductance'))
+
             self.lineEdit_ImageNumber.setText(ImageNumber)
             self.lineEdit_ImageDir.setText(ImageDir)
             yield AddParameterToDataVault(self.serversList['dv'], self.Parameter)
@@ -186,8 +193,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             for GateIndex in range(NumberOfSteps):
                 if self.DEMONS.Scanning_Flag == False:
                     print 'Abort the Sweep'
-                    yield self.FinishSweep(GateVoltageSet[GateIndex])
-                    break
+                    break #Break it outside of the for loop
                 yield Set_SIM900_VoltageOutput(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, GateVoltageSet[GateIndex])
                 yield SleepAsync(self.reactor, Delay)
                 Voltage = yield Get_SR_LI_R(self.DeviceList['Voltage_LI_Device']['DeviceObject'])
@@ -215,16 +221,13 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
         try:
             yield SleepAsync(self.reactor, 1)
             yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], self.Parameter['FourTerminal_GateChannel'], currentvoltage, 0.0, self.Parameter['FourTerminal_Numberofstep'], self.Parameter['FourTerminal_Delay'], self.reactor)
-            self.serversList['dv'].add_comment(str(self.textEdit_AddComments.toPlainText()))
-            saveDataToSessionFolder(self.sessionFolder, 'Probe Station Screening ' + self.Parameter['DeviceName'])
-            self.DEMONS.Scanning_Flag = False
+            self.serversList['dv'].add_comment(str(self.textEdit_Comment.toPlainText()))
+            saveDataToSessionFolder(self.winId(), self.sessionFolder, 'Probe Station Screening ' + self.Parameter['DeviceName'])
+            self.DEMONS.SetScanningFlag(False)
             self.Refreshinterface()
 
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
-
-    def Abort(self):
-        self.DEMONS.Scanning_Flag = False
 
     def connectServer(self, key, server):
         try:

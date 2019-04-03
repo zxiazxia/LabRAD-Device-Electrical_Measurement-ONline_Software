@@ -100,6 +100,9 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
+    def SetScanningFlag(self, State):
+        self.Scanning_Flag = State
+
     def openWindow(self, key):
         self.MeasurementWindows[key].show()
         self.MeasurementWindows[key].moveDefault()

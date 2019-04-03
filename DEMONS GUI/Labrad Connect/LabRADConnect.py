@@ -111,7 +111,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         self.LabradDictionary[servername] = dv
                         self.DVFolder = r'\.dataVault'
                         self.lineEdit_DataVaultFolder.setText(self.DVFolder)
-
+                        self.newDVFolder.emit([])#Emit DataVault Default
+                        self.newSessionFolder.emit(self.SessionFolder)
                         connection_flag = True
                     except:
                         connection_flag = False
