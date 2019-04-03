@@ -14,13 +14,16 @@ from scipy.signal import detrend
 
 
 path = sys.path[0] + r"\Four Terminal Gate Sweep Probe Station"
+sys.path.append(path + r'\FourTerminalGateSweepProbeStationSetting')
+
+import FourTerminalGateSweepProbeStationSetting
+
 FourTerminalGateSweepProbeStationWindowUI, QtBaseClass = uic.loadUiType(path + r"\FourTerminalGateSweepProbeStationWindow.ui")
 Ui_ServerList, QtBaseClass = uic.loadUiType(path + r"\requiredServers.ui")
 
 #Not required, but strongly recommended functions used to format numbers in a particular way.
 sys.path.append(sys.path[0]+'\Resources')
 from DEMONSFormat import *
-from DEMONSMeasure import *
 
 class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
 
@@ -33,6 +36,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
         self.setupUi(self)
 
         self.pushButton_Servers.clicked.connect(self.showServersList)
+
+        self.SettingWindow = FourTerminalGateSweepProbeStationSetting.Setting(self.reactor, self)
+        self.pushButton_Setting.clicked.connect(lambda: openWindow(self.SettingWindow))
 
         self.serversList = { #Dictionary including toplevel server received from labrad connect
             'dv': False,
@@ -86,6 +92,8 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             'FourTerminalSetting_Numberofsteps_Status': "Numberofsteps",
             'FourTerminal_Numberofstep': 101,
             'FourTerminal_GateChannel': 3,
+            'Setting_RampDelay': 0.001,
+            'Setting_RampStepSize': 0.001,
         } 
 
         self.lineEdit = {
@@ -99,6 +107,8 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             'FourTerminal_Delay': self.lineEdit_FourTerminal_Delay,
             'FourTerminal_Numberofstep': self.lineEdit_FourTerminal_Numberofstep,
             'FourTerminal_GateChannel': self.lineEdit_DataAquisition_GateChannel,
+            'Setting_RampDelay': self.SettingWindow.lineEdit_Setting_RampDelay,
+            'Setting_RampStepSize': self.SettingWindow.lineEdit_Setting_RampStepSize,
             
         }
 
@@ -185,7 +195,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             StartVoltage, EndVoltage = self.Parameter['FourTerminal_StartVoltage'], self.Parameter['FourTerminal_EndVoltage']
             NumberOfSteps, Delay = self.Parameter['FourTerminal_Numberofstep'], self.Parameter['FourTerminal_Delay']
 
-            yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, NumberOfSteps, Delay, self.reactor)
+            yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, self.Parameter['Setting_RampStepSize'], self.Parameter['Setting_RampDelay'], self.reactor)
             yield SleepAsync(self.reactor, 1)
 
             Data = np.empty((0,6))
@@ -220,7 +230,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
     def FinishSweep(self, currentvoltage):
         try:
             yield SleepAsync(self.reactor, 1)
-            yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], self.Parameter['FourTerminal_GateChannel'], currentvoltage, 0.0, self.Parameter['FourTerminal_Numberofstep'], self.Parameter['FourTerminal_Delay'], self.reactor)
+            yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], self.Parameter['FourTerminal_GateChannel'], currentvoltage, 0.0, self.Parameter['Setting_RampStepSize'], self.Parameter['Setting_RampDelay'], self.reactor)
             self.serversList['dv'].add_comment(str(self.textEdit_Comment.toPlainText()))
             saveDataToSessionFolder(self.winId(), self.sessionFolder, 'Probe Station Screening ' + self.Parameter['DeviceName'])
             self.DEMONS.SetScanningFlag(False)

@@ -19,7 +19,6 @@ Ui_ServerList, QtBaseClass = uic.loadUiType(path + r"\requiredServers.ui")
 #Not required, but strongly recommended functions used to format numbers in a particular way.
 sys.path.append(sys.path[0]+'\Resources')
 from DEMONSFormat import *
-from DEMONSMeasure import *
 
 class Window(QtGui.QMainWindow, ControlerWindowUI):
 

@@ -3,6 +3,7 @@ import sys
 from PyQt4 import Qt, QtGui, QtCore, uic
 import time 
 import ctypes
+import exceptions
 myappid = 'YoungLab.DeviceElectricalMeasurementONlineSoftware'
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
@@ -20,8 +21,8 @@ MainWindowUI, QtBaseClass = uic.loadUiType(UI_path)
 import LabRADConnect
 import FourTerminalGateSweepProbeStation
 import DACControler
+from DEMONSFormat import *
 
-import exceptions
 
 class MainWindow(QtGui.QMainWindow, MainWindowUI):
     """ The following section initializes, or defines the initialization of the GUI and 
@@ -45,9 +46,9 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
             'DACTrackerWindow': DACControler.Window(self.reactor, None)
         }
         
-        self.pushButton_LabRADConnect.clicked.connect(lambda: self.openWindow('LabRAD'))
-        self.pushButton_FourTerminalGateSweepProbeStation.clicked.connect(lambda: self.openWindow('FourTerminalGateSweepProbeStationWindow'))
-        self.pushButton_DACADC_Tracker.clicked.connect(lambda: self.openWindow('DACTrackerWindow'))
+        self.pushButton_LabRADConnect.clicked.connect(lambda: openWindow(self.MeasurementWindows['LabRAD']))
+        self.pushButton_FourTerminalGateSweepProbeStation.clicked.connect(lambda: openWindow(self.MeasurementWindows['FourTerminalGateSweepProbeStationWindow']))
+        self.pushButton_DACADC_Tracker.clicked.connect(lambda: openWindow(self.MeasurementWindows['DACTrackerWindow']))
         
         self.MeasurementWindows['LabRAD'].cxnsignal.connect(self.connect)
         self.MeasurementWindows['LabRAD'].discxnsignal.connect(self.disconnect)
@@ -55,7 +56,7 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
         
         
         #Open by default the LabRAD Connect Module and Device Select
-        self.openWindow('LabRAD')        
+        openWindow(self.MeasurementWindows['LabRAD'])        
         
     def setupAdditionalUi(self):
         """Some UI elements would not set properly from Qt Designer. These initializations are done here."""
@@ -102,11 +103,6 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
 
     def SetScanningFlag(self, State):
         self.Scanning_Flag = State
-
-    def openWindow(self, key):
-        self.MeasurementWindows[key].show()
-        self.MeasurementWindows[key].moveDefault()
-        self.MeasurementWindows[key].raise_()
     
     def moveDefault(self):
         self.move(10,10)
