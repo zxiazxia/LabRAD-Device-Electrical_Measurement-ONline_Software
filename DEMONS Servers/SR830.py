@@ -69,10 +69,10 @@ MODE_DICT = {
 
 def getSensitivityInt(v, mode):
     ''' converty from real sensitivity to an integer value taken by the sr830'''
-    if (mode == 0)or(mode==1):
+    if (mode == 0): #Voltage
         sens = int(round(3*log10(v)))+26
-    else:
-        sens = int(round(3*log10(v)))+2
+    else:#Current
+        sens = int(round(3*log10(v)))+44
     return sens
 
 def getTCInt(t):
@@ -85,13 +85,6 @@ class SR830(GPIBManagedServer):
     name = 'SR830'
     deviceName = 'Stanford_Research_Systems SR830'
 
-    @inlineCallbacks
-    def inputMode(self, c):
-        """returns the input mode. 0=A, 1=A-B, 2=I(10**6), 3=I(10**8)"""
-        dev = self.selectedDevice(c)
-        mode = yield dev.query('ISRC?')
-        returnValue(int(mode))
-
     @setting(11, 'Input Mode', mode='s', returns='i')
     def input_mode(self, c, mode=None):
         """returns the input mode. 0=A, 1=A-B, 2=I(10**6), 3=I(10**8)"""
@@ -102,7 +95,6 @@ class SR830(GPIBManagedServer):
             if mode not in [0, 1, 2, 3]:
                 raise Exception('Error, mode must be in [0, 1, 2, 3, A, A-B,'
                                 ' 1M, 100M], requested: {}'.format(mode))
-
             yield dev.write('ISRC {}'.format(mode))
         mode = yield dev.query('ISRC?')
         returnValue(int(mode))
@@ -332,7 +324,6 @@ class SR830(GPIBManagedServer):
         """
         dev = self.selectedDevice(c)
         mode = yield self.inputMode(c)
-
         if sens is not None:
             sens = getSensitivityInt(sens, mode)
             yield dev.write('SENS {}'.format(sens))
