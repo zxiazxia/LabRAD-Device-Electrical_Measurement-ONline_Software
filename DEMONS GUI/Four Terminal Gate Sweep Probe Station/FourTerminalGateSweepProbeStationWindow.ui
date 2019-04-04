@@ -1710,6 +1710,11 @@ color: rgb(168, 168, 168)
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
               <property name="currentIndex">
                <number>-1</number>
               </property>
@@ -1792,6 +1797,11 @@ color: rgb(168, 168, 168)
                 <width>16777215</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
               </property>
               <property name="currentIndex">
                <number>-1</number>
@@ -2102,6 +2112,11 @@ color: rgb(168, 168, 168)
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
               <property name="currentIndex">
                <number>-1</number>
               </property>
@@ -2184,6 +2199,11 @@ color: rgb(168, 168, 168)
                 <width>16777215</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
               </property>
               <property name="currentIndex">
                <number>-1</number>
