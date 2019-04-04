@@ -148,7 +148,7 @@ color: rgb(168, 168, 168)
 }</string>
          </property>
          <property name="text">
-          <string>Initial/End Ramp Wait Time:</string>
+          <string>Initial/End Ramp Time per Step</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>

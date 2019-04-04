@@ -320,7 +320,7 @@ color: rgb(168, 168, 168)
              <widget class="QTextEdit" name="textEdit_Comment">
               <property name="font">
                <font>
-                <pointsize>11</pointsize>
+                <pointsize>13</pointsize>
                </font>
               </property>
               <property name="toolTip">
@@ -485,7 +485,7 @@ background:black
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_FourTerminalDummyRight" stretch="1,8,3,4,3">
+        <layout class="QVBoxLayout" name="verticalLayout_FourTerminalDummyRight" stretch="1,5,3,3,10">
          <item>
           <widget class="QFrame" name="frame">
            <property name="styleSheet">
@@ -625,211 +625,8 @@ border:1px solid rgb(168,168,168)
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_4" rowstretch="1,1,1,1,1,1,1,1" columnstretch="2,2,0">
-            <item row="0" column="0" colspan="2">
-             <widget class="QLabel" name="label">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>9999</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Gate Voltage Setting</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
+           <layout class="QGridLayout" name="gridLayout_4" rowstretch="1,1,1,1,1" columnstretch="2,1,0">
             <item row="1" column="0">
-             <widget class="QLabel" name="label_20">
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">#label_ImageNum{
-color: rgb(168, 168, 168)
-}</string>
-              </property>
-              <property name="text">
-               <string>Select Server</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QComboBox" name="comboBox_DataAquisition_SelectServer">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="currentIndex">
-               <number>-1</number>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QPushButton" name="pushButton_DataAquisition_ServerIndicator">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">#pushButton_DataAquisition_ServerIndicator{
-background: rgb(144, 140, 9);
- border-radius: 4px;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="default">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_11">
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">#label_ImageNum{
-color: rgb(168, 168, 168)
-}</string>
-              </property>
-              <property name="text">
-               <string>Select Device</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QComboBox" name="comboBox_DataAquisition_SelectDevice">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="currentIndex">
-               <number>-1</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="QPushButton" name="pushButton_DataAquisition_DeviceIndicator">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">#pushButton_DataAquisition_DeviceIndicator{
-background: rgb(144, 140, 9);
- border-radius: 4px;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="default">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
              <widget class="QLabel" name="label_FourTerminal_Output1">
               <property name="minimumSize">
                <size>
@@ -845,7 +642,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
+            <item row="1" column="1">
              <widget class="QLineEdit" name="lineEdit_DataAquisition_GateChannel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -878,7 +675,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
+            <item row="2" column="0">
              <widget class="QLabel" name="label_MinVoltage">
               <property name="minimumSize">
                <size>
@@ -900,7 +697,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
+            <item row="2" column="1">
              <widget class="QLineEdit" name="lineEdit_FourTerminal_StartVoltage">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -933,7 +730,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="4" column="2">
+            <item row="2" column="2">
              <widget class="QLabel" name="label_MinVoltage_Unit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -955,7 +752,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
+            <item row="3" column="0">
              <widget class="QLabel" name="label_MaxVoltage">
               <property name="minimumSize">
                <size>
@@ -977,7 +774,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
+            <item row="3" column="1">
              <widget class="QLineEdit" name="lineEdit_FourTerminal_EndVoltage">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1010,7 +807,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="5" column="2">
+            <item row="3" column="2">
              <widget class="QLabel" name="label_MaxVoltage_Unit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -1032,7 +829,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
+            <item row="4" column="0">
              <widget class="QLabel" name="label_FourTerminalNumberofstep">
               <property name="minimumSize">
                <size>
@@ -1054,7 +851,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="6" column="1">
+            <item row="4" column="1">
              <widget class="QLineEdit" name="lineEdit_FourTerminal_Numberofstep">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1087,7 +884,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="6" column="2">
+            <item row="4" column="2">
              <widget class="QPushButton" name="pushButton_FourTerminal_NoSmTpTSwitch">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1118,7 +915,63 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="7" column="0">
+            <item row="0" column="0" colspan="3">
+             <widget class="QLabel" name="label">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>9999</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Gate Voltage Control</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+           <zorder>label_MinVoltage</zorder>
+           <zorder>lineEdit_FourTerminal_StartVoltage</zorder>
+           <zorder>label_MaxVoltage</zorder>
+           <zorder>label_MinVoltage_Unit</zorder>
+           <zorder>lineEdit_FourTerminal_EndVoltage</zorder>
+           <zorder>label_MaxVoltage_Unit</zorder>
+           <zorder>label_FourTerminalNumberofstep</zorder>
+           <zorder>lineEdit_FourTerminal_Numberofstep</zorder>
+           <zorder>pushButton_FourTerminal_NoSmTpTSwitch</zorder>
+           <zorder>label</zorder>
+           <zorder>label_FourTerminal_Output1</zorder>
+           <zorder>lineEdit_DataAquisition_GateChannel</zorder>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_5">
+           <property name="styleSheet">
+            <string notr="true">#frame_5{
+border:1px solid rgb(168,168,168)
+}</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,1,1" columnstretch="2,1,1,1,0">
+            <item row="1" column="0">
              <widget class="QLabel" name="label_Delay">
               <property name="minimumSize">
                <size>
@@ -1133,14 +986,14 @@ background: rgb(144, 140, 9);
                </size>
               </property>
               <property name="text">
-               <string>Awaiting time</string>
+               <string>Time per Points</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
-            <item row="7" column="1">
+            <item row="1" column="1" colspan="3">
              <widget class="QLineEdit" name="lineEdit_FourTerminal_Delay">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1173,7 +1026,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="7" column="2">
+            <item row="1" column="4">
              <widget class="QLabel" name="label_Delay_Unit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -1195,45 +1048,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-           </layout>
-           <zorder>label_MinVoltage</zorder>
-           <zorder>lineEdit_FourTerminal_StartVoltage</zorder>
-           <zorder>label_MaxVoltage</zorder>
-           <zorder>label_MinVoltage_Unit</zorder>
-           <zorder>lineEdit_FourTerminal_EndVoltage</zorder>
-           <zorder>label_MaxVoltage_Unit</zorder>
-           <zorder>label_FourTerminalNumberofstep</zorder>
-           <zorder>lineEdit_FourTerminal_Numberofstep</zorder>
-           <zorder>pushButton_FourTerminal_NoSmTpTSwitch</zorder>
-           <zorder>label_Delay</zorder>
-           <zorder>lineEdit_FourTerminal_Delay</zorder>
-           <zorder>label_Delay_Unit</zorder>
-           <zorder>label</zorder>
-           <zorder>label_20</zorder>
-           <zorder>comboBox_DataAquisition_SelectServer</zorder>
-           <zorder>pushButton_DataAquisition_ServerIndicator</zorder>
-           <zorder>label_11</zorder>
-           <zorder>comboBox_DataAquisition_SelectDevice</zorder>
-           <zorder>pushButton_DataAquisition_DeviceIndicator</zorder>
-           <zorder>label_FourTerminal_Output1</zorder>
-           <zorder>lineEdit_DataAquisition_GateChannel</zorder>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="frame_2">
-           <property name="styleSheet">
-            <string notr="true">#frame_2{
-border:1px solid rgb(168,168,168)
-}</string>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_7" rowstretch="1,1,1" columnstretch="2,2,1,1,0" rowminimumheight="1,1,1" columnminimumwidth="2,2,1,1,0">
-            <item row="1" column="0">
+            <item row="2" column="0">
              <widget class="QLabel" name="label_28">
               <property name="minimumSize">
                <size>
@@ -1254,7 +1069,7 @@ color: rgb(168, 168, 168)
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="2" column="1">
              <widget class="QLineEdit" name="lineEdit_LI_Timeconstant">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1287,7 +1102,7 @@ color: rgb(168, 168, 168)
               </property>
              </widget>
             </item>
-            <item row="1" column="2">
+            <item row="2" column="2">
              <widget class="QPushButton" name="pushButton_LI_Timeconstant_Read">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1342,7 +1157,7 @@ border-radius: 5px
               </property>
              </widget>
             </item>
-            <item row="1" column="3">
+            <item row="2" column="3">
              <widget class="QPushButton" name="pushButton_LI_Timeconstant_Set">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1397,7 +1212,7 @@ border-radius: 5px
               </property>
              </widget>
             </item>
-            <item row="1" column="4">
+            <item row="2" column="4">
              <widget class="QLabel" name="label_29">
               <property name="minimumSize">
                <size>
@@ -1416,6 +1231,50 @@ border-radius: 5px
               </property>
              </widget>
             </item>
+            <item row="0" column="0" colspan="5">
+             <widget class="QLabel" name="label_2">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>9999</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Measurement Setting</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_2">
+           <property name="styleSheet">
+            <string notr="true">#frame_2{
+border:1px solid rgb(168,168,168)
+}</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_7" rowstretch="1,1,1" columnstretch="2,1,1,1,0">
             <item row="2" column="0">
              <widget class="QLabel" name="label_30">
               <property name="minimumSize">
@@ -1619,50 +1478,7 @@ color: rgb(168, 168, 168)
 }</string>
               </property>
               <property name="text">
-               <string>Common Lock In Amplifier Settings</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="frame_Voltage_Lockin_Setting">
-           <property name="styleSheet">
-            <string notr="true">#frame_Voltage_Lockin_Setting{
-border:1px solid rgb(168,168,168)
-}</string>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,1,1,1" columnstretch="2,2,1,1,0">
-            <item row="0" column="0" colspan="4">
-             <widget class="QLabel" name="label_Voltage_LI_Settings">
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">#label_ImageNum{
-color: rgb(168, 168, 168)
-}</string>
-              </property>
-              <property name="text">
-               <string>Voltage Lock In Amplifier Settings</string>
+               <string>Excitation Settings</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -1670,182 +1486,6 @@ color: rgb(168, 168, 168)
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_18">
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">#label_ImageNum{
-color: rgb(168, 168, 168)
-}</string>
-              </property>
-              <property name="text">
-               <string>Select Server</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" colspan="3">
-             <widget class="QComboBox" name="comboBox_Voltage_LI_SelectServer">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="currentIndex">
-               <number>-1</number>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="4">
-             <widget class="QPushButton" name="pushButton_Voltage_LI_ServerIndicator">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">#pushButton_Voltage_LI_ServerIndicator{
-background: rgb(144, 140, 9);
- border-radius: 4px;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="default">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_9">
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">#label_ImageNum{
-color: rgb(168, 168, 168)
-}</string>
-              </property>
-              <property name="text">
-               <string>Select Device</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" colspan="3">
-             <widget class="QComboBox" name="comboBox_Voltage_LI_SelectDevice">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="currentIndex">
-               <number>-1</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="4">
-             <widget class="QPushButton" name="pushButton_Voltage_LI_DeviceIndicator">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">#pushButton_Voltage_LI_DeviceIndicator{
-background: rgb(144, 140, 9);
- border-radius: 4px;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="default">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
              <widget class="QLabel" name="label_32">
               <property name="minimumSize">
                <size>
@@ -1866,7 +1506,7 @@ color: rgb(168, 168, 168)
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
+            <item row="1" column="1">
              <widget class="QLineEdit" name="lineEdit_LI_Excitation">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1899,7 +1539,7 @@ color: rgb(168, 168, 168)
               </property>
              </widget>
             </item>
-            <item row="3" column="2">
+            <item row="1" column="2">
              <widget class="QPushButton" name="pushButton_LI_Excitation_Read">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1954,7 +1594,7 @@ border-radius: 5px
               </property>
              </widget>
             </item>
-            <item row="3" column="3">
+            <item row="1" column="3">
              <widget class="QPushButton" name="pushButton_LI_Excitation_Set">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -2009,7 +1649,7 @@ border-radius: 5px
               </property>
              </widget>
             </item>
-            <item row="3" column="4">
+            <item row="1" column="4">
              <widget class="QLabel" name="label_33">
               <property name="minimumSize">
                <size>
@@ -2044,9 +1684,178 @@ border:1px solid rgb(168,168,168)
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,1,1" columnstretch="2,2,0">
-            <item row="0" column="0" colspan="2">
-             <widget class="QLabel" name="label_Current_LI_Settings">
+           <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,1,1,1,1,1,1,1,1,1" columnstretch="2,2,0">
+            <item row="6" column="1">
+             <widget class="QComboBox" name="comboBox_Voltage_LI_SelectDevice">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>50</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="currentIndex">
+               <number>-1</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QComboBox" name="comboBox_DataAquisition_SelectDevice">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>50</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="currentIndex">
+               <number>-1</number>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_18">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#label_ImageNum{
+color: rgb(168, 168, 168)
+}</string>
+              </property>
+              <property name="text">
+               <string>Select Server</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QPushButton" name="pushButton_DataAquisition_ServerIndicator">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#pushButton_DataAquisition_ServerIndicator{
+background: rgb(144, 140, 9);
+ border-radius: 4px;
+}</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="default">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QComboBox" name="comboBox_DataAquisition_SelectServer">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>50</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="currentIndex">
+               <number>-1</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#label_ImageNum{
+color: rgb(168, 168, 168)
+}</string>
+              </property>
+              <property name="text">
+               <string>Select Device</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0" colspan="3">
+             <widget class="QLabel" name="label_34">
               <property name="minimumSize">
                <size>
                 <width>60</width>
@@ -2064,14 +1873,223 @@ color: rgb(168, 168, 168)
 }</string>
               </property>
               <property name="text">
-               <string>Current Lock In Amplifier Settings</string>
+               <string>Current Sensing Lock In:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_20">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#label_ImageNum{
+color: rgb(168, 168, 168)
+}</string>
+              </property>
+              <property name="text">
+               <string>Select Server</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="3" column="2">
+             <widget class="QPushButton" name="pushButton_DataAquisition_DeviceIndicator">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#pushButton_DataAquisition_DeviceIndicator{
+background: rgb(144, 140, 9);
+ border-radius: 4px;
+}</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="default">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" colspan="3">
+             <widget class="QLabel" name="label_35">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#label_ImageNum{
+color: rgb(168, 168, 168)
+}</string>
+              </property>
+              <property name="text">
+               <string>Voltage Sensing Lock In:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QComboBox" name="comboBox_Voltage_LI_SelectServer">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>50</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="currentIndex">
+               <number>-1</number>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="2">
+             <widget class="QPushButton" name="pushButton_Voltage_LI_ServerIndicator">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#pushButton_Voltage_LI_ServerIndicator{
+background: rgb(144, 140, 9);
+ border-radius: 4px;
+}</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="default">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="2">
+             <widget class="QPushButton" name="pushButton_Voltage_LI_DeviceIndicator">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#pushButton_Voltage_LI_DeviceIndicator{
+background: rgb(144, 140, 9);
+ border-radius: 4px;
+}</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="default">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#label_ImageNum{
+color: rgb(168, 168, 168)
+}</string>
+              </property>
+              <property name="text">
+               <string>Select Device</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
              <widget class="QLabel" name="label_19">
               <property name="minimumSize">
                <size>
@@ -2092,7 +2110,7 @@ color: rgb(168, 168, 168)
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="8" column="1">
              <widget class="QComboBox" name="comboBox_Current_LI_SelectServer">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -2122,7 +2140,7 @@ color: rgb(168, 168, 168)
               </property>
              </widget>
             </item>
-            <item row="1" column="2">
+            <item row="8" column="2">
              <widget class="QPushButton" name="pushButton_Current_LI_ServerIndicator">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -2159,7 +2177,7 @@ background: rgb(144, 140, 9);
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
+            <item row="9" column="0">
              <widget class="QLabel" name="label_10">
               <property name="minimumSize">
                <size>
@@ -2180,7 +2198,7 @@ color: rgb(168, 168, 168)
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="9" column="1">
              <widget class="QComboBox" name="comboBox_Current_LI_SelectDevice">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -2210,7 +2228,7 @@ color: rgb(168, 168, 168)
               </property>
              </widget>
             </item>
-            <item row="2" column="2">
+            <item row="9" column="2">
              <widget class="QPushButton" name="pushButton_Current_LI_DeviceIndicator">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -2244,6 +2262,58 @@ background: rgb(144, 140, 9);
               </property>
               <property name="default">
                <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="3">
+             <widget class="QLabel" name="label_Current_LI_Settings">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#label_ImageNum{
+color: rgb(168, 168, 168)
+}</string>
+              </property>
+              <property name="text">
+               <string>Server and Device Select</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="3">
+             <widget class="QLabel" name="label_36">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#label_ImageNum{
+color: rgb(168, 168, 168)
+}</string>
+              </property>
+              <property name="text">
+               <string>Gate Voltage Control Device:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>

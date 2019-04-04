@@ -25,8 +25,7 @@ class Setting(QtGui.QMainWindow, Ui_Setting):
 
         self.lineEdit_Setting_RampDelay.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.parent.Parameter, 'Setting_RampDelay', self.parent.lineEdit))
         self.lineEdit_Setting_RampStepSize.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.parent.Parameter, 'Setting_RampStepSize', self.parent.lineEdit))
+        self.lineEdit_Setting_WaitTime.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.parent.Parameter, 'Setting_WaitTime', self.parent.lineEdit))
 
     def moveDefault(self):
         self.move(200,0)
-
-

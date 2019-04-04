@@ -82,9 +82,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
 
         self.Parameter = {
             'DeviceName': 'Device Name',#This is related to the sample name like YS8
-            'LI_Excitation': 0.01,
-            'LI_Timeconstant': 0.03,
-            'LI_Frequency': 17.777,
+            'LI_Excitation': 'Read',
+            'LI_Timeconstant': 'Read',
+            'LI_Frequency': 'Read',
             'Voltage_LI_Gain': 1.0,
             'Current_LI_Gain': 1.0,
             'FourTerminal_StartVoltage': 0.0,
@@ -93,9 +93,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             'FourTerminalSetting_Numberofsteps_Status': "Numberofsteps",
             'FourTerminal_Numberofstep': 101,
             'FourTerminal_GateChannel': 3,
-            'Setting_RampDelay': 0.001,
-            'Setting_RampStepSize': 0.001,
-            'Setting_WaitTime': 1.0,
+            'Setting_RampDelay': 0.0001,
+            'Setting_RampStepSize': 0.01,
+            'Setting_WaitTime': 2.0,
         } 
 
         self.lineEdit = {
@@ -164,6 +164,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             self.lineEdit_Device_Name: True,
             self.pushButton_StartFourTerminalSweep: (self.DeviceList['DataAquisition_Device']['DeviceObject'] != False) and self.DEMONS.Scanning_Flag == False,
             self.pushButton_AbortFourTerminalSweep: self.DEMONS.Scanning_Flag == True,
+            self.comboBox_DataAquisition_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_DataAquisition_SelectDevice: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_DataAquisition_GateChannel: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_FourTerminal_StartVoltage: self.DEMONS.Scanning_Flag == False,
@@ -176,10 +177,12 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             self.lineEdit_LI_Frequency: self.DEMONS.Scanning_Flag == False,
             self.pushButton_LI_Frequency_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False,
             self.pushButton_LI_Frequency_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False,
+            self.comboBox_Voltage_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_Voltage_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_LI_Excitation: self.DEMONS.Scanning_Flag == False,
             self.pushButton_LI_Excitation_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False,
             self.pushButton_LI_Excitation_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False,
+            self.comboBox_Current_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_Current_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
         }
 
@@ -242,9 +245,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             yield SleepAsync(self.reactor, self.Parameter['Setting_WaitTime'])
             yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], self.Parameter['FourTerminal_GateChannel'], currentvoltage, 0.0, self.Parameter['Setting_RampStepSize'], self.Parameter['Setting_RampDelay'], self.reactor)
             self.serversList['dv'].add_comment(str(self.textEdit_Comment.toPlainText()))
-            saveDataToSessionFolder(self.winId(), self.sessionFolder, 'Probe Station Screening ' + self.Parameter['DeviceName'])
             self.DEMONS.SetScanningFlag(False)
             self.Refreshinterface()
+            saveDataToSessionFolder(self.winId(), self.sessionFolder, 'Probe Station Screening ' + self.Parameter['DeviceName'])
 
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
@@ -299,6 +302,11 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
         for key, DevicePropertyList in self.DeviceList.iteritems():
             RefreshIndicator(DevicePropertyList['ServerIndicator'], DevicePropertyList['ServerObject'])
             RefreshIndicator(DevicePropertyList['DeviceIndicator'], DevicePropertyList['DeviceObject'])
+
+        if self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False:
+            ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter,     'LI_Excitation', self.lineEdit['LI_Excitation'])
+            ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].time_constant, self.Parameter,  'LI_Timeconstant', self.lineEdit['LI_Timeconstant'])
+            ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency'])
 
     def SetupPlots(self):
         self.Plotlist = {
