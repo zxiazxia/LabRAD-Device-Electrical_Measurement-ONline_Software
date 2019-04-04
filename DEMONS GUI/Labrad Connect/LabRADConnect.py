@@ -35,8 +35,10 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'ser_server': False,
         'DACADC'   : False,
         'SR830'   : False,
-        'SR860'   : False,		
-        'SIM900'   : False,		
+        'SR860'   : False,
+        'SIM900'   : False,
+        'GPIBDeviceManager'   : False,
+        'GPIBServer'   : False,
         }
         
         self.pushButtonDictionary = {
@@ -47,6 +49,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'SR830'   : self.pushButton_SR830,
         'SR860'   : self.pushButton_SR860,
         'SIM900'   : self.pushButton_SIM900,
+        'GPIBDeviceManager'   : self.pushButton_GPIBDeviceManager,
+        'GPIBServer'   : self.pushButton_GPIBServer,
         }
 
         self.labelDictionary = {
@@ -57,6 +61,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'SR830'   : self.label_SR830,
         'SR860'   : self.label_SR860,
         'SIM900'   : self.label_SIM900,
+        'GPIBDeviceManager'   : self.label_GPIBDeviceManager,
+        'GPIBServer'   : self.label_GPIBServer,
         }
         
         #Data vault session info
@@ -84,6 +90,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         self.pushButton_SR830.clicked.connect(lambda: self.connectServer('SR830'))
         self.pushButton_SR860.clicked.connect(lambda: self.connectServer('SR860'))
         self.pushButton_SIM900.clicked.connect(lambda: self.connectServer('SIM900'))
+        self.pushButton_GPIBDeviceManager.clicked.connect(lambda: self.connectServer('GPIBDeviceManager'))
+        self.pushButton_GPIBServer.clicked.connect(lambda: self.connectServer('GPIBServer'))
 
         self.key_list = []
         
@@ -153,7 +161,25 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         connection_flag = True
                     except:
                         connection_flag = False
-                        
+                elif servername == 'GPIBDeviceManager':
+                    try:
+                        gpib_device_manager = yield self.LabradDictionary['cxn'].gpib_device_manager
+                        self.LabradDictionary[servername] = gpib_device_manager
+                        connection_flag = True
+                    except:
+                        connection_flag = False
+                elif servername == 'GPIBServer':
+                    try:
+                        computerName = platform.node() # get computer name
+                        gpibServerName = computerName.lower().replace(' ','_').replace('-','_') + '_gpib_bus'
+                        gpib_server = yield self.LabradDictionary['cxn'].servers[gpibServerName]
+                        self.LabradDictionary[servername] = gpib_server
+                        connection_flag = True
+                    except Exception as inst:
+                        connection_flag = False
+                        print inst
+
+
                 if connection_flag:
                     self.cxnsignal.emit(servername, self.LabradDictionary[servername])
                     self.labelDictionary[servername].setText('Connected')

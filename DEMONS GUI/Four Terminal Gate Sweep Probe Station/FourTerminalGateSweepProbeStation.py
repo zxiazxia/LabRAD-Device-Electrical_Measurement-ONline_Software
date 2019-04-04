@@ -82,6 +82,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
 
         self.Parameter = {
             'DeviceName': 'Device Name',#This is related to the sample name like YS8
+            'LI_Excitation': 0.01,
             'LI_Timeconstant': 0.03,
             'LI_Frequency': 17.777,
             'Voltage_LI_Gain': 1.0,
@@ -94,14 +95,14 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             'FourTerminal_GateChannel': 3,
             'Setting_RampDelay': 0.001,
             'Setting_RampStepSize': 0.001,
+            'Setting_WaitTime': 1.0,
         } 
 
         self.lineEdit = {
             'DeviceName': self.lineEdit_Device_Name,
+            'LI_Excitation': self.lineEdit_LI_Excitation,
             'LI_Timeconstant': self.lineEdit_LI_Timeconstant,
             'LI_Frequency': self.lineEdit_LI_Frequency,
-            'Voltage_LI_Gain': self.lineEdit_Voltage_LI_Gain,
-            'Current_LI_Gain': self.lineEdit_Current_LI_Gain,
             'FourTerminal_StartVoltage': self.lineEdit_FourTerminal_StartVoltage,
             'FourTerminal_EndVoltage': self.lineEdit_FourTerminal_EndVoltage,
             'FourTerminal_Delay': self.lineEdit_FourTerminal_Delay,
@@ -109,7 +110,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             'FourTerminal_GateChannel': self.lineEdit_DataAquisition_GateChannel,
             'Setting_RampDelay': self.SettingWindow.lineEdit_Setting_RampDelay,
             'Setting_RampStepSize': self.SettingWindow.lineEdit_Setting_RampStepSize,
-            
+            'Setting_WaitTime': self.SettingWindow.lineEdit_Setting_WaitTime,
         }
 
         for key in self.lineEdit:
@@ -120,24 +121,24 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
 
         self.lineEdit_Device_Name.editingFinished.connect(lambda: UpdateLineEdit_String(self.Parameter, 'DeviceName', self.lineEdit))
 
-
+        self.lineEdit_LI_Excitation.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'LI_Excitation', self.lineEdit))
+        self.pushButton_LI_Excitation_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'LI_Excitation', self.lineEdit['LI_Excitation']))
+        self.pushButton_LI_Excitation_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'LI_Excitation', self.lineEdit['LI_Excitation']))#Send to Voltage Lock in
         self.lineEdit_LI_Timeconstant.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'LI_Timeconstant', self.lineEdit))
-        self.lineEdit_LI_Frequency.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'LI_Frequency', self.lineEdit))
         self.pushButton_LI_Timeconstant_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].time_constant, self.Parameter, 'LI_Timeconstant', self.lineEdit['LI_Timeconstant']))
-        self.pushButton_LI_Timeconstant_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].time_constant, self.Parameter, 'LI_Timeconstant', self.lineEdit['LI_Timeconstant']))
-        self.pushButton_LI_Timeconstant_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].time_constant, self.Parameter, 'LI_Timeconstant', self.lineEdit['LI_Timeconstant']))
+        self.pushButton_LI_Timeconstant_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].time_constant, self.Parameter, 'LI_Timeconstant', self.lineEdit['LI_Timeconstant']))#Send to Voltage Lock in
+        self.pushButton_LI_Timeconstant_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].time_constant, self.Parameter, 'LI_Timeconstant', self.lineEdit['LI_Timeconstant']))#Send to Current Lock in
+        self.lineEdit_LI_Frequency.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'LI_Frequency', self.lineEdit))
         self.pushButton_LI_Frequency_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency']))
-        self.pushButton_LI_Frequency_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency']))
-        self.pushButton_LI_Frequency_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency']))
+        self.pushButton_LI_Frequency_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency']))#Send to Voltage Lock in
+        self.pushButton_LI_Frequency_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency']))#Send to Current Lock in
 
         self.comboBox_Voltage_LI_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceList, 'Voltage_LI_Device', self.serversList, str(self.DeviceList['Voltage_LI_Device']['ComboBoxServer'].currentText())))
         self.comboBox_Voltage_LI_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.DeviceList, 'Voltage_LI_Device', str(self.DeviceList['Voltage_LI_Device']['ComboBoxDevice'].currentText()), self.Refreshinterface))
-        self.lineEdit_Voltage_LI_Gain.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Voltage_LI_Gain', self.lineEdit))
         
 
         self.comboBox_Current_LI_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceList, 'Current_LI_Device', self.serversList, str(self.DeviceList['Current_LI_Device']['ComboBoxServer'].currentText())))
         self.comboBox_Current_LI_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.DeviceList, 'Current_LI_Device', str(self.DeviceList['Current_LI_Device']['ComboBoxDevice'].currentText()), self.Refreshinterface))
-        self.lineEdit_Current_LI_Gain.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Current_LI_Gain', self.lineEdit))
 
         self.comboBox_DataAquisition_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceList, 'DataAquisition_Device', self.serversList, str(self.DeviceList['DataAquisition_Device']['ComboBoxServer'].currentText())))
         self.comboBox_DataAquisition_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.DeviceList, 'DataAquisition_Device', str(self.DeviceList['DataAquisition_Device']['ComboBoxDevice'].currentText()), self.Refreshinterface))
@@ -162,14 +163,24 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
         self.ButtonsCondition={
             self.lineEdit_Device_Name: True,
             self.pushButton_StartFourTerminalSweep: (self.DeviceList['DataAquisition_Device']['DeviceObject'] != False) and self.DEMONS.Scanning_Flag == False,
-            self.comboBox_Voltage_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
-            self.lineEdit_LI_Timeconstant: self.DEMONS.Scanning_Flag == False,
-            self.lineEdit_LI_Frequency: self.DEMONS.Scanning_Flag == False,
-            self.lineEdit_Voltage_LI_Gain: True,
-            self.comboBox_Current_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
-            self.lineEdit_Current_LI_Gain: True,
+            self.pushButton_AbortFourTerminalSweep: self.DEMONS.Scanning_Flag == True,
             self.comboBox_DataAquisition_SelectDevice: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_DataAquisition_GateChannel: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_FourTerminal_StartVoltage: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_FourTerminal_EndVoltage: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_FourTerminal_Numberofstep: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_FourTerminal_Delay: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_LI_Timeconstant: self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Timeconstant_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False,
+            self.pushButton_LI_Timeconstant_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False,
+            self.lineEdit_LI_Frequency: self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Frequency_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False,
+            self.pushButton_LI_Frequency_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False,
+            self.comboBox_Voltage_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_LI_Excitation: self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Excitation_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False,
+            self.pushButton_LI_Excitation_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False,
+            self.comboBox_Current_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
         }
 
     @inlineCallbacks
@@ -180,7 +191,6 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             self.Refreshinterface()
             ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].time_constant, self.Parameter, 'LI_Timeconstant', self.lineEdit['LI_Timeconstant'])
             ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency'])
-            yield SleepAsync(self.reactor, 1)
 
             Multiplier = [self.Parameter['Voltage_LI_Gain'], self.Parameter['Current_LI_Gain']] #Voltage, Current
 
@@ -196,7 +206,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             NumberOfSteps, Delay = self.Parameter['FourTerminal_Numberofstep'], self.Parameter['FourTerminal_Delay']
 
             yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, self.Parameter['Setting_RampStepSize'], self.Parameter['Setting_RampDelay'], self.reactor)
-            yield SleepAsync(self.reactor, 1)
+            yield SleepAsync(self.reactor, self.Parameter['Setting_WaitTime'])
 
             Data = np.empty((0,6))
             GateVoltageSet = np.linspace(StartVoltage, EndVoltage, NumberOfSteps)
@@ -229,7 +239,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
     @inlineCallbacks
     def FinishSweep(self, currentvoltage):
         try:
-            yield SleepAsync(self.reactor, 1)
+            yield SleepAsync(self.reactor, self.Parameter['Setting_WaitTime'])
             yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], self.Parameter['FourTerminal_GateChannel'], currentvoltage, 0.0, self.Parameter['Setting_RampStepSize'], self.Parameter['Setting_RampDelay'], self.reactor)
             self.serversList['dv'].add_comment(str(self.textEdit_Comment.toPlainText()))
             saveDataToSessionFolder(self.winId(), self.sessionFolder, 'Probe Station Screening ' + self.Parameter['DeviceName'])
