@@ -87,7 +87,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             'LI_Frequency': 'Read',
             'Voltage_LI_Gain': 1.0,
             'Current_LI_Gain': 1.0,
-            'FourTerminal_StartVoltage': 0.0,
+            'FourTerminal_StartVoltage': -1.0,
             'FourTerminal_EndVoltage': 1.0,
             'FourTerminal_Delay': 0.01,
             'FourTerminalSetting_Numberofsteps_Status': "Numberofsteps",
@@ -247,7 +247,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             self.serversList['dv'].add_comment(str(self.textEdit_Comment.toPlainText()))
             self.DEMONS.SetScanningFlag(False)
             self.Refreshinterface()
-            saveDataToSessionFolder(self.winId(), self.sessionFolder, str(self.lineEdit_ImageDir.text()) + str(self.lineEdit_ImageNumber.text()) + 'Probe Station Screening ' + self.Parameter['DeviceName'])
+            saveDataToSessionFolder(self.winId(), self.sessionFolder, str(self.lineEdit_ImageDir.text()) + '//' + str(self.lineEdit_ImageNumber.text())+ ' - ' + 'Probe Station Screening ' + self.Parameter['DeviceName'])
 
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
