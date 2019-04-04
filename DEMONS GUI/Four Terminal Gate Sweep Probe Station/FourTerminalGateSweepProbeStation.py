@@ -247,7 +247,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             self.serversList['dv'].add_comment(str(self.textEdit_Comment.toPlainText()))
             self.DEMONS.SetScanningFlag(False)
             self.Refreshinterface()
-            saveDataToSessionFolder(self.winId(), self.sessionFolder, 'Probe Station Screening ' + self.Parameter['DeviceName'])
+            saveDataToSessionFolder(self.winId(), self.sessionFolder, str(self.lineEdit_ImageDir.text()) + str(self.lineEdit_ImageNumber.text()) + 'Probe Station Screening ' + self.Parameter['DeviceName'])
 
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
@@ -304,7 +304,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             RefreshIndicator(DevicePropertyList['DeviceIndicator'], DevicePropertyList['DeviceObject'])
 
         if self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False:
-            ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter,     'LI_Excitation', self.lineEdit['LI_Excitation'])
+            ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'LI_Excitation', self.lineEdit['LI_Excitation'])
             ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].time_constant, self.Parameter,  'LI_Timeconstant', self.lineEdit['LI_Timeconstant'])
             ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency'])
 
