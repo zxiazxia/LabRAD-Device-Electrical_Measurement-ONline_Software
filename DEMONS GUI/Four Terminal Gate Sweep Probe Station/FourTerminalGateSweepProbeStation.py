@@ -172,16 +172,16 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             self.lineEdit_FourTerminal_Numberofstep: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_FourTerminal_Delay: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_LI_Timeconstant: self.DEMONS.Scanning_Flag == False,
-            self.pushButton_LI_Timeconstant_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False,
-            self.pushButton_LI_Timeconstant_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False,
+            self.pushButton_LI_Timeconstant_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Timeconstant_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
             self.lineEdit_LI_Frequency: self.DEMONS.Scanning_Flag == False,
-            self.pushButton_LI_Frequency_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False,
-            self.pushButton_LI_Frequency_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False,
+            self.pushButton_LI_Frequency_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Frequency_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
             self.comboBox_Voltage_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_Voltage_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_LI_Excitation: self.DEMONS.Scanning_Flag == False,
-            self.pushButton_LI_Excitation_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False,
-            self.pushButton_LI_Excitation_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False,
+            self.pushButton_LI_Excitation_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Excitation_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
             self.comboBox_Current_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_Current_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
         }
@@ -216,6 +216,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             for GateIndex in range(NumberOfSteps):
                 if self.DEMONS.Scanning_Flag == False:
                     print 'Abort the Sweep'
+                    yield self.FinishSweep(GateVoltageSet[GateIndex])
                     break #Break it outside of the for loop
                 yield Set_SIM900_VoltageOutput(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, GateVoltageSet[GateIndex])
                 yield SleepAsync(self.reactor, Delay)
@@ -233,9 +234,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
                 Plot1DData(XData, VoltageData, self.Plotlist['VoltagePlot'])
                 Plot1DData(XData, CurrentData, self.Plotlist['CurrentPlot'])
                 Plot1DData(XData, ResistanceData, self.Plotlist['ResistancePlot'])
+                if GateIndex == NumberOfSteps - 1:
+                    yield self.FinishSweep(GateVoltageSet[GateIndex])
 
-            yield self.FinishSweep(EndVoltage)
-            
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
@@ -247,7 +248,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             self.serversList['dv'].add_comment(str(self.textEdit_Comment.toPlainText()))
             self.DEMONS.SetScanningFlag(False)
             self.Refreshinterface()
-            saveDataToSessionFolder(self.winId(), self.sessionFolder, str(self.lineEdit_ImageDir.text()) + '//' + str(self.lineEdit_ImageNumber.text())+ ' - ' + 'Probe Station Screening ' + self.Parameter['DeviceName'])
+            saveDataToSessionFolder(self.winId(), self.sessionFolder, str(self.lineEdit_ImageDir.text()).replace('\\','_') + '_' + str(self.lineEdit_ImageNumber.text())+ ' - ' + 'Probe Station Screening ' + self.Parameter['DeviceName'])
 
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
