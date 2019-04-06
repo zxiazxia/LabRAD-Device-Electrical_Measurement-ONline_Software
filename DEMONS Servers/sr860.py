@@ -54,15 +54,24 @@ def getSensitivity(i, mode):
 	Converts form the integer label used by the SR860 to a sensitivity 
 	'''
     if i < 0:
-        return getSensitivity(0)
+        return getSensitivity(0, mode)
     elif i > 27:
-        return getSensitvity(27)
+        return getSensitvity(27, mode)
     elif i % 3 == 0:
-        return 10**(-i/3)
+        if mode == 0: #voltage
+            return 10**(-i/3)
+        else:
+            return 10**(-6 - i / 3)
     elif i % 3 == 1:
-        return 5 * 10**(-i/3)
+        if mode == 0: #voltage
+            return 5 * 10**(-i/3)
+        else:
+            return 5 * 10**(-6 - i / 3)
     else:
-        return 2 * 10**(-i/3)
+        if mode == 0: #voltage
+            return 2 * 10**(-i/3)
+        else:
+            return 2 * 10**(-6 - i / 3)
 
 def getSensitivityInt(v, mode):
     '''
@@ -70,13 +79,20 @@ def getSensitivityInt(v, mode):
     Voltage mode (0), Current Mode (1)
     '''
     try:
-        if mode == 0:
+        if mode == 0:#voltage
             if v >= 1.0:
                 sens = 0
             elif v <= 10**-9:
                 sens = 27
             else:
                 sens = -int(round(3*log10(v)))
+        if mode == 1:
+            if v >= 1.0 * 10 ** -6:
+                sens = 0
+            elif v <= 10**-15:
+                sens = 27
+            else:
+                sens = -int(round(3*log10(v))) - 18
         return sens
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno

@@ -162,7 +162,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
     def DetermineEnableConditions(self):
         self.ButtonsCondition={
             self.lineEdit_Device_Name: True,
-            self.pushButton_StartFourTerminalSweep: (self.DeviceList['DataAquisition_Device']['DeviceObject'] != False) and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_StartFourTerminalSweep: (self.DeviceList['DataAquisition_Device']['DeviceObject'] != False) and (self.DeviceList['Current_LI_Device']['DeviceObject'] != False) and (self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False) and self.DEMONS.Scanning_Flag == False,
             self.pushButton_AbortFourTerminalSweep: self.DEMONS.Scanning_Flag == True,
             self.comboBox_DataAquisition_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_DataAquisition_SelectDevice: self.DEMONS.Scanning_Flag == False,
@@ -198,9 +198,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             Multiplier = [self.Parameter['Voltage_LI_Gain'], self.Parameter['Current_LI_Gain']] #Voltage, Current
 
             ImageNumber, ImageDir = yield CreateDataVaultFile(self.serversList['dv'], 'FourTerminalGateSweep ' + str(self.Parameter['DeviceName']), ('Gate Index', 'Gate Voltage'), ('Voltage', 'Current', 'Resistance', 'Conductance'))
-
             self.lineEdit_ImageNumber.setText(ImageNumber)
             self.lineEdit_ImageDir.setText(ImageDir)
+
             yield AddParameterToDataVault(self.serversList['dv'], self.Parameter)
             ClearPlots(self.Plotlist)
 

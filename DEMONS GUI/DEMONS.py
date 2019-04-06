@@ -12,6 +12,7 @@ sys.path.append(path + r'\Resources')
 sys.path.append(path + r'\Labrad Connect')
 sys.path.append(path + r'\DataVaultBrowser')
 sys.path.append(path + r'\Four Terminal Gate Sweep Probe Station')
+sys.path.append(path + r'\Four Terminal Gate Sweep SQUID')
 sys.path.append(path + r'\DAC Controler')
 
 UI_path = path + r"\MainWindow.ui"
@@ -20,6 +21,7 @@ MainWindowUI, QtBaseClass = uic.loadUiType(UI_path)
 #import all windows for gui
 import LabRADConnect
 import FourTerminalGateSweepProbeStation
+import FourTerminalGateSweepSQUID
 import DACControler
 from DEMONSFormat import *
 
@@ -43,12 +45,14 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
         self.MeasurementWindows = {
             'LabRAD': LabRADConnect.Window(self.reactor, None),
             'FourTerminalGateSweepProbeStationWindow': FourTerminalGateSweepProbeStation.Window(self.reactor, self, None),
-            'DACTrackerWindow': DACControler.Window(self.reactor, None)
+            'DACTrackerWindow': DACControler.Window(self.reactor, None),
+            'FourTerminalGateSweepSQUIDWindow': FourTerminalGateSweepSQUID.Window(self.reactor, self, None),
         }
         
         self.pushButton_LabRADConnect.clicked.connect(lambda: openWindow(self.MeasurementWindows['LabRAD']))
         self.pushButton_FourTerminalGateSweepProbeStation.clicked.connect(lambda: openWindow(self.MeasurementWindows['FourTerminalGateSweepProbeStationWindow']))
         self.pushButton_DACADC_Tracker.clicked.connect(lambda: openWindow(self.MeasurementWindows['DACTrackerWindow']))
+        self.pushButton_FourTerminalGateSweepSQUID.clicked.connect(lambda: openWindow(self.MeasurementWindows['FourTerminalGateSweepSQUIDWindow']))
         
         self.MeasurementWindows['LabRAD'].cxnsignal.connect(self.connect)
         self.MeasurementWindows['LabRAD'].discxnsignal.connect(self.disconnect)

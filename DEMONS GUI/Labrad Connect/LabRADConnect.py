@@ -236,7 +236,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                 dvExplorer.accepted.connect(lambda: self.OpenDataVaultFolder(self.reactor, dv, dvExplorer.directory)) 
 
         except Exception as inst:
-            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno                    
+            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
    
     @inlineCallbacks
     def OpenDataVaultFolder(self, c, datavault, directory):

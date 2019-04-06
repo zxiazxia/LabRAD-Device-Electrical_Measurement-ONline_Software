@@ -13,16 +13,20 @@ from scipy.signal import detrend
 #importing a bunch of stuff
 
 
-path = sys.path[0] + r"\Four Terminal Gate Sweep"
-FourTerminalGateSweepWindowUI, QtBaseClass = uic.loadUiType(path + r"\FourTerminalGateSweepWindow.ui")
+path = sys.path[0] + r"\Four Terminal Gate Sweep SQUID"
+sys.path.append(path + r'\FourTerminalGateSweepSQUIDSetting')
+
+import FourTerminalGateSweepSQUIDSetting
+
+FourTerminalGateSweepSQUIDWindowUI, QtBaseClass = uic.loadUiType(path + r"\FourTerminalGateSweepSQUIDWindow.ui")
 Ui_ServerList, QtBaseClass = uic.loadUiType(path + r"\requiredServers.ui")
 
 #Not required, but strongly recommended functions used to format numbers in a particular way.
 sys.path.append(sys.path[0]+'\Resources')
 from DEMONSFormat import *
-from DEMONSMeasure import *
 
-class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
+
+class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
 
     def __init__(self, reactor, DEMONS, parent=None):
         super(Window, self).__init__(parent)
@@ -33,6 +37,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
         self.setupUi(self)
 
         self.pushButton_Servers.clicked.connect(self.showServersList)
+
+        self.SettingWindow = FourTerminalGateSweepSQUIDSetting.Setting(self.reactor, self)
+        self.pushButton_Setting.clicked.connect(lambda: openWindow(self.SettingWindow))
 
         self.serversList = { #Dictionary including toplevel server received from labrad connect
             'dv': False,
@@ -49,7 +56,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
             'ComboBoxServer': self.comboBox_Voltage_LI_SelectServer,
             'ComboBoxDevice': self.comboBox_Voltage_LI_SelectDevice,
             'ServerIndicator': self.pushButton_Voltage_LI_ServerIndicator,
-            'DeviceIndicator': self.pushButton_Voltage_LI_DeviceIndicator,            
+            'DeviceIndicator': self.pushButton_Voltage_LI_DeviceIndicator,
             'ServerNeeded': ['SR830', 'SR860'],
         }
 
@@ -70,13 +77,14 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
             'ComboBoxDevice': self.comboBox_DataAquisition_SelectDevice,
             'ServerIndicator': self.pushButton_DataAquisition_ServerIndicator,
             'DeviceIndicator': self.pushButton_DataAquisition_DeviceIndicator, 
-            'ServerNeeded': ['DACADC', 'SIM900'],
+            'ServerNeeded': ['DACADC'],
         }
 
         self.Parameter = {
             'DeviceName': 'Device Name',#This is related to the sample name like YS8
             'Voltage_LI_Sensitivity': 1,
             'Voltage_LI_Timeconstant': 2,
+            'Voltage_LI_Excitation': 0.0,
             'Voltage_LI_Frequency': 17.777,
             'Voltage_LI_Gain': 1.0,
             'Current_LI_Sensitivity': 1,
@@ -85,18 +93,22 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
             'Current_LI_Gain': 1.0,
             'FourTerminal_StartVoltage': 0.0,
             'FourTerminal_EndVoltage': 1.0,
+            'FourTerminal_Numberofstep': 1000,
             'FourTerminal_Delay': 0.01,
             'FourTerminalSetting_Numberofsteps_Status': "Numberofsteps",
-            'FourTerminal_Numberofstep': 1000,
             'FourTerminal_GateChannel': 0,
             'FourTerminal_VoltageReadingChannel': 0,
             'FourTerminal_CurrentReadingChannel': 1,
+            'Setting_RampDelay': 0.0001,
+            'Setting_RampStepSize': 0.001,
+            'Setting_WaitTime': 2.0,
         } 
 
         self.lineEdit = {
             'DeviceName': self.lineEdit_Device_Name,
             'Voltage_LI_Sensitivity': self.lineEdit_Voltage_LI_Sensitivity,
             'Voltage_LI_Timeconstant': self.lineEdit_Voltage_LI_Timeconstant,
+            'Voltage_LI_Excitation': self.lineEdit_Voltage_LI_Excitation,
             'Voltage_LI_Frequency': self.lineEdit_Voltage_LI_Frequency,
             'Voltage_LI_Gain': self.lineEdit_Voltage_LI_Gain,
             'Current_LI_Sensitivity': self.lineEdit_Current_LI_Sensitivity,
@@ -107,10 +119,15 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
             'FourTerminal_EndVoltage': self.lineEdit_FourTerminal_EndVoltage,
             'FourTerminal_Delay': self.lineEdit_FourTerminal_Delay,
             'FourTerminal_Numberofstep': self.lineEdit_FourTerminal_Numberofstep,
-            'FourTerminal_GateChannel': self.lineEdit_DataAquisition_GateChannel,
-            'FourTerminal_VoltageReadingChannel': self.lineEdit_DataAquisition_VoltageChannel,
-            'FourTerminal_CurrentReadingChannel': self.lineEdit_DataAquisition_CurrentChannel,
-            
+            'FourTerminal_GateChannel': self.lineEdit_GateVoltageChannel,
+            'FourTerminal_VoltageReadingChannel': self.lineEdit_VoltageReadingChannel,
+            'FourTerminal_CurrentReadingChannel': self.lineEdit_CurrentReadingChannel,
+            'Setting_RampDelay': self.SettingWindow.lineEdit_Setting_RampDelay,
+            'Setting_RampStepSize': self.SettingWindow.lineEdit_Setting_RampStepSize,
+            'Setting_WaitTime': self.SettingWindow.lineEdit_Setting_WaitTime,
+            'Setting_RampDelay': self.SettingWindow.lineEdit_Setting_RampDelay,
+            'Setting_RampStepSize': self.SettingWindow.lineEdit_Setting_RampStepSize,
+            'Setting_WaitTime': self.SettingWindow.lineEdit_Setting_WaitTime,
         }
 
         for key in self.lineEdit:
@@ -119,33 +136,35 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
 
         self.DetermineEnableConditions()
 
-        self.FourTerminal_ChannelInput=[]
-        self.FourTerminal_ChannelOutput=[]
-
         self.lineEdit_Device_Name.editingFinished.connect(lambda: UpdateLineEdit_String(self.Parameter, 'DeviceName', self.lineEdit))
 
         self.comboBox_Voltage_LI_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceList, 'Voltage_LI_Device', self.serversList, str(self.DeviceList['Voltage_LI_Device']['ComboBoxServer'].currentText())))
         self.comboBox_Voltage_LI_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.DeviceList, 'Voltage_LI_Device', str(self.DeviceList['Voltage_LI_Device']['ComboBoxDevice'].currentText()), self.Refreshinterface))
-
-        # self.lineEdit_Voltage_LI_Sensitivity.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Voltage_LI_Sensitivity', self.lineEdit, self.DeviceList['Voltage_LI_Device']['DeviceObject'], ['SR830', 'sensitivity'], [0, 26], int))
-        # self.lineEdit_Voltage_LI_Timeconstant.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Voltage_LI_Timeconstant', self.lineEdit, self.DeviceList['Voltage_LI_Device']['DeviceObject'], ['SR830', 'timeconstant'], [0, 19], int))
-        # self.lineEdit_Voltage_LI_Frequency.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Voltage_LI_Frequency', self.lineEdit, self.DeviceList['Voltage_LI_Device']['DeviceObject'], ['SR830', 'frequency'], None, float))
         self.lineEdit_Voltage_LI_Sensitivity.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Voltage_LI_Sensitivity', self.lineEdit))
+        self.pushButton_Voltage_LI_Sensitivity_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Voltage_LI_Sensitivity', self.lineEdit['Voltage_LI_Sensitivity']))
+        self.pushButton_Voltage_LI_Sensitivity_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Voltage_LI_Sensitivity', self.lineEdit['Voltage_LI_Sensitivity']))
         self.lineEdit_Voltage_LI_Timeconstant.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Voltage_LI_Timeconstant', self.lineEdit))
+        self.pushButton_Voltage_LI_Timeconstant_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Voltage_LI_Timeconstant', self.lineEdit['Voltage_LI_Timeconstant']))
+        self.pushButton_Voltage_LI_Timeconstant_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Voltage_LI_Timeconstant', self.lineEdit['Voltage_LI_Timeconstant']))
+        self.lineEdit_Voltage_LI_Excitation.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Voltage_LI_Excitation', self.lineEdit))
+        self.pushButton_Voltage_LI_Excitation_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Voltage_LI_Excitation', self.lineEdit['Voltage_LI_Excitation']))
+        self.pushButton_Voltage_LI_Excitation_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Voltage_LI_Excitation', self.lineEdit['Voltage_LI_Excitation']))
         self.lineEdit_Voltage_LI_Frequency.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Voltage_LI_Frequency', self.lineEdit))
-
+        self.pushButton_Voltage_LI_Frequency_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Voltage_LI_Frequency', self.lineEdit['Voltage_LI_Frequency']))
+        self.pushButton_Voltage_LI_Frequency_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Voltage_LI_Frequency', self.lineEdit['Voltage_LI_Frequency']))
         self.lineEdit_Voltage_LI_Gain.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Voltage_LI_Gain', self.lineEdit))
 
         self.comboBox_Current_LI_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceList, 'Current_LI_Device', self.serversList, str(self.DeviceList['Current_LI_Device']['ComboBoxServer'].currentText())))
         self.comboBox_Current_LI_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.DeviceList, 'Current_LI_Device', str(self.DeviceList['Current_LI_Device']['ComboBoxDevice'].currentText()), self.Refreshinterface))
-
-        # self.lineEdit_Current_LI_Sensitivity.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Current_LI_Sensitivity', self.lineEdit, self.DeviceList['Current_LI_Device']['DeviceObject'], ['SR830', 'sensitivity'], [0, 26], int))
-        # self.lineEdit_Current_LI_Timeconstant.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Current_LI_Timeconstant', self.lineEdit, self.DeviceList['Current_LI_Device']['DeviceObject'], ['SR830', 'timeconstant'], [0, 19], int))
-        # self.lineEdit_Current_LI_Frequency.editingFinished.connect(lambda: UpdateSetlineEdit(self.Parameter, 'Current_LI_Frequency', self.lineEdit, self.DeviceList['Current_LI_Device']['DeviceObject'], ['SR830', 'frequency'], None, float))
         self.lineEdit_Current_LI_Sensitivity.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Current_LI_Sensitivity', self.lineEdit))
+        self.pushButton_Current_LI_Sensitivity_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Current_LI_Sensitivity', self.lineEdit['Current_LI_Sensitivity']))
+        self.pushButton_Current_LI_Sensitivity_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Current_LI_Sensitivity', self.lineEdit['Current_LI_Sensitivity']))
         self.lineEdit_Current_LI_Timeconstant.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Current_LI_Timeconstant', self.lineEdit))
+        self.pushButton_Current_LI_Timeconstant_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Current_LI_Timeconstant', self.lineEdit['Current_LI_Timeconstant']))
+        self.pushButton_Current_LI_Timeconstant_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Current_LI_Timeconstant', self.lineEdit['Current_LI_Timeconstant']))
         self.lineEdit_Current_LI_Frequency.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Current_LI_Frequency', self.lineEdit))
-
+        self.pushButton_Current_LI_Frequency_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Current_LI_Frequency', self.lineEdit['Current_LI_Frequency']))
+        self.pushButton_Current_LI_Frequency_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'Current_LI_Frequency', self.lineEdit['Current_LI_Frequency']))
         self.lineEdit_Current_LI_Gain.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'Current_LI_Gain', self.lineEdit))
 
         self.comboBox_DataAquisition_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceList, 'DataAquisition_Device', self.serversList, str(self.DeviceList['DataAquisition_Device']['ComboBoxServer'].currentText())))
@@ -158,64 +177,107 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
         self.lineEdit_FourTerminal_Delay.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'FourTerminal_Delay', self.lineEdit))
         self.pushButton_FourTerminal_NoSmTpTSwitch.clicked.connect(lambda: Toggle_NumberOfSteps_StepSize(self.Parameter, 'FourTerminal_Numberofstep', 'FourTerminal_EndVoltage', 'FourTerminal_StartVoltage', 'FourTerminalSetting_Numberofsteps_Status', self.label_FourTerminalNumberofstep, 'Volt per Step', self.lineEdit))  
 
+        self.lineEdit_GateVoltageChannel.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'FourTerminal_GateChannel', self.lineEdit, None, int))
+        self.lineEdit_VoltageReadingChannel.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'FourTerminal_VoltageReadingChannel', self.lineEdit, None, int))
+        self.lineEdit_CurrentReadingChannel.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'FourTerminal_CurrentReadingChannel', self.lineEdit, None, int))
+
         self.pushButton_StartFourTerminalSweep.clicked.connect(self.StartMeasurement)
 
         self.SetupPlots()
+        self.Refreshinterface()
 
     def DetermineEnableConditions(self):
         self.ButtonsCondition={
             self.lineEdit_Device_Name: True,
             self.pushButton_StartFourTerminalSweep: (not self.DeviceList['DataAquisition_Device'] == False) and self.DEMONS.Scanning_Flag == False,
-            self.comboBox_Voltage_LI_SelectDevice: True,
-            self.lineEdit_Voltage_LI_Sensitivity: True,
-            self.lineEdit_Voltage_LI_Timeconstant: True,
-            self.lineEdit_Voltage_LI_Frequency: True,
-            self.lineEdit_Voltage_LI_Gain: True,
-            self.comboBox_Current_LI_SelectDevice: True,
-            self.lineEdit_Current_LI_Sensitivity: True,
-            self.lineEdit_Current_LI_Timeconstant: True,
-            self.lineEdit_Current_LI_Frequency: True,
-            self.lineEdit_Current_LI_Gain: True,
-            self.comboBox_DataAquisition_SelectDevice: True,
-            self.lineEdit_DataAquisition_GateChannel: True,
-            self.lineEdit_DataAquisition_VoltageChannel: True,
-            self.lineEdit_DataAquisition_CurrentChannel: True,
+            self.pushButton_AbortFourTerminalSweep: False,
+            self.comboBox_Voltage_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
+            self.comboBox_Voltage_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Voltage_LI_Sensitivity: self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Voltage_LI_Sensitivity_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Voltage_LI_Sensitivity_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Voltage_LI_Timeconstant: self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Voltage_LI_Timeconstant_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Voltage_LI_Timeconstant_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Voltage_LI_Excitation: self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Voltage_LI_Excitation_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Voltage_LI_Excitation_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Voltage_LI_Frequency: self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Voltage_LI_Frequency_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Voltage_LI_Frequency_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Voltage_LI_Gain: self.DEMONS.Scanning_Flag == False,
+            self.comboBox_Current_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
+            self.comboBox_Current_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Current_LI_Sensitivity: self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Current_LI_Sensitivity_Read: self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Current_LI_Sensitivity_Set: self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Current_LI_Timeconstant: self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Current_LI_Timeconstant_Read: self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Current_LI_Timeconstant_Set: self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Current_LI_Frequency: self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Current_LI_Frequency_Read: self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_Current_LI_Frequency_Set: self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Current_LI_Gain: self.DEMONS.Scanning_Flag == False,
+            self.comboBox_DataAquisition_SelectServer: self.DEMONS.Scanning_Flag == False,
+            self.comboBox_DataAquisition_SelectDevice: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_FourTerminal_StartVoltage: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_FourTerminal_EndVoltage: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_FourTerminal_Numberofstep: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_FourTerminal_Delay: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_GateVoltageChannel: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_VoltageReadingChannel: self.DEMONS.Scanning_Flag == False,
+            self.lineEdit_CurrentReadingChannel: self.DEMONS.Scanning_Flag == False,
         }
 
     @inlineCallbacks
     def StartMeasurement(self, c):
         try:
+            self.DEMONS.SetScanningFlag(True)
+            self.Refreshinterface()
 
             Multiplier = [self.Parameter['Voltage_LI_Sensitivity'] * self.Parameter['Voltage_LI_Gain'] / 10.0, self.Parameter['Current_LI_Sensitivity'] * self.Parameter['Current_LI_Gain'] / 10.0] #Voltage, Current
+
             ImageNumber, ImageDir = yield CreateDataVaultFile(self.serversList['dv'], 'FourTerminalGateSweep ' + str(self.Parameter['DeviceName']), ('Gate Index', 'Gate Voltage'), ('Voltage', 'Current', 'Resistance', 'Conductance'))
             self.lineEdit_ImageNumber.setText(ImageNumber)
             self.lineEdit_ImageDir.setText(ImageDir)
+
             yield AddParameterToDataVault(self.serversList['dv'], self.Parameter)
             ClearPlots(self.Plotlist)
 
-            if str(self.comboBox_SelectMode.currentText()) == 'All DACADC Buffer': #Determine if seclected device include DACADC in registry
-                    GateChannel, VoltageChannel, CurrentChannel = self.Parameter['FourTerminal_GateChannel'], self.Parameter['FourTerminal_VoltageReadingChannel'], self.Parameter['FourTerminal_CurrentReadingChannel']
-                    StartVoltage, EndVoltage = self.Parameter['FourTerminal_StartVoltage'], self.Parameter['FourTerminal_EndVoltage']
-                    NumberOfSteps, Delay = self.Parameter['FourTerminal_Numberofstep'], self.Parameter['FourTerminal_Delay']
-                    yield Ramp_DACADC(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, NumberOfSteps, Delay)
-                    yield SleepAsync(self.reactor, 1)
-                    Data = yield Buffer_Ramp_DACADC(self.DeviceList['DataAquisition_Device']['DeviceObject'], [GateChannel], [VoltageChannel, CurrentChannel],[StartVoltage], [EndVoltage], NumberOfSteps, Delay)
-                    yield Ramp_DACADC(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, EndVoltage, 0.0, NumberOfSteps, Delay)
-                    Data = Multiply(Data, Multiplier) #Scale them with corresponding multiplier [voltage, current]
-                    Data = AttachData_Front(Data, np.linspace(StartVoltage, EndVoltage, NumberOfSteps)) #Attach Gate Voltage
-                    Data = AttachData_Front(Data, range(NumberOfSteps)) #Attach Gate Index
-                    Data = Attach_ResistanceConductance(Data, 2, 3)
+            GateChannel, VoltageChannel, CurrentChannel = self.Parameter['FourTerminal_GateChannel'], self.Parameter['FourTerminal_VoltageReadingChannel'], self.Parameter['FourTerminal_CurrentReadingChannel']
+            StartVoltage, EndVoltage = self.Parameter['FourTerminal_StartVoltage'], self.Parameter['FourTerminal_EndVoltage']
+            NumberOfSteps, Delay = self.Parameter['FourTerminal_Numberofstep'], self.Parameter['FourTerminal_Delay']
 
-                    self.serversList['dv'].add(Data)
+            yield Ramp_DACADC(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, self.Parameter['Setting_RampStepSize'], self.Parameter['Setting_RampDelay'])
+            yield SleepAsync(self.reactor, self.Parameter['Setting_WaitTime'])
 
-                    XData, VoltageData, CurrentData, ResistanceData, ConductanceData = Data[:,1], Data[:,2], Data[:,3], Data[:,4], Data[:,5]
-                    Plot1DData(XData, VoltageData, self.Plotlist['VoltagePlot'])
-                    Plot1DData(XData, CurrentData, self.Plotlist['CurrentPlot'])
-                    Plot1DData(XData, ResistanceData, self.Plotlist['ResistancePlot'])
-                    Plot1DData(XData, ConductanceData, self.Plotlist['ConductancePlot'])
-            elif str(self.comboBox_SelectMode.currentText()) == 'LockIn + SIM':
-                pass
+            Data = yield Buffer_Ramp_DACADC(self.DeviceList['DataAquisition_Device']['DeviceObject'], [GateChannel], [VoltageChannel, CurrentChannel],[StartVoltage], [EndVoltage], NumberOfSteps, Delay)
             
+            Data = Multiply(Data, Multiplier) #Scale them with corresponding multiplier [voltage, current]
+            Data = AttachData_Front(Data, np.linspace(StartVoltage, EndVoltage, NumberOfSteps)) #Attach Gate Voltage
+            Data = AttachData_Front(Data, range(NumberOfSteps)) #Attach Gate Index
+            Data = Attach_ResistanceConductance(Data, 2, 3)
+            self.serversList['dv'].add(Data)
+            XData, VoltageData, CurrentData, ResistanceData = Data[:,1], Data[:,2], Data[:,3], Data[:,4]
+            Plot1DData(XData, VoltageData, self.Plotlist['VoltagePlot'])
+            Plot1DData(XData, CurrentData, self.Plotlist['CurrentPlot'])
+            Plot1DData(XData, ResistanceData, self.Plotlist['ResistancePlot'])
+
+            yield self.FinishSweep(EndVoltage)
+
+        except Exception as inst:
+            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
+    @inlineCallbacks
+    def FinishSweep(self, currentvoltage):
+        try:
+            yield SleepAsync(self.reactor, self.Parameter['Setting_WaitTime'])
+            yield Ramp_DACADC(self.DeviceList['DataAquisition_Device']['DeviceObject'], int(self.Parameter['FourTerminal_GateChannel']), currentvoltage, 0.0, self.Parameter['Setting_RampStepSize'], self.Parameter['Setting_RampDelay'])
+            self.serversList['dv'].add_comment(str(self.textEdit_Comment.toPlainText()))
+            self.DEMONS.SetScanningFlag(False)
+            self.Refreshinterface()
+            saveDataToSessionFolder(self.winId(), self.sessionFolder, str(self.lineEdit_ImageNumber.text()) + ' - ' + 'Four Terminal SQUID ' + self.Parameter['DeviceName'])
+
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
@@ -275,12 +337,10 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepWindowUI):
             'VoltagePlot': pg.PlotWidget(parent = None),
             'CurrentPlot': pg.PlotWidget(parent = None),
             'ResistancePlot': pg.PlotWidget(parent = None),
-            'ConductancePlot': pg.PlotWidget(parent = None)
         }
-        Setup1DPlot(self.Plotlist['VoltagePlot'], self.Layout_FourTerminalPlot1, 'Voltage', 'Voltage', "V", 'Gate Voltage', "V")#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
-        Setup1DPlot(self.Plotlist['CurrentPlot'], self.Layout_FourTerminalPlot2, 'Current', 'Current', "A", 'Gate Voltage', "V")#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
-        Setup1DPlot(self.Plotlist['ResistancePlot'], self.Layout_FourTerminalPlot3, 'Resistance', 'Resistance', u"\u03A9", 'Gate Voltage', "V")#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
-        Setup1DPlot(self.Plotlist['ConductancePlot'], self.Layout_FourTerminalPlot4, 'Conductance', 'Conductance', "S", 'Gate Voltage',"V" )#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
+        Setup1DPlot(self.Plotlist['VoltagePlot'], self.Layout_FourTerminalPlot_1, 'Voltage', 'Voltage', "V", 'Gate Voltage', "V")#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
+        Setup1DPlot(self.Plotlist['CurrentPlot'], self.Layout_FourTerminalPlot_2, 'Current', 'Current', "A", 'Gate Voltage', "V")#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
+        Setup1DPlot(self.Plotlist['ResistancePlot'], self.Layout_FourTerminalPlot_3, 'Resistance', 'Resistance', u"\u03A9", 'Gate Voltage', "V")#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
 
     def setSessionFolder(self, folder):
         self.sessionFolder = folder

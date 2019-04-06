@@ -46,18 +46,27 @@ def getTC(i):
     else:
         return 3*10**(-5 + i/2)
 
-def getSensitivity(i):
-    """converts form the integer label used by the SR830 to a sensitivity"""
+def getSensitivity(i, mode):
+    """converts form the integer label used by the SR830 to a sensitivity based on the mode"""
     if i < 0:
-        return getSensitivity(0)
+        return getSensitivity(0, mode)
     elif i > 26:
-        return getSensitivity(26)
+        return getSensitivity(26, mode)
     elif i % 3 == 0:
-        return 2 * 10**(-9 + i/3)
+        if mode == 0 or mode == 1:
+            return 2 * 10**(-9 + i/3)
+        else:
+            return 2 * 10**(-15 + i/3)
     elif i % 3 == 1:
-        return 5 * 10**(-9 + i/3)
+        if mode == 0 or mode == 1:
+            return 5 * 10**(-9 + i/3)
+        else:
+            return 5 * 10**(-15 + i/3)
     else:
-        return 10 * 10**(-9 + i/3)
+        if mode == 0 or mode == 1:
+            return 10 * 10**(-9 + i/3)
+        else:
+            return 10 * 10**(-15 + i/3)
 
 MODE_DICT = {
     'A': 0,
@@ -66,17 +75,16 @@ MODE_DICT = {
     '100M': 3
 }
 
-
 def getSensitivityInt(v, mode):
     ''' converty from real sensitivity to an integer value taken by the sr830'''
-    if (mode == 0): #Voltage
+    if (mode == 0 or mode == 1): #Voltage
         sens = int(round(3*log10(v)))+26
-    else:#Current
+    else: #Current
         sens = int(round(3*log10(v)))+44
     return sens
 
 def getTCInt(t):
-    ''' convert from real sensitivity values to an integer value taken by the sr830'''
+    ''' convert from real time constant values to an integer value taken by the sr830'''
     timeconstant = int(round(2*log10(t)))+10
     return timeconstant
 
@@ -315,20 +323,19 @@ class SR830(GPIBManagedServer):
         """Set or get the sensitivity.
 
         Args:
-            i (i):  The sensitivity to set.
-                i=0 --> 2 nV/fA; 1-->5nV/fA, 2-->10nV/fA,
-                3-->20nV/fA, ..., 26 --> 1V/uA.
+            no input: return the current sensitivity without unit
+            input: set the current sensitivity and return the set sensitivity without unit
 
         Returns:
             (Value or ):  The input range (sensitivity).
         """
         dev = self.selectedDevice(c)
-        mode = yield self.inputMode(c)
+        mode = yield self.input_mode(c)
         if sens is not None:
             sens = getSensitivityInt(sens, mode)
             yield dev.write('SENS {}'.format(sens))
         resp = yield dev.query("SENS?")
-        returnValue(getSensitivity(int(resp)))
+        returnValue(getSensitivity(int(resp), mode))
 
     @setting(41, 'Sensitivity Up', returns='v')
     def sensitivity_up(self, c):
@@ -354,7 +361,7 @@ class SR830(GPIBManagedServer):
         waittime = yield self.wait_time(c)
         r = yield self.r(c)
         sens = yield self.sensitivity(c)
-        mode = yield self.inputMode(c)
+        mode = yield self.input_mode(c)
         previousSens = sens
 
         while r == 0:
