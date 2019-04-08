@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Four Terminal Gate Sweep</string>
+   <string>Probe Station Screening</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../Resources/DEMONSResources.qrc">
@@ -339,7 +339,7 @@ color: rgb(168, 168, 168)
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_9" rowstretch="1,4">
+           <layout class="QGridLayout" name="gridLayout_9" rowstretch="1,0">
             <item row="0" column="0">
              <widget class="QPushButton" name="pushButton_Setting">
               <property name="sizePolicy">
@@ -355,7 +355,6 @@ color: rgb(168, 168, 168)
                <string notr="true">#pushButton_Setting{
 image:url(:/Pictures/Pictures/Setting.png);
 background: black;
-border: 0px solid rgb(95,107,166);
 }
 
 QPushButton:pressed#pushButton_Setting{

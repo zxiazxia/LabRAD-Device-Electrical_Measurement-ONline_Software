@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>263</width>
-    <height>95</height>
+    <width>262</width>
+    <height>114</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Server List</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../Resources/DEMONSResources.qrc">
-    <normaloff>:/Pictures/Pictures/DemonLogo.png</normaloff>:/Pictures/Pictures/DemonLogo.png</iconset>
+   <iconset>
+    <normaloff>:/newPrefix/Pictures/DemonLogo.png</normaloff>:/newPrefix/Pictures/DemonLogo.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background: black</string>
@@ -36,6 +36,24 @@ color: rgb(168,168,168)
    </property>
    <property name="text">
     <string>Required servers list: </string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>70</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">#label_2{
+color: rgb(168,168,168)
+}</string>
+   </property>
+   <property name="text">
+    <string>•  AMI430</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_3">
@@ -63,7 +81,7 @@ color: rgb(168,168,168)
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>70</y>
+     <y>90</y>
      <width>111</width>
      <height>16</height>
     </rect>
@@ -74,12 +92,12 @@ color: rgb(168,168,168)
 }</string>
    </property>
    <property name="text">
-    <string>•  DAC ADC</string>
+    <string>•  IPS120</string>
    </property>
   </widget>
  </widget>
  <resources>
-  <include location="../Resources/DEMONSResources.qrc"/>
+  <include location="../../Resources/DEMONSResources.qrc"/>
  </resources>
  <connections/>
 </ui>

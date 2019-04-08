@@ -102,7 +102,6 @@ def getTCInt(t):
     timeconstant = int(2+round(2*log10(t)))+10
     return timeconstant
 
-
 class sr860Wrapper(GPIBDeviceWrapper):
     @inlineCallbacks
     def inputMode(self):
@@ -388,12 +387,14 @@ class sr860Wrapper(GPIBDeviceWrapper):
     @inlineCallbacks
     def sensitivity(self, i=None):
         if i is None:
+            iv_mode = yield self.input_mode()
             resp = yield self.query("SCAL?")
-            returnValue(getSensitivity(int(resp)))
+            returnValue(getSensitivity(int(resp), int(iv_mode)))
         else:
+            iv_mode = yield self.input_mode()
             yield self.write('SCAL ' + str(i))
             resp = yield self.query("SCAL?")
-            returnValue(getSensitivity(int(resp)))
+            returnValue(getSensitivity(int(resp), int(iv_mode)))
 
     @inlineCallbacks
     def auto_sensitivity(self):
@@ -812,25 +813,13 @@ class sr860Server(GPIBManagedServer):
         try:
             dev = self.selectedDevice(c)
             iv_mode = yield dev.input_mode()
-            if int(iv_mode) == 0:
-    			u = units.V
-            elif int(iv_mode) == 1:
-    			u = units.A
-            else:
-    			u = 'none'
             if i is None:
                 resp = yield dev.sensitivity()
-                if u != 'none':
-                    returnValue(resp * u)
-                else:
-                    returnValue(resp)
+                returnValue(resp)
             else:
                 jj = getSensitivityInt(i, int(iv_mode))
                 resp = yield dev.sensitivity(jj)
-                if u != 'none':
-                    returnValue(resp * u)
-                else:
-                    returnValue(resp)
+                returnValue(resp)
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 

@@ -21,20 +21,25 @@ Read a funnction and update a lineEdit, use device's function and take the retur
 '''
 @inlineCallbacks
 def ReadEdit_Parameter(Function, Parameter, parametername, lineEdit):
-    value = yield Function()
-    Parameter[parametername] = value
-    lineEdit.setText(formatNum(Parameter[parametername], 6))
+    try:
+        value = yield Function()
+        Parameter[parametername] = value
+        lineEdit.setText(formatNum(Parameter[parametername], 6))
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
 '''
 Set a funnction and update a lineEdit
 '''
 @inlineCallbacks
 def SetEdit_Parameter(Function, Parameter, parametername, lineEdit):
-    dummyval = readNum(str(lineEdit.text()), None , False)
-    value = yield Function(dummyval)
-    Parameter[parametername] = value
-    lineEdit.setText(formatNum(Parameter[parametername], 6))
-
+    try:
+        dummyval = readNum(str(lineEdit.text()), None , False)
+        value = yield Function(dummyval)
+        Parameter[parametername] = value
+        lineEdit.setText(formatNum(Parameter[parametername], 6))
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 '''
 Update parameter, normally just text
 Input: dictionary of parameters, key for the value to be changed, the lineEdit where the input comes from
@@ -98,7 +103,9 @@ def Toggle_NumberOfSteps_StepSize(dict, key, endkey, startkey, statuskey, label,
 Simple StepSize to Number of Step Converters
 '''
 def StepSizeToNumberOfSteps(End, Start, SS):  #Conver stepsize to number of steps
-    Numberofsteps=int(abs(End - Start)/float(SS)+1)
+    Numberofsteps=int(round(abs(End - Start)/float(SS))+1)
+    if Numberofsteps == 1:
+        Numberofsteps = 2
     return Numberofsteps
 
 def NumberOfStepsToStepSize(Start, End, NoS):
@@ -255,22 +262,23 @@ def updateDataVaultDirectory(window, directory):
 '''
 Clear Plots, can take a list/dict or single plot
 '''
-def ClearPlots(Plots):
-    if isinstance(Plots, list):
-        for plot in Plots:
+def ClearPlots(Plotlist):
+    if isinstance(Plotlist, list): #Input is a list of plots
+        for plot in Plotlist:
             plot.clear()
-    elif isinstance(Plots, dict):
-        for name, plot in Plots.iteritems():
-            plot.clear()
-    else:
-        Plots.clear()
+    elif isinstance(Plotlist, dict): #input is the plotlist
+        for PlotName in Plotlist:
+            Plotlist[PlotName]['PlotObject'].clear()
+    else:#input is a single plot
+        Plotlist.clear()
 
 '''
 Input: PlotItem, Layout of Plot and Plot properties
 '''
 def Setup1DPlot(Plot, Layout, Title, yaxis, yunit, xaxis, xunit):
     Plot.setGeometry(QtCore.QRect(0, 0, 10, 10))
-    Plot.setTitle(Title)
+    if Title is not None:
+        Plot.setTitle(Title)
     Plot.setLabel('left', yaxis, units = yunit)
     Plot.setLabel('bottom', xaxis, units = xunit)
     Plot.showAxis('right', show = True)
@@ -280,11 +288,34 @@ def Setup1DPlot(Plot, Layout, Title, yaxis, yunit, xaxis, xunit):
     Plot.enableAutoRange(enable = True)
     Layout.addWidget(Plot)
 
+def RefreshPlot1D(PlotList):
+    try:
+        for PlotName in PlotList:
+            Plot1DData(PlotList[PlotName]['PlotData'][0], PlotList[PlotName]['PlotData'][1], PlotList[PlotName]['PlotObject'])
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
 '''
 Input: Data for Xaxis, Yaxis and plot object
 '''
 def Plot1DData(xaxis, yaxis, plot, color = 0.5):
     plot.plot(x = xaxis, y = yaxis, pen = color)
+
+def Setup2DPlot(PlotItem, ImageView, Layout, yaxis, yunit, xaxis, xunit):
+    PlotItem.setLabel('left', yaxis, units = yunit)
+    PlotItem.setLabel('bottom', xaxis, units = xunit)
+    PlotItem.showAxis('top', show = True)
+    PlotItem.showAxis('right', show = True)
+    PlotItem.setAspectLocked(False)
+    PlotItem.invertY(False)
+    PlotItem.setXRange(-1.0, 1.0, 0)
+    PlotItem.setYRange(-1.0, 1.0, 0)
+    ImageView.setGeometry(QtCore.QRect(0, 0, 400, 200))
+    ImageView.ui.menuBtn.hide()
+    ImageView.ui.histogram.item.gradient.loadPreset('bipolar')
+    ImageView.ui.roiBtn.hide()
+    ImageView.ui.menuBtn.hide()
+    Layout.addWidget(ImageView)
 
 def Division(voltage, current, multiplier = 1):
     if current != 0.0:
@@ -638,6 +669,60 @@ def Buffer_Ramp_Debug(Device, Output, Input, Min, Max, NoS, Delay):
         for j in xpoints:
             DebugData[i].append(i * j)
     return DebugData
+
+#Magnetic Field control
+@inlineCallbacks
+def RampMagneticField(DeviceObject, ServerName, TargetField, RampRate):
+    try:
+        if ServerName == 'IPS120':
+            yield DeviceObject.set_control(3)
+            yield DeviceObject.set_fieldsweep_rate(RampRate)#Set Ramp Rate
+            yield DeviceObject.set_control(2)
+
+            t0 = time.time() #Keep track of starting time for setting the field
+            yield DeviceObject.set_control(3)
+            yield DeviceObject.set_targetfield(TargetField) #Set the setpoin
+            yield DeviceObject.set_control(2)
+
+            yield DeviceObject.set_control(3)
+            yield DeviceObject.set_activity(1) #Put ips in go to setpoint mode
+            yield DeviceObject.set_control(2)
+
+            print 'Setting field to ' + str(TargetField)
+
+            while True:
+                yield DeviceObject.set_control(3)#
+                current_field = yield DeviceObject.read_parameter(7)#Read the field
+                yield DeviceObject.set_control(2)#
+                #if within 10 uT of the desired field, break out of the loop
+                if float(current_field[1:]) <= TargetField + 0.00001 and float(current_field[1:]) >= TargetField -0.00001:#if reach target field already
+                    break
+                #if after one second we still haven't reached the desired field, then reset the field setpoint and activity
+                if time.time() - t0 > 1:
+                    yield DeviceObject.set_control(3)
+                    yield DeviceObject.set_targetfield(TargetField)
+                    yield DeviceObject.set_control(2)
+
+                    yield DeviceObject.set_control(3)
+                    yield DeviceObject.set_activity(1)
+                    yield DeviceObject.set_control(2)
+                    t0 = time.time()
+                    print 'restarting loop'
+
+        if ServerName == 'AMI430':
+            print 'Setting field to ' + str(TargetField)
+            t0 = time.time() #Keep track of starting time for setting the field
+            yield DeviceObject.conf_field_targ(TargetField) #Set targer field
+            yield DeviceObject.ramp() #Start ramp
+            target_field = yield DeviceObject.get_field_targ()#Get target field set in the device
+            actual_field = yield DeviceObject.get_field_mag() #read actual field
+            while abs(target_field - actual_field) > 1e-3:
+                time.sleep(2)
+                actual_field = yield DeviceObject.get_field_mag() #read actual field
+    except Exception as inst:
+        print 'Scan error: ', inst
+        print 'on line: ', sys.exc_traceback.tb_lineno
+
 
 #Data Vault related Code
 '''

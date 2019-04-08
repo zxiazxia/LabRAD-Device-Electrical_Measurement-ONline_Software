@@ -1,38 +1,46 @@
 start /min labrad
 
-TIMEOUT /T 7
+TIMEOUT 7 /NOBREAK
 
 start /min python "%CD%\DEMONS Servers\serial_server.py"
 
-TIMEOUT /T 1
+TIMEOUT 1 /NOBREAK
 
 start /min python "%CD%\DEMONS Servers\gpib_server.py"
 
-TIMEOUT /T 1
+TIMEOUT 1 /NOBREAK
 
 start /min python "%CD%\DEMONS Servers\gpib_device_manager.py"
 
-TIMEOUT /T 1
+TIMEOUT 1 /NOBREAK
 
 start /min python "%CD%\DEMONS Servers\data_vault.py"
 
-TIMEOUT /T 1
+TIMEOUT 1 /NOBREAK
 
 start /min python "%CD%\DEMONS Servers\dac_adc.py"
 
-TIMEOUT /T 1
+TIMEOUT 1 /NOBREAK
 
 start /min python "%CD%\DEMONS Servers\SR830.py"
 
-TIMEOUT /T 1
+TIMEOUT 1 /NOBREAK
 
 start /min python "%CD%\DEMONS Servers\SR860.py"
 
-TIMEOUT /T 1
+TIMEOUT 1 /NOBREAK
 
 start /min python "%CD%\DEMONS Servers\SIM_900.py"
 
-TIMEOUT /T 1
+TIMEOUT 1 /NOBREAK
+
+start /min python "%CD%\DEMONS Servers\ips_120_10.py"
+
+TIMEOUT 1 /NOBREAK
+
+start /min python "%CD%\DEMONS Servers\ami_430.py"
+
+TIMEOUT 1 /NOBREAK
 
 python "%CD%\DEMONS GUI\DEMONS.py"
 

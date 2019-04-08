@@ -321,7 +321,7 @@ background-color: rgb(3, 3, 3);</string>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_9" rowstretch="1,4">
+           <layout class="QGridLayout" name="gridLayout_9" rowstretch="1,1,0">
             <item row="0" column="0">
              <widget class="QPushButton" name="pushButton_Setting">
               <property name="sizePolicy">
@@ -337,7 +337,6 @@ background-color: rgb(3, 3, 3);</string>
                <string notr="true">#pushButton_Setting{
 image:url(:/Pictures/Pictures/Setting.png);
 background: black;
-border: 0px solid rgb(95,107,166);
 }
 
 QPushButton:pressed#pushButton_Setting{
@@ -352,7 +351,7 @@ border-radius: 5px
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="2" column="0">
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -364,6 +363,36 @@ border-radius: 5px
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="pushButton_MagneticField">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Open Settings</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#pushButton_MagneticField{
+image:url(:/Pictures/Pictures/Magnetic Field.png);
+background: black;
+}
+
+QPushButton:pressed#pushButton_MagneticField{
+image:url(:/Pictures/Pictures/Magnetic Field.png);
+background: black;
+border: 2px rgb(131,131,131);
+border-radius: 5px
+}
+</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -794,7 +823,7 @@ color: rgb(168, 168, 168)
              </size>
             </property>
             <property name="toolTip">
-             <string>0 --&gt; 2 nV/fA; 1--&gt;5nV/fA, 2--&gt;10nV/fA, 3--&gt;20nV/fA, ..., 26 --&gt; 1V/uA</string>
+             <string>Lock-In sensitivity</string>
             </property>
             <property name="text">
              <string>default</string>
@@ -972,7 +1001,7 @@ color: rgb(168, 168, 168)
              </size>
             </property>
             <property name="toolTip">
-             <string>0 --&gt; 10 us; 1--&gt;30us, 2--&gt;100us, 3--&gt;300us, ..., 19 --&gt; 30ks</string>
+             <string>Lock-In time constant</string>
             </property>
             <property name="text">
              <string>default</string>
@@ -1148,6 +1177,9 @@ color: rgb(168, 168, 168)
               <width>16777215</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string>Lock-In excitation</string>
             </property>
             <property name="text">
              <string>default</string>
@@ -1325,6 +1357,9 @@ border-radius: 5px
               <height>16777215</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Lock-In frequency</string>
+            </property>
             <property name="text">
              <string>default</string>
             </property>
@@ -1500,6 +1535,9 @@ border-radius: 5px
               <width>16777215</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string>Any Gain in the circuit not listed</string>
             </property>
             <property name="text">
              <string>default</string>
@@ -1789,7 +1827,7 @@ color: rgb(168, 168, 168)
              </size>
             </property>
             <property name="toolTip">
-             <string>0 --&gt; 2 nV/fA; 1--&gt;5nV/fA, 2--&gt;10nV/fA, 3--&gt;20nV/fA, ..., 26 --&gt; 1V/uA</string>
+             <string>Lock-In sensitivity</string>
             </property>
             <property name="text">
              <string>default</string>
@@ -1961,7 +1999,7 @@ color: rgb(168, 168, 168)
              </size>
             </property>
             <property name="toolTip">
-             <string>0 --&gt; 10 us; 1--&gt;30us, 2--&gt;100us, 3--&gt;300us, ..., 19 --&gt; 30ks</string>
+             <string>Lock-In time constant</string>
             </property>
             <property name="text">
              <string>default</string>
@@ -2133,6 +2171,9 @@ border-radius: 5px
               <height>16777215</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Lock-In frequency</string>
+            </property>
             <property name="text">
              <string>default</string>
             </property>
@@ -2303,6 +2344,9 @@ border-radius: 5px
               <height>16777215</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Any Gain in the circuit not listed</string>
+            </property>
             <property name="text">
              <string>default</string>
             </property>
@@ -2422,6 +2466,9 @@ color: rgb(168, 168, 168)
               <width>16777215</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string>Sweep Start Voltage</string>
             </property>
             <property name="text">
              <string>default</string>

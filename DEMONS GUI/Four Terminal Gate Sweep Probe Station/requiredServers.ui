@@ -14,8 +14,8 @@
    <string>Server List</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/newPrefix/Pictures/DemonLogo.png</normaloff>:/newPrefix/Pictures/DemonLogo.png</iconset>
+   <iconset resource="../Resources/DEMONSResources.qrc">
+    <normaloff>:/Pictures/Pictures/DemonLogo.png</normaloff>:/Pictures/Pictures/DemonLogo.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background: black</string>

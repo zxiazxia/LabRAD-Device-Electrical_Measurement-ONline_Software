@@ -39,6 +39,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'SIM900'   : False,
         'GPIBDeviceManager'   : False,
         'GPIBServer'   : False,
+        'AMI430'   : False,
+        'IPS120'   : False,
         }
         
         self.pushButtonDictionary = {
@@ -51,6 +53,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'SIM900'   : self.pushButton_SIM900,
         'GPIBDeviceManager'   : self.pushButton_GPIBDeviceManager,
         'GPIBServer'   : self.pushButton_GPIBServer,
+        'AMI430'   : self.pushButton_AMI430,
+        'IPS120'   : self.pushButton_IPS120,
         }
 
         self.labelDictionary = {
@@ -63,6 +67,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'SIM900'   : self.label_SIM900,
         'GPIBDeviceManager'   : self.label_GPIBDeviceManager,
         'GPIBServer'   : self.label_GPIBServer,
+        'AMI430'   : self.label_AMI430,
+        'IPS120'   : self.label_IPS120,
         }
         
         #Data vault session info
@@ -72,13 +78,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         
         #Saving images of all data taken info
         self.lineEdit_SessionFolder.setReadOnly(True)
-        home = os.path.expanduser("~")
-        self.SessionFolder = home + '\\Data Sets\\DEMONSData\\' + str(datetime.date.today())
+        self.SessionFolder = ''
         self.lineEdit_SessionFolder.setText(self.SessionFolder)
-        
-        folderExists = os.path.exists(self.SessionFolder)
-        if not folderExists:
-            os.makedirs(self.SessionFolder)
         
         self.pushButton_ConnectAll.clicked.connect(self.connectAllServers)
         self.pushButton_DisconnectAll.clicked.connect(self.disconnectAllServers)
@@ -92,6 +93,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         self.pushButton_SIM900.clicked.connect(lambda: self.connectServer('SIM900'))
         self.pushButton_GPIBDeviceManager.clicked.connect(lambda: self.connectServer('GPIBDeviceManager'))
         self.pushButton_GPIBServer.clicked.connect(lambda: self.connectServer('GPIBServer'))
+        self.pushButton_AMI430.clicked.connect(lambda: self.connectServer('AMI430'))
+        self.pushButton_IPS120.clicked.connect(lambda: self.connectServer('IPS120'))
 
         self.key_list = []
         
@@ -120,8 +123,20 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         self.DVFolder = r'\.dataVault'
                         self.lineEdit_DataVaultFolder.setText(self.DVFolder)
                         self.newDVFolder.emit([])#Emit DataVault Default
-                        self.newSessionFolder.emit(self.SessionFolder)
                         connection_flag = True
+
+                        reg = self.LabradDictionary['cxn'].registry #Set Registry
+                        yield reg.cd(['Servers', 'Data Vault', 'Repository']) #Go into Repository
+                        settinglist = yield reg.dir() # read the default settings
+                        self.osDVFolder = yield reg.get(settinglist[1][-1]) #Get the path from default settings
+                        self.osDVFolder = self.osDVFolder.replace('/', '\\') #Transform into os format
+                        self.SessionFolder = self.osDVFolder + '\\Image'
+                        self.lineEdit_SessionFolder.setText(self.SessionFolder)
+                        self.newSessionFolder.emit(self.SessionFolder)
+
+                        folderExists = os.path.exists(self.SessionFolder)
+                        if not folderExists:
+                            os.makedirs(self.SessionFolder)
                     except:
                         connection_flag = False
                 elif servername == 'ser_server':
@@ -177,8 +192,20 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         connection_flag = True
                     except Exception as inst:
                         connection_flag = False
-                        print inst
-
+                elif servername == 'AMI430':
+                    try:
+                        ami430 = yield self.LabradDictionary['cxn'].ami_430
+                        self.LabradDictionary[servername] = ami430
+                        connection_flag = True
+                    except:
+                        connection_flag = False
+                elif servername == 'IPS120':
+                    try:
+                        ips = yield self.LabradDictionary['cxn'].ips120_power_supply
+                        self.LabradDictionary[servername] = ips
+                        connection_flag = True
+                    except:
+                        connection_flag = False
 
                 if connection_flag:
                     self.cxnsignal.emit(servername, self.LabradDictionary[servername])
@@ -243,20 +270,27 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         try:
             yield datavault.cd(directory)
             directory = directory[1:]
-            DVFolder  = ''
+            DVFolder, osDVFolder = '', ''
             DVList = []
             for i in directory:
                 DVList.append(i)
                 DVFolder = DVFolder + '\\' + i
+                osDVFolder = osDVFolder +'\\' + i + '.dir'
             self.DVFolder = r'\.datavault' + DVFolder
+            self.SessionFolder = self.osDVFolder + '\\' + osDVFolder + '\\Image'
             self.lineEdit_DataVaultFolder.setText(self.DVFolder)
+            self.lineEdit_SessionFolder.setText(self.SessionFolder)
             self.newDVFolder.emit(DVList)
+            self.newSessionFolder.emit(self.SessionFolder)
+
+            folderExists = os.path.exists(self.SessionFolder)
+            if not folderExists:
+                os.makedirs(self.SessionFolder)
         except Exception as inst:
-            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno                    
-              
+            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+
     def chooseSessionFolder(self):
-        home = os.path.expanduser("~")
-        folder = str(QtGui.QFileDialog.getExistingDirectory(self, directory = home + '\\Data Sets\\DEMONSData'))
+        folder = str(QtGui.QFileDialog.getExistingDirectory(self, self.SessionFolder))
         if folder:
             self.SessionFolder = folder
             self.lineEdit_SessionFolder.setText(self.SessionFolder)
