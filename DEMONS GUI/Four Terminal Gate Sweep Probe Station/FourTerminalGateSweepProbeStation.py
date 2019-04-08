@@ -267,9 +267,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
                 Data = np.append(Data, [Data_Line], axis = 0)
                 XData, VoltageData, CurrentData, ResistanceData, ConductanceData = Data[:,1], Data[:,2], Data[:,3], Data[:,4], Data[:,5]
                 ClearPlots(self.Plotlist)
-                Plot1DData(XData, VoltageData, self.Plotlist['VoltagePlot'])
-                Plot1DData(XData, CurrentData, self.Plotlist['CurrentPlot'])
-                Plot1DData(XData, ResistanceData, self.Plotlist['ResistancePlot'])
+                Plot1DData(XData, VoltageData, self.Plotlist['VoltagePlot']['PlotObject'])
+                Plot1DData(XData, CurrentData, self.Plotlist['CurrentPlot']['PlotObject'])
+                Plot1DData(XData, ResistanceData, self.Plotlist['ResistancePlot']['PlotObject'])
                 if GateIndex == NumberOfSteps - 1:
                     yield self.FinishSweep(GateVoltageSet[GateIndex])
 
