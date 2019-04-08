@@ -117,6 +117,42 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             if not isinstance(self.Parameter[key], str):
                 UpdateLineEdit_Bound(self.Parameter, key, self.lineEdit)
 
+
+        self.Plotlist = {}
+        self.Plotlist['VoltagePlot'] = {
+            'PlotObject': pg.PlotWidget(parent = None),
+            'PlotData': [[], []],
+            'Layout': self.Layout_FourTerminalPlot1,
+            'Title': 'Voltage',
+            'XAxisName': 'Gate Voltage',
+            'XUnit':"V",
+            'YAxisName': 'Voltage',
+            'YUnit': "V",
+        }
+
+        self.Plotlist['CurrentPlot'] = {
+            'PlotObject': pg.PlotWidget(parent = None),
+            'PlotData': [[], []],
+            'Layout': self.Layout_FourTerminalPlot2,
+            'Title': 'Current',
+            'XAxisName': 'Gate Voltage',
+            'XUnit':"V",
+            'YAxisName': 'Current',
+            'YUnit': "A",
+        }
+
+        self.Plotlist['ResistancePlot'] = {
+            'PlotObject': pg.PlotWidget(parent = None),
+            'PlotData': [[], []],
+            'Layout': self.Layout_FourTerminalPlot3,
+            'Title': 'Resistance',
+            'XAxisName': 'Gate Voltage',
+            'XUnit':"V",
+            'YAxisName': 'Resistance',
+            'YUnit': u"\u03A9", #Capital Ohm 
+        }
+
+
         self.DetermineEnableConditions()
 
         self.lineEdit_Device_Name.editingFinished.connect(lambda: UpdateLineEdit_String(self.Parameter, 'DeviceName', self.lineEdit))
@@ -310,14 +346,8 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency'])
 
     def SetupPlots(self):
-        self.Plotlist = {
-            'VoltagePlot': pg.PlotWidget(parent = None),
-            'CurrentPlot': pg.PlotWidget(parent = None),
-            'ResistancePlot': pg.PlotWidget(parent = None),
-        }
-        Setup1DPlot(self.Plotlist['VoltagePlot'], self.Layout_FourTerminalPlot1, 'Voltage', 'Voltage', "V", 'Gate Voltage', "V")#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
-        Setup1DPlot(self.Plotlist['CurrentPlot'], self.Layout_FourTerminalPlot2, 'Current', 'Current', "A", 'Gate Voltage', "V")#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
-        Setup1DPlot(self.Plotlist['ResistancePlot'], self.Layout_FourTerminalPlot3, 'Resistance', 'Resistance', u"\u03A9", 'Gate Voltage', "V")#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
+        for PlotName in self.Plotlist:
+            Setup1DPlot(self.Plotlist[PlotName]['PlotObject'], self.Plotlist[PlotName]['Layout'], self.Plotlist[PlotName]['Title'], self.Plotlist[PlotName]['YAxisName'], self.Plotlist[PlotName]['YUnit'], self.Plotlist[PlotName]['XAxisName'], self.Plotlist[PlotName]['XUnit'])#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
 
     def setSessionFolder(self, folder):
         self.sessionFolder = folder
