@@ -192,8 +192,6 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'YUnit': u"\u03A9", #Capital Ohm 
         }
 
-        self.DetermineEnableConditions()
-
         self.lineEdit_Device_Name.editingFinished.connect(lambda: UpdateLineEdit_String(self.Parameter, 'DeviceName', self.lineEdit))
 
         self.comboBox_Voltage_LI_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceList, 'Voltage_LI_Device', self.serversList, str(self.DeviceList['Voltage_LI_Device']['ComboBoxServer'].currentText())))
@@ -394,6 +392,8 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
         for key, DevicePropertyList in self.DeviceList.iteritems():
             RefreshIndicator(DevicePropertyList['ServerIndicator'], DevicePropertyList['ServerObject'])
             RefreshIndicator(DevicePropertyList['DeviceIndicator'], DevicePropertyList['DeviceObject'])
+
+        self.MagnetControlWindow.Refreshinterface()
 
     def SetupPlots(self):
         for PlotName in self.Plotlist:

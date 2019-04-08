@@ -120,16 +120,18 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                     try:
                         dv = yield self.LabradDictionary['cxn'].data_vault
                         self.LabradDictionary[servername] = dv
-                        self.DVFolder = r'\.dataVault'
-                        self.lineEdit_DataVaultFolder.setText(self.DVFolder)
-                        self.newDVFolder.emit([])#Emit DataVault Default
-                        connection_flag = True
 
                         reg = self.LabradDictionary['cxn'].registry #Set Registry
                         yield reg.cd(['Servers', 'Data Vault', 'Repository']) #Go into Repository
                         settinglist = yield reg.dir() # read the default settings
                         self.osDVFolder = yield reg.get(settinglist[1][-1]) #Get the path from default settings
                         self.osDVFolder = self.osDVFolder.replace('/', '\\') #Transform into os format
+
+                        self.DVFolder = self.osDVFolder
+                        self.lineEdit_DataVaultFolder.setText(self.DVFolder)
+                        self.newDVFolder.emit([])#Emit DataVault Default
+                        connection_flag = True
+
                         self.SessionFolder = self.osDVFolder + '\\Image'
                         self.lineEdit_SessionFolder.setText(self.SessionFolder)
                         self.newSessionFolder.emit(self.SessionFolder)
@@ -276,7 +278,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                 DVList.append(i)
                 DVFolder = DVFolder + '\\' + i
                 osDVFolder = osDVFolder +'\\' + i + '.dir'
-            self.DVFolder = r'\.datavault' + DVFolder
+            self.DVFolder =  self.osDVFolder + '\\' + DVFolder
             self.SessionFolder = self.osDVFolder + '\\' + osDVFolder + '\\Image'
             self.lineEdit_DataVaultFolder.setText(self.DVFolder)
             self.lineEdit_SessionFolder.setText(self.SessionFolder)

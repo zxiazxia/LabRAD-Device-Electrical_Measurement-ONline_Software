@@ -140,12 +140,28 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
 
         self.SetupPlots()
 
+    def DetermineEnableConditions(self):
+        self.ButtonsCondition={
+            self.pushButton_StartFourTerminalSweep: (not self.parent.DeviceList['Magnet_Device'] == False) and self.parent.DEMONS.Scanning_Flag == False,
+            self.pushButton_AbortFourTerminalSweep: (not self.parent.DeviceList['Magnet_Device'] == False) and self.parent.DEMONS.Scanning_Flag == True,
+            self.comboBox_MagnetControl_SelectServer: self.parent.DEMONS.Scanning_Flag == False,
+            self.comboBox_MagnetControl_SelectDevice: self.parent.DEMONS.Scanning_Flag == False,
+            self.lineEdit_StartField: self.parent.DEMONS.Scanning_Flag == False,
+            self.lineEdit_EndVoltage: self.parent.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Numberofstep: self.parent.DEMONS.Scanning_Flag == False,
+            self.lineEdit_RampSpeed: self.parent.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Delay: self.parent.DEMONS.Scanning_Flag == False,
+        }
+
+    def Refreshinterface(self):
+        self.DetermineEnableConditions()
+        RefreshButtonStatus(self.ButtonsCondition)
+
     def SetupPlots(self):
         for PlotName in self.Plotlist:
             Setup2DPlot(self.Plotlist[PlotName]['PlotObject'], self.Plotlist[PlotName]['ImageViewObject'], self.Plotlist[PlotName]['Layout'], self.Plotlist[PlotName]['YAxisName'], self.Plotlist[PlotName]['YUnit'], self.Plotlist[PlotName]['XAxisName'], self.Plotlist[PlotName]['XUnit'])
             Setup1DPlot(self.Plotlist[PlotName]['YZPlot']['PlotObject'], self.Plotlist[PlotName]['YZPlot']['Layout'], self.Plotlist[PlotName]['YZPlot']['Title'], self.Plotlist[PlotName]['YZPlot']['YAxisName'], self.Plotlist[PlotName]['YZPlot']['YUnit'], self.Plotlist[PlotName]['YZPlot']['XAxisName'], self.Plotlist[PlotName]['YZPlot']['XUnit'])#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
             Setup1DPlot(self.Plotlist[PlotName]['XZPlot']['PlotObject'], self.Plotlist[PlotName]['XZPlot']['Layout'], self.Plotlist[PlotName]['XZPlot']['Title'], self.Plotlist[PlotName]['XZPlot']['YAxisName'], self.Plotlist[PlotName]['XZPlot']['YUnit'], self.Plotlist[PlotName]['XZPlot']['XAxisName'], self.Plotlist[PlotName]['XZPlot']['XUnit'])#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
-
 
     def moveDefault(self):
         self.move(200,0)

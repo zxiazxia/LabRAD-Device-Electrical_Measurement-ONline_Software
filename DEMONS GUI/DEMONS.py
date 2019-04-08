@@ -60,7 +60,7 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
         
         
         #Open by default the LabRAD Connect Module and Device Select
-        openWindow(self.MeasurementWindows['LabRAD'])        
+        openWindow(self.MeasurementWindows['LabRAD'])
         
     def setupAdditionalUi(self):
         """Some UI elements would not set properly from Qt Designer. These initializations are done here."""

@@ -672,14 +672,13 @@ def Buffer_Ramp_Debug(Device, Output, Input, Min, Max, NoS, Delay):
 
 #Magnetic Field control
 @inlineCallbacks
-def RampMagneticField(DeviceObject, ServerName, TargetField, RampRate):
+def RampMagneticField(DeviceObject, ServerName, TargetField, RampRate, Reactor):
     try:
         if ServerName == 'IPS120':
             yield DeviceObject.set_control(3)
             yield DeviceObject.set_fieldsweep_rate(RampRate)#Set Ramp Rate
             yield DeviceObject.set_control(2)
 
-            t0 = time.time() #Keep track of starting time for setting the field
             yield DeviceObject.set_control(3)
             yield DeviceObject.set_targetfield(TargetField) #Set the setpoin
             yield DeviceObject.set_control(2)
@@ -697,17 +696,16 @@ def RampMagneticField(DeviceObject, ServerName, TargetField, RampRate):
                 #if within 10 uT of the desired field, break out of the loop
                 if float(current_field[1:]) <= TargetField + 0.00001 and float(current_field[1:]) >= TargetField -0.00001:#if reach target field already
                     break
+                else:
                 #if after one second we still haven't reached the desired field, then reset the field setpoint and activity
-                if time.time() - t0 > 1:
                     yield DeviceObject.set_control(3)
                     yield DeviceObject.set_targetfield(TargetField)
                     yield DeviceObject.set_control(2)
-
                     yield DeviceObject.set_control(3)
                     yield DeviceObject.set_activity(1)
                     yield DeviceObject.set_control(2)
-                    t0 = time.time()
                     print 'restarting loop'
+                    SleepAsync(Reactor, 2)
 
         if ServerName == 'AMI430':
             print 'Setting field to ' + str(TargetField)
