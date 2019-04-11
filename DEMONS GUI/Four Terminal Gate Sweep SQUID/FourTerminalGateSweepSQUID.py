@@ -118,10 +118,10 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'Setting_WaitTime': 2.0,
             'MagnetControl_StartField': -0.3,
             'MagnetControl_EndField': 0.3,
-            'MagnetControl_Numberofstep': 100,
+            'MagnetControl_Numberofstep': 10,
             'MagnetControl_Numberofstep_Status': "Numberofsteps",
             'MagnetControl_RampSpeed': 1.0,
-            'MagnetControl_Delay': 0.02,
+            'MagnetControl_Delay': 0.5,
             }
 
         self.lineEdit = {
@@ -158,7 +158,6 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
 
 
         self.Plotlist = {}
-
         self.Plotlist['VoltagePlot'] = {
             'PlotObject': pg.PlotWidget(parent = None),
             'PlotData': [[], []],
@@ -169,7 +168,6 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'YAxisName': 'Voltage',
             'YUnit': "V",
         }
-
         self.Plotlist['CurrentPlot'] = {
             'PlotObject': pg.PlotWidget(parent = None),
             'PlotData': [[], []],
@@ -180,7 +178,6 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'YAxisName': 'Current',
             'YUnit': "A",
         }
-
         self.Plotlist['ResistancePlot'] = {
             'PlotObject': pg.PlotWidget(parent = None),
             'PlotData': [[], []],
@@ -245,7 +242,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
     def DetermineEnableConditions(self):
         self.ButtonsCondition={
             self.lineEdit_Device_Name: True,
-            self.pushButton_StartFourTerminalSweep: (not self.DeviceList['DataAquisition_Device'] == False) and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_StartFourTerminalSweep: self.DeviceList['DataAquisition_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
             self.pushButton_AbortFourTerminalSweep: False,
             self.comboBox_Voltage_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_Voltage_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,

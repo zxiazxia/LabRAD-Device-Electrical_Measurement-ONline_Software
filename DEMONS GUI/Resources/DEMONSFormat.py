@@ -295,13 +295,18 @@ def RefreshPlot1D(PlotList):
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
+
+
 '''
 Input: Data for Xaxis, Yaxis and plot object
 '''
 def Plot1DData(xaxis, yaxis, plot, color = 0.5):
     plot.plot(x = xaxis, y = yaxis, pen = color)
 
-def Setup2DPlot(PlotItem, ImageView, Layout, yaxis, yunit, xaxis, xunit):
+
+def Setup2DPlot(ImageView, Layout, yaxis, yunit, xaxis, xunit):
+    PlotItem = pg.PlotItem()
+    ImageView = CustomImageView(view = PlotItem)
     PlotItem.setLabel('left', yaxis, units = yunit)
     PlotItem.setLabel('bottom', xaxis, units = xunit)
     PlotItem.showAxis('top', show = True)
@@ -310,13 +315,67 @@ def Setup2DPlot(PlotItem, ImageView, Layout, yaxis, yunit, xaxis, xunit):
     PlotItem.invertY(False)
     PlotItem.setXRange(-1.0, 1.0, 0)
     PlotItem.setYRange(-1.0, 1.0, 0)
-    ImageView.setGeometry(QtCore.QRect(0, 0, 400, 200))
+    ImageView.setGeometry(QtCore.QRect(0, 0, 10, 10))
     ImageView.ui.menuBtn.hide()
     ImageView.ui.histogram.item.gradient.loadPreset('bipolar')
     ImageView.ui.roiBtn.hide()
     ImageView.ui.menuBtn.hide()
     Layout.addWidget(ImageView)
+    return ImageView
 
+def Connect2DPlots(PlotName, PlotList):
+    PlotList[PlotName]['PlotObject'] = Setup2DPlot(PlotList[PlotName]['PlotObject'], PlotList[PlotName]['Layout'], PlotList[PlotName]['YAxisName'], PlotList[PlotName]['YUnit'], PlotList[PlotName]['XAxisName'], PlotList[PlotName]['XUnit'])
+    Setup1DPlot(PlotList[PlotName]['YZPlot']['PlotObject'], PlotList[PlotName]['YZPlot']['Layout'], PlotList[PlotName]['YZPlot']['Title'], PlotList[PlotName]['YZPlot']['YAxisName'], PlotList[PlotName]['YZPlot']['YUnit'], PlotList[PlotName]['YZPlot']['XAxisName'], PlotList[PlotName]['YZPlot']['XUnit'])#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
+    Setup1DPlot(PlotList[PlotName]['XZPlot']['PlotObject'], PlotList[PlotName]['XZPlot']['Layout'], PlotList[PlotName]['XZPlot']['Title'], PlotList[PlotName]['XZPlot']['YAxisName'], PlotList[PlotName]['XZPlot']['YUnit'], PlotList[PlotName]['XZPlot']['XAxisName'], PlotList[PlotName]['XZPlot']['XUnit'])#Plot, Layout , Title , yaxis , yunit, xaxis ,xunit
+    PlotList[PlotName]['PlotObject'].addItem(PlotList[PlotName]['YZPlot']['LineCut'], ignoreBounds = True)
+    PlotList[PlotName]['YZPlot']['LineCut'].sigPositionChangeFinished.connect(lambda: UpdateLineCutMoving(PlotList[PlotName], 'YZPlot'))
+    PlotList[PlotName]['YZPlot']['LineEdit'].editingFinished.connect(lambda: UpdateLineCutLineEdit(PlotList[PlotName], 'YZPlot'))
+    PlotList[PlotName]['PlotObject'].addItem(PlotList[PlotName]['XZPlot']['LineCut'], ignoreBounds = True)
+    PlotList[PlotName]['XZPlot']['LineCut'].sigPositionChangeFinished.connect(lambda: UpdateLineCutMoving(PlotList[PlotName], 'XZPlot'))
+    PlotList[PlotName]['XZPlot']['LineEdit'].editingFinished.connect(lambda: UpdateLineCutLineEdit(PlotList[PlotName], 'XZPlot'))
+
+
+def Plot2DData(ImageView, Data, Minx, Miny, Scalex, Scaley, autoRange = False, autoLevels = False):
+    ImageView.setImage(Data, autoRange = autoRange , autoLevels = autoLevels, pos = [Minx, Miny], scale = [Scalex, Scaley])
+
+def UpdateLineCutMoving(PlotDictionary, LineCutName):
+    PlotDictionary[LineCutName]['Value'] = PlotDictionary[LineCutName]['LineCut'].value()
+    PlotDictionary[LineCutName]['LineEdit'].setText(formatNum(PlotDictionary[LineCutName]['Value'], 6))
+    RefreshLineCutPlot(PlotDictionary, LineCutName, PlotDictionary[LineCutName]['PlotData'])
+
+def UpdateLineCutLineEdit(PlotDictionary, LineCutName):
+    dummystr=str(PlotDictionary[LineCutName]['LineEdit'].text())   #read the text
+    dummyval=readNum(dummystr, None , False)
+    if isinstance(dummyval, float):
+        PlotDictionary[LineCutName]['Value'] = float(dummyval)
+    PlotDictionary[LineCutName]['LineEdit'].setText(formatNum(PlotDictionary[LineCutName]['Value'], 6))
+    RefreshLineCutPlot(PlotDictionary, LineCutName, PlotDictionary[LineCutName]['PlotData'])
+
+def RefreshLineCutPlot(PlotDictionary, LineCutPlotName, PlotData):
+    try:
+        Value = PlotDictionary[LineCutPlotName]['Value']
+        LineCutPlot = PlotDictionary[LineCutPlotName]['PlotObject']
+        if LineCutPlotName == 'YZPlot':
+            Min, Scale = PlotDictionary['PlotObject'].Position[0], PlotDictionary['PlotObject'].ScaleSize[0]
+            XDataMin, XDataScale, NumberofData = PlotDictionary['PlotObject'].Position[1], PlotDictionary['PlotObject'].ScaleSize[1], PlotDictionary['PlotObject'].ImageData.shape[1]
+            Index = int((Value - Min) / Scale + 0.5)
+            PlotDictionary[LineCutPlotName]['PlotData'][1] = PlotDictionary['PlotData'][:, Index]
+        else:
+            Min, Scale = PlotDictionary['PlotObject'].Position[1], PlotDictionary['PlotObject'].ScaleSize[1]
+            XDataMin, XDataScale, NumberofData = PlotDictionary['PlotObject'].Position[0], PlotDictionary['PlotObject'].ScaleSize[0], PlotDictionary['PlotObject'].ImageData.shape[0]
+            Index = int((Value - Min) / Scale + 0.5)
+            PlotDictionary[LineCutPlotName]['PlotData'][1] = PlotDictionary['PlotData'][Index]
+     
+        PlotDictionary[LineCutPlotName]['PlotData'][0] = np.linspace(XDataMin, XDataMin + NumberofData * XDataScale - XDataScale, NumberofData)
+        LineCutPlot.clear()
+        if LineCutPlotName == 'YZPlot':
+            Plot1DData(PlotDictionary[LineCutPlotName]['PlotData'][1], PlotDictionary[LineCutPlotName]['PlotData'][0], LineCutPlot)
+        else:
+            Plot1DData(PlotDictionary[LineCutPlotName]['PlotData'][0], PlotDictionary[LineCutPlotName]['PlotData'][1], LineCutPlot)
+     
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+     
 def Division(voltage, current, multiplier = 1):
     if current != 0.0:
         resistance = float(voltage / current) * multiplier
@@ -768,3 +827,47 @@ def SleepAsync(reactor, secs):
     d = Deferred()
     reactor.callLater(secs, d.callback, 'Sleeping')
     return d
+
+
+#ImageView for Plotting Purpose
+class CustomImageView(pg.ImageView):
+    '''
+    Extension of pyqtgraph's ImageView.
+    1. histogram ignore 0.0, Quick and Dirt fix of setting histogram to ignore 0.0
+    2. Store ImageData, Position and ScaleSize
+    3. AutoSetLevels set histogram regardless of 0.0
+    '''
+    def __init__(self, parent=None, name="ImageView", view=None, imageItem=None, * args):
+        pg.ImageView.__init__(self, parent, name, view, imageItem, *args)
+
+
+    def setImage(self, img, autoRange = False, autoLevels = False, levels = None, axes = None, xvals = None, pos = None, scale = None, transform = None, autoHistogramRange = False):
+        try:
+            if autoRange:
+                self.AutoSetRange(img, pos = [pos[0] - scale[0] / 2, pos[1] - scale[1] / 2], scale = scale)
+            self.ImageData = img
+            self.Position = pos
+            self.ScaleSize = scale
+            r0 = np.where(np.all(img == 0.0, axis = 0))[0]
+            c0 = np.where(np.all(img == 0.0, axis = 1))[0]
+            tmp = np.delete(np.delete(img, r0, axis = 1), c0, axis = 0)
+            if np.all(tmp == 0.0) or np.size(tmp) == 0: #Clear if nothing is being plotted 
+                pg.ImageView.clear(self)
+            else:
+                pg.ImageView.setImage(self, tmp, False, False, levels, axes, xvals, [pos[0] - scale[0] / 2, pos[1] - scale[1] / 2], scale, transform, False)
+            if autoLevels:
+                self.AutoSetLevels()
+
+        except Exception as inst:
+            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+    
+    def AutoSetLevels(self):
+        ZeroRemoved = self.ImageData[self.ImageData != 0.0]
+        Min, Max = np.amin(ZeroRemoved), np.amax(ZeroRemoved)
+        if Min == Max:
+            Min = Max - 10**-15
+        pg.ImageView.setLevels(self, Min, Max)
+
+    def AutoSetRange(self, data, pos, scale): #
+        pg.ImageView.setImage(self, data, autoLevels = False, pos = pos, scale = scale)
+
