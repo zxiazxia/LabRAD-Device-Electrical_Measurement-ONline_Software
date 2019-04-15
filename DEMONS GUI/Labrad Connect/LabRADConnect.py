@@ -29,7 +29,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         
         #Initialize variables for all possible server connections in a dictionary
         #Makes multiple connections for browsing data vault in every desired context
-        self.LabradDictionary = {
+        self.LabradDictionary = {}
+        self.LabradDictionary['Local'] = {
         'cxn'       : False,
         'dv'        : False,
         'ser_server': False,
@@ -42,8 +43,14 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'AMI430'   : False,
         'IPS120'   : False,
         }
+        self.LabradDictionary['4KMonitor'] = {
+        'cxn': False,
+        'IPS120': False,
+        'dv': False,
+        }
         
-        self.pushButtonDictionary = {
+        self.pushButtonDictionary = {}
+        self.pushButtonDictionary['Local'] = {
         'cxn'       : self.pushButton_LabRAD,
         'dv'        : self.pushButton_DataVault,
         'ser_server': self.pushButton_SerialServer,
@@ -56,8 +63,14 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'AMI430'   : self.pushButton_AMI430,
         'IPS120'   : self.pushButton_IPS120,
         }
+        self.pushButtonDictionary['4KMonitor'] = {
+        'cxn': self.pushButton_4KMonitor_LabRAD,
+        'IPS120': self.pushButton_4KMonitor_IPS120,
+        'dv': self.pushButton_4KMonitor_DataVault,
+        }
 
-        self.labelDictionary = {
+        self.labelDictionary = {}
+        self.labelDictionary['Local'] = {
         'cxn'       : self.label_Labrad,
         'dv'        : self.label_DataVault,
         'ser_server': self.label_SerialServer,
@@ -70,7 +83,12 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         'AMI430'   : self.label_AMI430,
         'IPS120'   : self.label_IPS120,
         }
-        
+        self.labelDictionary['4KMonitor'] = {
+        'cxn': self.label_4KMonitor_Labrad,
+        'IPS120': self.label_4KMonitor_IPS120,
+        'dv': self.label_4KMonitor_DataVault,
+        }
+
         #Data vault session info
         self.lineEdit_DataVaultFolder.setReadOnly(True)
         self.DVFolder = ''
@@ -81,22 +99,27 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         self.SessionFolder = ''
         self.lineEdit_SessionFolder.setText(self.SessionFolder)
         
-        self.pushButton_ConnectAll.clicked.connect(self.connectAllServers)
-        self.pushButton_DisconnectAll.clicked.connect(self.disconnectAllServers)
+        self.pushButton_ConnectAll.clicked.connect(lambda: self.connectAllServers('Local'))
+        self.pushButton_DisconnectAll.clicked.connect(lambda: self.disconnectAllServers('Local'))
 
-        self.pushButton_LabRAD.clicked.connect(lambda: self.connectServer('cxn'))
-        self.pushButton_DataVault.clicked.connect(lambda: self.connectServer('dv'))
-        self.pushButton_DACADC.clicked.connect(lambda: self.connectServer('DACADC'))
-        self.pushButton_SerialServer.clicked.connect(lambda: self.connectServer('ser_server'))
-        self.pushButton_SR830.clicked.connect(lambda: self.connectServer('SR830'))
-        self.pushButton_SR860.clicked.connect(lambda: self.connectServer('SR860'))
-        self.pushButton_SIM900.clicked.connect(lambda: self.connectServer('SIM900'))
-        self.pushButton_GPIBDeviceManager.clicked.connect(lambda: self.connectServer('GPIBDeviceManager'))
-        self.pushButton_GPIBServer.clicked.connect(lambda: self.connectServer('GPIBServer'))
-        self.pushButton_AMI430.clicked.connect(lambda: self.connectServer('AMI430'))
-        self.pushButton_IPS120.clicked.connect(lambda: self.connectServer('IPS120'))
+        self.pushButton_LabRAD.clicked.connect(lambda: self.connectServer('Local', 'cxn'))
+        self.pushButton_DataVault.clicked.connect(lambda: self.connectServer('Local', 'dv'))
+        self.pushButton_DACADC.clicked.connect(lambda: self.connectServer('Local', 'DACADC'))
+        self.pushButton_SerialServer.clicked.connect(lambda: self.connectServer('Local', 'ser_server'))
+        self.pushButton_SR830.clicked.connect(lambda: self.connectServer('Local', 'SR830'))
+        self.pushButton_SR860.clicked.connect(lambda: self.connectServer('Local', 'SR860'))
+        self.pushButton_SIM900.clicked.connect(lambda: self.connectServer('Local', 'SIM900'))
+        self.pushButton_GPIBDeviceManager.clicked.connect(lambda: self.connectServer('Local', 'GPIBDeviceManager'))
+        self.pushButton_GPIBServer.clicked.connect(lambda: self.connectServer('Local', 'GPIBServer'))
+        self.pushButton_AMI430.clicked.connect(lambda: self.connectServer('Local', 'AMI430'))
+        self.pushButton_IPS120.clicked.connect(lambda: self.connectServer('Local', 'IPS120'))
 
-        self.key_list = []
+        self.pushButton_4KMonitor_ConnectAll.clicked.connect(lambda: self.connectAllServers('4KMonitor'))
+        self.pushButton_4KMonitor_DisconnectAll.clicked.connect(lambda: self.disconnectAllServers('4KMonitor'))
+
+        self.pushButton_4KMonitor_LabRAD.clicked.connect(lambda: self.connectServer('4KMonitor', 'cxn'))
+        self.pushButton_4KMonitor_IPS120.clicked.connect(lambda: self.connectServer('4KMonitor', 'IPS120'))
+        self.pushButton_4KMonitor_DataVault.clicked.connect(lambda: self.connectServer('4KMonitor', 'dv'))
         
         self.pushButton_DataVaultFolder.clicked.connect(self.chooseDVFolder)
         self.pushButton_SessionFolder.clicked.connect(self.chooseSessionFolder)
@@ -105,83 +128,89 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         pass
 
     @inlineCallbacks
-    def connectServer(self, servername, disconnect = True): #Click to toggle connection to a server
+    def connectServer(self, LabradPosition, servername, disconnect = True): #Click to toggle connection to a server
         try:
-            if self.LabradDictionary[servername] is False:
+            if self.LabradDictionary[LabradPosition][servername] is False:
                 if servername == 'cxn':
                     from labrad.wrappers import connectAsync
                     try:
-                        cxn = yield connectAsync(host = '127.0.0.1', password = 'pass')
-                        self.LabradDictionary[servername] = cxn
+                        if LabradPosition == 'Local':
+                            cxn = yield connectAsync(host = '127.0.0.1', password = 'pass')
+                        elif LabradPosition == '4KMonitor':
+                            cxn = yield connectAsync(host = '4KMonitor', password = 'pass')
+                        self.LabradDictionary[LabradPosition][servername] = cxn
                         connection_flag = True
-                    except:
+                    except Exception as inst:
                         connection_flag = False
+                        print inst
                 elif servername == 'dv':
                     try:
-                        dv = yield self.LabradDictionary['cxn'].data_vault
-                        self.LabradDictionary[servername] = dv
+                        print 'dv'
+                        dv = yield self.LabradDictionary[LabradPosition]['cxn'].data_vault
+                        self.LabradDictionary[LabradPosition][servername] = dv
 
-                        reg = self.LabradDictionary['cxn'].registry #Set Registry
-                        yield reg.cd(['Servers', 'Data Vault', 'Repository']) #Go into Repository
-                        settinglist = yield reg.dir() # read the default settings
-                        self.osDVFolder = yield reg.get(settinglist[1][-1]) #Get the path from default settings
-                        self.osDVFolder = self.osDVFolder.replace('/', '\\') #Transform into os format
+                        if LabradPosition == 'Local':
+                            reg = self.LabradDictionary[LabradPosition]['cxn'].registry #Set Registry
+                            yield reg.cd(['Servers', 'Data Vault', 'Repository']) #Go into Repository
+                            settinglist = yield reg.dir() # read the default settings
+                            self.osDVFolder = yield reg.get(settinglist[1][-1]) #Get the path from default settings
+                            self.osDVFolder = self.osDVFolder.replace('/', '\\') #Transform into os format
 
-                        self.DVFolder = self.osDVFolder
-                        self.lineEdit_DataVaultFolder.setText(self.DVFolder)
-                        self.newDVFolder.emit([])#Emit DataVault Default
-                        connection_flag = True
+                            self.DVFolder = self.osDVFolder
+                            self.lineEdit_DataVaultFolder.setText(self.DVFolder)
+                            self.newDVFolder.emit([])#Emit DataVault Default
+                            connection_flag = True
 
-                        self.SessionFolder = self.osDVFolder + '\\Image'
-                        self.lineEdit_SessionFolder.setText(self.SessionFolder)
-                        self.newSessionFolder.emit(self.SessionFolder)
+                            self.SessionFolder = self.osDVFolder + '\\Image'
+                            self.lineEdit_SessionFolder.setText(self.SessionFolder)
+                            self.newSessionFolder.emit(self.SessionFolder)
 
-                        folderExists = os.path.exists(self.SessionFolder)
-                        if not folderExists:
-                            os.makedirs(self.SessionFolder)
+                            folderExists = os.path.exists(self.SessionFolder)
+                            if not folderExists:
+                                os.makedirs(self.SessionFolder)
                     except:
                         connection_flag = False
                 elif servername == 'ser_server':
                     try:
                         computerName = platform.node() # get computer name
                         serialServerName = computerName.lower().replace(' ','_').replace('-','_') + '_serial_server'
-                        ser_server = yield self.LabradDictionary['cxn'].servers[serialServerName]
-                        self.LabradDictionary[servername] = ser_server
+                        ser_server = yield self.LabradDictionary[LabradPosition]['cxn'].servers[serialServerName]
+                        self.LabradDictionary[LabradPosition][servername] = ser_server
                         connection_flag = True
                     except:
                         connection_flag = False
                 elif servername == 'DACADC':
                     try:
-                        dac = yield self.LabradDictionary['cxn'].dac_adc
-                        self.LabradDictionary[servername] = dac
+                        dac = yield self.LabradDictionary[LabradPosition]['cxn'].dac_adc
+                        self.LabradDictionary[LabradPosition][servername] = dac
                         connection_flag = True
                     except:
                         connection_flag = False
                 elif servername == 'SR830':
                     try:
-                        sr830 = yield self.LabradDictionary['cxn'].sr830
-                        self.LabradDictionary[servername] = sr830
+                        sr830 = yield self.LabradDictionary[LabradPosition]['cxn'].sr830
+                        self.LabradDictionary[LabradPosition][servername] = sr830
                         connection_flag = True
                     except:
                         connection_flag = False
                 elif servername == 'SR860':
                     try:
-                        sr860 = yield self.LabradDictionary['cxn'].sr860
-                        self.LabradDictionary[servername] = sr860
+                        sr860 = yield self.LabradDictionary[LabradPosition]['cxn'].sr860
+                        self.LabradDictionary[LabradPosition][servername] = sr860
                         connection_flag = True
                     except:
                         connection_flag = False
                 elif servername == 'SIM900':
                     try:
-                        sim900 = yield self.LabradDictionary['cxn'].sim900
-                        self.LabradDictionary[servername] = sim900
+                        sim900 = yield self.LabradDictionary[LabradPosition]['cxn'].sim900
+                        self.LabradDictionary[LabradPosition][servername] = sim900
                         connection_flag = True
                     except:
                         connection_flag = False
                 elif servername == 'GPIBDeviceManager':
                     try:
-                        gpib_device_manager = yield self.LabradDictionary['cxn'].gpib_device_manager
-                        self.LabradDictionary[servername] = gpib_device_manager
+                        gpib_device_manager = yield self.LabradDictionary[LabradPosition]['cxn'].gpib_device_manager
+                        self.LabradDictionary[LabradPosition][servername] = gpib_device_manager
                         connection_flag = True
                     except:
                         connection_flag = False
@@ -189,61 +218,69 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                     try:
                         computerName = platform.node() # get computer name
                         gpibServerName = computerName.lower().replace(' ','_').replace('-','_') + '_gpib_bus'
-                        gpib_server = yield self.LabradDictionary['cxn'].servers[gpibServerName]
-                        self.LabradDictionary[servername] = gpib_server
+                        gpib_server = yield self.LabradDictionary[LabradPosition]['cxn'].servers[gpibServerName]
+                        self.LabradDictionary[LabradPosition][servername] = gpib_server
                         connection_flag = True
                     except Exception as inst:
                         connection_flag = False
                 elif servername == 'AMI430':
                     try:
-                        ami430 = yield self.LabradDictionary['cxn'].ami_430
-                        self.LabradDictionary[servername] = ami430
+                        ami430 = yield self.LabradDictionary[LabradPosition]['cxn'].ami_430
+                        self.LabradDictionary[LabradPosition][servername] = ami430
                         connection_flag = True
                     except:
                         connection_flag = False
                 elif servername == 'IPS120':
                     try:
-                        ips = yield self.LabradDictionary['cxn'].ips120_power_supply
-                        self.LabradDictionary[servername] = ips
+                        ips = yield self.LabradDictionary[LabradPosition]['cxn'].ips120_power_supply
+                        self.LabradDictionary[LabradPosition][servername] = ips
                         connection_flag = True
                     except:
                         connection_flag = False
 
                 if connection_flag:
-                    self.cxnsignal.emit(servername, self.LabradDictionary[servername])
-                    self.labelDictionary[servername].setText('Connected')
-                    self.pushButtonDictionary[servername].setStyleSheet('#' + str(self.pushButtonDictionary[servername].objectName()) + '{background: rgb(0, 170, 0);border-radius: 4px;}')
+                    if LabradPosition == 'Local':
+                        Prefix = ''
+                    else:
+                        Prefix = LabradPosition + ' '
+                    self.cxnsignal.emit(Prefix + servername, self.LabradDictionary[LabradPosition][servername])
+                    self.labelDictionary[LabradPosition][servername].setText('Connected')
+                    self.pushButtonDictionary[LabradPosition][servername].setStyleSheet('#' + str(self.pushButtonDictionary[LabradPosition][servername].objectName()) + '{background: rgb(0, 170, 0);border-radius: 4px;}')
                 else:
-                    self.labelDictionary[servername].setText('Connection Failed.')
-                    self.pushButtonDictionary[servername].setStyleSheet('#' + str(self.pushButtonDictionary[servername].objectName()) + '{background: rgb(161, 0, 0);border-radius: 4px;}')
+                    self.labelDictionary[LabradPosition][servername].setText('Connection Failed.')
+                    self.pushButtonDictionary[LabradPosition][servername].setStyleSheet('#' + str(self.pushButtonDictionary[LabradPosition][servername].objectName()) + '{background: rgb(161, 0, 0);border-radius: 4px;}')
             else:
                 if disconnect:
-                    self.disconnectServer(servername)
+                    self.disconnectServer(LabradPosition, servername)
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
             
-    def disconnectServer(self, servername): 
+    def disconnectServer(self, LabradPosition, servername): 
         try:
-            self.LabradDictionary[servername] = False
-            self.labelDictionary[servername].setText('Disconnected.')
-            self.pushButtonDictionary[servername].setStyleSheet('#' + str(self.pushButtonDictionary[servername].objectName()) + '{background: rgb(161, 0, 0);border-radius: 4px;}')
-            self.discxnsignal.emit(servername)
+            self.LabradDictionary[LabradPosition][servername] = False
+            self.labelDictionary[LabradPosition][servername].setText('Disconnected.')
+            self.pushButtonDictionary[LabradPosition][servername].setStyleSheet('#' + str(self.pushButtonDictionary[LabradPosition][servername].objectName()) + '{background: rgb(161, 0, 0);border-radius: 4px;}')
+            if LabradPosition == 'Local':
+                Prefix = ''
+            else:
+                Prefix = LabradPosition + ' '
+            self.discxnsignal.emit(LabradPosition + servername)
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
     
     @inlineCallbacks
-    def connectAllServers(self, e):
-        yield self.connectServer('cxn', False)
+    def connectAllServers(self, LabradPosition):
+        yield self.connectServer(LabradPosition, 'cxn', False)
         yield self.sleep(1)
-        for name in self.LabradDictionary:
+        for name in self.LabradDictionary[LabradPosition]:
             if name == 'cxn':
                 pass
             else:
-                yield self.connectServer(name, False)
+                yield self.connectServer(LabradPosition, name, False)
             
-    def disconnectAllServers(self, e):
-        for name in self.LabradDictionary:
-            self.disconnectServer(name)
+    def disconnectAllServers(self, LabradPosition):
+        for name in self.LabradDictionary[LabradPosition]:
+            self.disconnectServer(LabradPosition, name)
 
     @inlineCallbacks
     def chooseDVFolder(self, c = None):
@@ -301,11 +338,9 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
     def moveDefault(self):    
         self.move(650, 10)
 
-
-
     def sleep(self,secs):
         """Asynchronous compatible sleep command. Sleeps for given time in seconds, but allows
         other operations to be done elsewhere while paused."""
         d = Deferred()
         self.reactor.callLater(secs,d.callback,'Sleeping')
-        return d        
+        return d

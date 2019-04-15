@@ -49,7 +49,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'SR830': False,
             'SR860': False,
             'AMI430': False,
-            'IPS120': False,
+            '4KMonitor IPS120': False,
         }
 
         self.DeviceList = {}#self.DeviceList['Device Name'][Device Property]
@@ -91,7 +91,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'ComboBoxDevice': self.MagnetControlWindow.comboBox_MagnetControl_SelectDevice,
             'ServerIndicator': self.MagnetControlWindow.pushButton_MagnetControl_ServerIndicator,
             'DeviceIndicator': self.MagnetControlWindow.pushButton_MagnetControl_DeviceIndicator, 
-            'ServerNeeded': ['AMI430', 'IPS120'],
+            'ServerNeeded': ['AMI430', '4KMonitor IPS120'],
         }
 
         self.Parameter = {
@@ -362,15 +362,19 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
 
     def refreshServerIndicator(self):
         try:
-            optional = []#This optional will reconstruct combobox multiple time when you disconnect/connect server individually
-            flag = True
+            optional_Main = ['4KMonitor IPS']#This optional will reconstruct combobox multiple time when you disconnect/connect server individually
+            optional_MagneticExtension = []
+            flag_Main, flag_MagneticExtension = True
             for key in self.serversList:
-                if self.serversList[str(key)] == False and not key in optional:
-                    flag = False
+                if self.serversList[str(key)] == False and not key in optional_Main:
+                    flag_Main = False
+                if self.serversList[str(key)] == False and not key in optional_MagneticExtension:
+                    flag_MagneticExtension = False
 
-            if flag:
+            if flag_Main:
                 setIndicator(self.pushButton_Servers, 'rgb(0, 170, 0)')
-                setIndicator(self.MagnetControlWindow.pushButton_Servers, 'rgb(0, 170, 0)')
+                if flag_MagneticExtension:
+                    setIndicator(self.MagnetControlWindow.pushButton_Servers, 'rgb(0, 170, 0)')
 
                 for key, DevicePropertyList in self.DeviceList.iteritems():#Reconstruct all combobox when all servers are connected
                     ReconstructComboBox(DevicePropertyList['ComboBoxServer'], DevicePropertyList['ServerNeeded'])
