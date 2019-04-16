@@ -142,10 +142,8 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         connection_flag = True
                     except Exception as inst:
                         connection_flag = False
-                        print inst
                 elif servername == 'dv':
                     try:
-                        print 'dv'
                         dv = yield self.LabradDictionary[LabradPosition]['cxn'].data_vault
                         self.LabradDictionary[LabradPosition][servername] = dv
 
@@ -168,8 +166,9 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                             folderExists = os.path.exists(self.SessionFolder)
                             if not folderExists:
                                 os.makedirs(self.SessionFolder)
-                    except:
+                    except Exception as inst:
                         connection_flag = False
+                        print 'dv', inst
                 elif servername == 'ser_server':
                     try:
                         computerName = platform.node() # get computer name

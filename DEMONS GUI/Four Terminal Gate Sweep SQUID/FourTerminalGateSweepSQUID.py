@@ -362,15 +362,18 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
 
     def refreshServerIndicator(self):
         try:
-            optional_Main = ['4KMonitor IPS']#This optional will reconstruct combobox multiple time when you disconnect/connect server individually
+            optional_Main = ['4KMonitor IPS120']#This optional will reconstruct combobox multiple time when you disconnect/connect server individually
             optional_MagneticExtension = []
-            flag_Main, flag_MagneticExtension = True
+            flag_Main, flag_MagneticExtension = True, True
             for key in self.serversList:
                 if self.serversList[str(key)] == False and not key in optional_Main:
                     flag_Main = False
+                    print key
                 if self.serversList[str(key)] == False and not key in optional_MagneticExtension:
                     flag_MagneticExtension = False
 
+            print flag_Main, flag_MagneticExtension
+            print self.serversList
             if flag_Main:
                 setIndicator(self.pushButton_Servers, 'rgb(0, 170, 0)')
                 if flag_MagneticExtension:
@@ -384,7 +387,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
                 setIndicator(self.pushButton_Servers, 'rgb(161, 0, 0)')
                 setIndicator(self.MagnetControlWindow.pushButton_Servers, 'rgb(161, 0, 0)')
         except Exception as inst:
-            print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+            print 'Error: refreshServerIndicator', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
     def Refreshinterface(self):
         self.DetermineEnableConditions()
