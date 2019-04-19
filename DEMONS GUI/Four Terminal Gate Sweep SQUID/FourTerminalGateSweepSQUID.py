@@ -16,9 +16,11 @@ from scipy.signal import detrend
 path = sys.path[0] + r"\Four Terminal Gate Sweep SQUID"
 sys.path.append(path + r'\FourTerminalGateSweepSQUIDSetting')
 sys.path.append(path + r'\MagneticFieldExpansionPack')
+sys.path.append(path + r'\HysterisisExpansionPack')
 
 import FourTerminalGateSweepSQUIDSetting
 import MagnetExtension
+import HysteresisExtension
 
 FourTerminalGateSweepSQUIDWindowUI, QtBaseClass = uic.loadUiType(path + r"\FourTerminalGateSweepSQUIDWindow.ui")
 Ui_ServerList, QtBaseClass = uic.loadUiType(path + r"\requiredServers.ui")
@@ -28,11 +30,11 @@ sys.path.append(sys.path[0]+'\Resources')
 from DEMONSFormat import *
 
 class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
-    def __init__(self, reactor, DEMONS, parent=None):
+    def __init__(self, reactor, DEMONS, UpperLevel, parent=None):
         super(Window, self).__init__(parent)
         
         self.reactor = reactor
-        self.parent = parent
+        self.UpperLevel = UpperLevel
         self.DEMONS = DEMONS
         self.setupUi(self)
 
@@ -42,6 +44,8 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
         self.pushButton_Setting.clicked.connect(lambda: openWindow(self.SettingWindow))
         self.MagnetControlWindow = MagnetExtension.MagnetControl(self.reactor, self)
         self.pushButton_MagneticField.clicked.connect(lambda: openWindow(self.MagnetControlWindow))
+        self.HysteresisWindow = HysteresisExtension.Hysteresis(self.reactor, self)
+        self.pushButton_Hysterisis.clicked.connect(lambda: openWindow(self.HysteresisWindow))
 
         self.serversList = { #Dictionary including toplevel server received from labrad connect
             'dv': False,
@@ -93,6 +97,16 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'DeviceIndicator': self.MagnetControlWindow.pushButton_MagnetControl_DeviceIndicator, 
             'ServerNeeded': ['AMI430', '4KMonitor IPS120'],
         }
+        
+        self.DeviceList['Hysteresis_Device'] = {
+            'DeviceObject': False,
+            'ServerObject': False,
+            'ComboBoxServer': self.HysteresisWindow.comboBox_Hysteresis_SelectServer,
+            'ComboBoxDevice': self.HysteresisWindow.comboBox_Hysteresis_SelectDevice,
+            'ServerIndicator': self.HysteresisWindow.pushButton_Hysteresis_ServerIndicator,
+            'DeviceIndicator': self.HysteresisWindow.pushButton_Hysteresis_DeviceIndicator, 
+            'ServerNeeded': ['AMI430', '4KMonitor IPS120'],
+        }
 
         self.Parameter = {
             'DeviceName': 'Device Name',#This is related to the sample name like YS8
@@ -122,6 +136,12 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'MagnetControl_Numberofstep_Status': "Numberofsteps",
             'MagnetControl_RampSpeed': 1.0,
             'MagnetControl_Delay': 0.5,
+            'Hysteresis_StartField': -0.3,
+            'Hysteresis_EndField': 0.3,
+            'Hysteresis_Numberofstep': 10,
+            'Hysteresis_Numberofstep_Status': "Numberofsteps",
+            'Hysteresis_RampSpeed': 1.0,
+            'Hysteresis_Delay': 0.5,
             }
 
         self.lineEdit = {
@@ -150,7 +170,12 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'MagnetControl_Numberofstep': self.MagnetControlWindow.lineEdit_Numberofstep,
             'MagnetControl_RampSpeed': self.MagnetControlWindow.lineEdit_RampSpeed,
             'MagnetControl_Delay': self.MagnetControlWindow.lineEdit_Delay,
-        }
+            'Hysteresis_StartField': self.HysteresisWindow.lineEdit_StartField,
+            'Hysteresis_EndField': self.HysteresisWindow.lineEdit_EndVoltage,
+            'Hysteresis_Numberofstep': self.HysteresisWindow.lineEdit_Numberofstep,
+            'Hysteresis_RampSpeed': self.HysteresisWindow.lineEdit_RampSpeed,
+            'Hysteresis_Delay': self.HysteresisWindow.lineEdit_Delay,
+            }
 
         for key in self.lineEdit:
             if not isinstance(self.Parameter[key], str):
@@ -364,21 +389,23 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
         try:
             optional_Main = ['4KMonitor IPS120']#This optional will reconstruct combobox multiple time when you disconnect/connect server individually
             optional_MagneticExtension = []
-            flag_Main, flag_MagneticExtension = True, True
+            optional_HysteresisExtension = []
+            flag_Main, flag_MagneticExtension, flag_HysteresisExtension = True, True, True
             for key in self.serversList:
                 if self.serversList[str(key)] == False and not key in optional_Main:
                     flag_Main = False
-                    print key
                 if self.serversList[str(key)] == False and not key in optional_MagneticExtension:
                     flag_MagneticExtension = False
-
-            print flag_Main, flag_MagneticExtension
-            print self.serversList
+                if self.serversList[str(key)] == False and not key in optional_HysteresisExtension:
+                    flag_HysteresisExtension = False
+                    
             if flag_Main:
                 setIndicator(self.pushButton_Servers, 'rgb(0, 170, 0)')
                 if flag_MagneticExtension:
                     setIndicator(self.MagnetControlWindow.pushButton_Servers, 'rgb(0, 170, 0)')
-
+                if flag_HysteresisExtension:
+                    setIndicator(self.HysteresisWindow.pushButton_Servers, 'rgb(0, 170, 0)')
+                    
                 for key, DevicePropertyList in self.DeviceList.iteritems():#Reconstruct all combobox when all servers are connected
                     ReconstructComboBox(DevicePropertyList['ComboBoxServer'], DevicePropertyList['ServerNeeded'])
 
@@ -386,6 +413,8 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             else:
                 setIndicator(self.pushButton_Servers, 'rgb(161, 0, 0)')
                 setIndicator(self.MagnetControlWindow.pushButton_Servers, 'rgb(161, 0, 0)')
+                setIndicator(self.HysteresisWindow.pushButton_Servers, 'rgb(161, 0, 0)')
+                
         except Exception as inst:
             print 'Error: refreshServerIndicator', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
@@ -398,6 +427,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             RefreshIndicator(DevicePropertyList['DeviceIndicator'], DevicePropertyList['DeviceObject'])
 
         self.MagnetControlWindow.Refreshinterface()
+        self.HysteresisWindow.Refreshinterface()
 
     def SetupPlots(self):
         for PlotName in self.Plotlist:

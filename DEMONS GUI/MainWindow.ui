@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
-    <height>244</height>
+    <width>559</width>
+    <height>254</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@ background-color: rgb(0, 0, 0);
       <property name="styleSheet">
        <string notr="true">QPushButton:pressed#pushButton_LabRADConnect{
 color: rgb(0,255,0);
-background-color:rgb(150,150,150);
+background-color:rgb(0,50,0);
 border: 1px solid rgb(0,255,0);
 border-radius: 5px
 }
@@ -46,7 +46,8 @@ color: rgb(0,255,0);
 background-color:rgb(0,0,0);
 border: 2px solid rgb(0,255,0);
 border-radius: 5px
-}</string>
+}
+</string>
       </property>
       <property name="text">
        <string>Connect Server</string>
@@ -120,18 +121,21 @@ background: black;\n}</string>
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton:pressed#pushButton_DACADC_Tracker{
-color: rgb(0,0,0);
-background-color:rgb(131,131,131);
-border: 1px solid rgb(0,0,0);
+color: rgb(50,150,255);
+background-color:rgb(10,30,50);
+border: 1px solid rgb(50,150,255);
 border-radius: 5px
 }
 
 QPushButton#pushButton_DACADC_Tracker{
-color: rgb(131,131,131);
+color: rgb(50,150,255);
 background-color:rgb(0,0,0);
-border: 2px solid  rgb(131,131,131);
+border: 2px solid  rgb(50,150,255);
 border-radius: 5px
-}</string>
+}
+
+
+</string>
       </property>
       <property name="text">
        <string>DAC ADC Tracker</string>
@@ -161,16 +165,16 @@ border-radius: 5px
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton:pressed#pushButton_FourTerminalGateSweepProbeStation{
-color: rgb(0,0,0);
-background-color:rgb(131,131,131);
-border: 1px solid rgb(0,0,0);
+color: rgb(50,150,255);
+background-color:rgb(10,30,50);
+border: 1px solid rgb(50,150,255);
 border-radius: 5px
 }
 
 QPushButton#pushButton_FourTerminalGateSweepProbeStation{
-color: rgb(131,131,131);
+color: rgb(50,150,255);
 background-color:rgb(0,0,0);
-border: 2px solid  rgb(131,131,131);
+border: 2px solid  rgb(50,150,255);
 border-radius: 5px
 }</string>
       </property>
@@ -241,21 +245,55 @@ border-radius: 5px
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton:pressed#pushButton_FourTerminalGateSweepSQUID{
-color: rgb(0,0,0);
-background-color:rgb(131,131,131);
-border: 1px solid rgb(0,0,0);
+color: rgb(50,150,255);
+background-color:rgb(10,30,50);
+border: 1px solid rgb(50,150,255);
 border-radius: 5px
 }
 
 QPushButton#pushButton_FourTerminalGateSweepSQUID{
-color: rgb(131,131,131);
+color: rgb(50,150,255);
 background-color:rgb(0,0,0);
-border: 2px solid  rgb(131,131,131);
+border: 2px solid  rgb(50,150,255);
 border-radius: 5px
-}</string>
+}
+
+
+</string>
       </property>
       <property name="text">
        <string>Four Terminal Buffered</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="4">
+     <widget class="QPushButton" name="pushButton_DataPlotter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton:pressed#pushButton_DataPlotter{
+color: rgb(255,150,50);
+background-color:rgb(50,30,10);
+border: 1px solid rgb(255,150,50);
+border-radius: 5px
+}
+
+QPushButton#pushButton_DataPlotter{
+color: rgb(255,150,50);
+background-color:rgb(0,0,0);
+border: 2px solid  rgb(255,150,50);
+border-radius: 5px
+}
+
+
+</string>
+      </property>
+      <property name="text">
+       <string>Data Plotter</string>
       </property>
      </widget>
     </item>

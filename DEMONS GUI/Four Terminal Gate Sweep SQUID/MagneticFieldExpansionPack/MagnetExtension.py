@@ -19,28 +19,29 @@ Ui_MagnetControlWindow, QtBaseClass = uic.loadUiType(path + r"\MagnetExtensionWi
 Ui_ServerList, QtBaseClass = uic.loadUiType(path + r"\requiredServers.ui")
 
 class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
-    def __init__(self, reactor, parent = None):
+    def __init__(self, reactor, UpperLevel, parent = None):
         super(MagnetControl, self).__init__(parent)
 
         self.reactor = reactor
+        self.UpperLevel = UpperLevel
         self.parent = parent
         self.setupUi(self)
 
         self.pushButton_Servers.clicked.connect(self.showServersList)
 
-        self.comboBox_MagnetControl_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.parent.DeviceList, 'Magnet_Device', self.parent.serversList, str(self.parent.DeviceList['Magnet_Device']['ComboBoxServer'].currentText())))
-        self.comboBox_MagnetControl_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.parent.DeviceList, 'Magnet_Device', str(self.parent.DeviceList['Magnet_Device']['ComboBoxDevice'].currentText()), self.parent.Refreshinterface))
-        self.lineEdit_StartField.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.parent.Parameter, 'MagnetControl_StartField', self.parent.lineEdit))
-        self.lineEdit_StartField.editingFinished.connect(lambda: UpdateLineEdit_NumberOfStep(self.parent.Parameter, 'MagnetControl_Numberofstep', 'MagnetControl_EndField', 'MagnetControl_StartField', 'MagnetControl_Numberofstep_Status', self.parent.lineEdit))
-        self.lineEdit_EndVoltage.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.parent.Parameter, 'MagnetControl_EndField', self.parent.lineEdit))
-        self.lineEdit_EndVoltage.editingFinished.connect(lambda: UpdateLineEdit_NumberOfStep(self.parent.Parameter, 'MagnetControl_Numberofstep', 'MagnetControl_EndField', 'MagnetControl_StartField', 'MagnetControl_Numberofstep_Status', self.parent.lineEdit))
-        self.lineEdit_Numberofstep.editingFinished.connect(lambda: UpdateLineEdit_NumberOfStep(self.parent.Parameter, 'MagnetControl_Numberofstep', 'MagnetControl_EndField', 'MagnetControl_StartField', 'MagnetControl_Numberofstep_Status', self.parent.lineEdit))
-        self.pushButton_MagnetControl_NoSmTpTSwitch.clicked.connect(lambda: Toggle_NumberOfSteps_StepSize(self.parent.Parameter, 'MagnetControl_Numberofstep', 'MagnetControl_EndField', 'MagnetControl_StartField', 'MagnetControl_Numberofstep_Status', self.label_MangnetControl_NumberofStep, 'Tesla per Step', self.parent.lineEdit))  
-        self.lineEdit_RampSpeed.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.parent.Parameter, 'MagnetControl_RampSpeed', self.parent.lineEdit))
-        self.lineEdit_Delay.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.parent.Parameter, 'MagnetControl_Delay', self.parent.lineEdit))
+        self.comboBox_MagnetControl_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.UpperLevel.DeviceList, 'Magnet_Device', self.UpperLevel.serversList, str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText())))
+        self.comboBox_MagnetControl_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.UpperLevel.DeviceList, 'Magnet_Device', str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxDevice'].currentText()), self.UpperLevel.Refreshinterface))
+        self.lineEdit_StartField.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.UpperLevel.Parameter, 'MagnetControl_StartField', self.UpperLevel.lineEdit))
+        self.lineEdit_StartField.editingFinished.connect(lambda: UpdateLineEdit_NumberOfStep(self.UpperLevel.Parameter, 'MagnetControl_Numberofstep', 'MagnetControl_EndField', 'MagnetControl_StartField', 'MagnetControl_Numberofstep_Status', self.UpperLevel.lineEdit))
+        self.lineEdit_EndVoltage.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.UpperLevel.Parameter, 'MagnetControl_EndField', self.UpperLevel.lineEdit))
+        self.lineEdit_EndVoltage.editingFinished.connect(lambda: UpdateLineEdit_NumberOfStep(self.UpperLevel.Parameter, 'MagnetControl_Numberofstep', 'MagnetControl_EndField', 'MagnetControl_StartField', 'MagnetControl_Numberofstep_Status', self.UpperLevel.lineEdit))
+        self.lineEdit_Numberofstep.editingFinished.connect(lambda: UpdateLineEdit_NumberOfStep(self.UpperLevel.Parameter, 'MagnetControl_Numberofstep', 'MagnetControl_EndField', 'MagnetControl_StartField', 'MagnetControl_Numberofstep_Status', self.UpperLevel.lineEdit))
+        self.pushButton_MagnetControl_NoSmTpTSwitch.clicked.connect(lambda: Toggle_NumberOfSteps_StepSize(self.UpperLevel.Parameter, 'MagnetControl_Numberofstep', 'MagnetControl_EndField', 'MagnetControl_StartField', 'MagnetControl_Numberofstep_Status', self.label_MangnetControl_NumberofStep, 'Tesla per Step', self.UpperLevel.lineEdit))  
+        self.lineEdit_RampSpeed.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.UpperLevel.Parameter, 'MagnetControl_RampSpeed', self.UpperLevel.lineEdit))
+        self.lineEdit_Delay.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.UpperLevel.Parameter, 'MagnetControl_Delay', self.UpperLevel.lineEdit))
 
         self.pushButton_StartFourTerminalSweep.clicked.connect(self.StartMeasurement)
-        self.pushButton_AbortFourTerminalSweep.clicked.connect(lambda: self.parent.DEMONS.SetScanningFlag(False))
+        self.pushButton_AbortFourTerminalSweep.clicked.connect(lambda: self.UpperLevel.DEMONS.SetScanningFlag(False))
 
         self.Plotlist = {}
         self.Plotlist['ResistancePlot'] = {
@@ -159,15 +160,15 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
 
     def DetermineEnableConditions(self):
         self.ButtonsCondition={
-            self.pushButton_StartFourTerminalSweep: (self.parent.DeviceList['Magnet_Device']['DeviceObject'] != False) and self.parent.DEMONS.Scanning_Flag == False or True,
-            self.pushButton_AbortFourTerminalSweep: self.parent.DEMONS.Scanning_Flag == True,
-            self.comboBox_MagnetControl_SelectServer: self.parent.DEMONS.Scanning_Flag == False,
-            self.comboBox_MagnetControl_SelectDevice: self.parent.DEMONS.Scanning_Flag == False,
-            self.lineEdit_StartField: self.parent.DEMONS.Scanning_Flag == False,
-            self.lineEdit_EndVoltage: self.parent.DEMONS.Scanning_Flag == False,
-            self.lineEdit_Numberofstep: self.parent.DEMONS.Scanning_Flag == False,
-            self.lineEdit_RampSpeed: self.parent.DEMONS.Scanning_Flag == False,
-            self.lineEdit_Delay: self.parent.DEMONS.Scanning_Flag == False,
+            self.pushButton_StartFourTerminalSweep: (self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'] != False) and self.UpperLevel.DEMONS.Scanning_Flag == False or True,
+            self.pushButton_AbortFourTerminalSweep: self.UpperLevel.DEMONS.Scanning_Flag == True,
+            self.comboBox_MagnetControl_SelectServer: self.UpperLevel.DEMONS.Scanning_Flag == False,
+            self.comboBox_MagnetControl_SelectDevice: self.UpperLevel.DEMONS.Scanning_Flag == False,
+            self.lineEdit_StartField: self.UpperLevel.DEMONS.Scanning_Flag == False,
+            self.lineEdit_EndVoltage: self.UpperLevel.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Numberofstep: self.UpperLevel.DEMONS.Scanning_Flag == False,
+            self.lineEdit_RampSpeed: self.UpperLevel.DEMONS.Scanning_Flag == False,
+            self.lineEdit_Delay: self.UpperLevel.DEMONS.Scanning_Flag == False,
         }
 
     def Refreshinterface(self):
@@ -181,25 +182,25 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
     @inlineCallbacks
     def StartMeasurement(self, c):
         try:
-            self.parent.DEMONS.SetScanningFlag(True)
-            self.parent.Refreshinterface()
+            self.UpperLevel.DEMONS.SetScanningFlag(True)
+            self.UpperLevel.Refreshinterface()
 
-            Multiplier = [self.parent.Parameter['Voltage_LI_Sensitivity'] * self.parent.Parameter['Voltage_LI_Gain'] / 10.0, self.parent.Parameter['Current_LI_Sensitivity'] * self.parent.Parameter['Current_LI_Gain'] / 10.0] #Voltage, Current
+            Multiplier = [self.UpperLevel.Parameter['Voltage_LI_Sensitivity'] * self.UpperLevel.Parameter['Voltage_LI_Gain'] / 10.0, self.UpperLevel.Parameter['Current_LI_Sensitivity'] * self.UpperLevel.Parameter['Current_LI_Gain'] / 10.0] #Voltage, Current
 
-            ImageNumber, ImageDir = yield CreateDataVaultFile(self.parent.serversList['dv'], 'FourTerminalGateAndMagneticFieldSweep' + str(self.parent.Parameter['DeviceName']), ('Magnetic Field Index', 'Magnetic Field', 'Gate Index', 'Gate Voltage'), ('Voltage', 'Current', 'Resistance', 'Conductance'))
-            self.parent.lineEdit_ImageNumber.setText(ImageNumber)
-            self.parent.lineEdit_ImageDir.setText(ImageDir)
+            ImageNumber, ImageDir = yield CreateDataVaultFile(self.UpperLevel.serversList['dv'], 'Gate And Magnetic Field Sweep' + str(self.UpperLevel.Parameter['DeviceName']), ('Magnetic Field Index', 'Magnetic Field', 'Gate Index', 'Gate Voltage'), ('Voltage', 'Current', 'Resistance', 'Conductance'))
+            self.UpperLevel.lineEdit_ImageNumber.setText(ImageNumber)
+            self.UpperLevel.lineEdit_ImageDir.setText(ImageDir)
 
-            yield AddParameterToDataVault(self.parent.serversList['dv'], self.parent.Parameter)
+            yield AddParameterToDataVault(self.UpperLevel.serversList['dv'], self.UpperLevel.Parameter)
             ClearPlots(self.Plotlist)
-            ClearPlots(self.parent.Plotlist)
+            ClearPlots(self.UpperLevel.Plotlist)
 
-            GateChannel, VoltageChannel, CurrentChannel = self.parent.Parameter['FourTerminal_GateChannel'], self.parent.Parameter['FourTerminal_VoltageReadingChannel'], self.parent.Parameter['FourTerminal_CurrentReadingChannel']
-            StartVoltage, EndVoltage = self.parent.Parameter['FourTerminal_StartVoltage'], self.parent.Parameter['FourTerminal_EndVoltage']
-            NumberOfSteps, Delay = self.parent.Parameter['FourTerminal_Numberofstep'], self.parent.Parameter['FourTerminal_Delay']
-            StartField, EndField = self.parent.Parameter['MagnetControl_StartField'], self.parent.Parameter['MagnetControl_EndField']
-            FieldSteps, FieldDelay = self.parent.Parameter['MagnetControl_Numberofstep'], self.parent.Parameter['MagnetControl_Delay']
-            FieldSpeed = self.parent.Parameter['MagnetControl_RampSpeed']
+            GateChannel, VoltageChannel, CurrentChannel = self.UpperLevel.Parameter['FourTerminal_GateChannel'], self.UpperLevel.Parameter['FourTerminal_VoltageReadingChannel'], self.UpperLevel.Parameter['FourTerminal_CurrentReadingChannel']
+            StartVoltage, EndVoltage = self.UpperLevel.Parameter['FourTerminal_StartVoltage'], self.UpperLevel.Parameter['FourTerminal_EndVoltage']
+            NumberOfSteps, Delay = self.UpperLevel.Parameter['FourTerminal_Numberofstep'], self.UpperLevel.Parameter['FourTerminal_Delay']
+            StartField, EndField = self.UpperLevel.Parameter['MagnetControl_StartField'], self.UpperLevel.Parameter['MagnetControl_EndField']
+            FieldSteps, FieldDelay = self.UpperLevel.Parameter['MagnetControl_Numberofstep'], self.UpperLevel.Parameter['MagnetControl_Delay']
+            FieldSpeed = self.UpperLevel.Parameter['MagnetControl_RampSpeed']
 
             Data2D = np.empty((0, 8))
 
@@ -208,21 +209,21 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
 
             MagneticFieldSet = np.linspace(StartField, EndField, FieldSteps)
             for FieldIndex in range(FieldSteps):
-                if self.parent.DEMONS.Scanning_Flag == False:
+                if self.UpperLevel.DEMONS.Scanning_Flag == False:
                     print 'Abort the Sweep'
                     yield self.FinishSweep()
                     break
 
                 #Set Magnetic Field
-                # yield RampMagneticField(self.parent.DeviceList['Magnet_Device']['DeviceObject'], str(self.parent.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
+                # yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
                 yield SleepAsync(self.reactor, FieldDelay)
 
                 #Ramp DACADC to initial
-                yield Ramp_DACADC(self.parent.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, self.parent.Parameter['Setting_RampStepSize'], self.parent.Parameter['Setting_RampDelay'])
-                yield SleepAsync(self.reactor, self.parent.Parameter['Setting_WaitTime'])
+                yield Ramp_DACADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, self.UpperLevel.Parameter['Setting_RampStepSize'], self.UpperLevel.Parameter['Setting_RampDelay'])
+                yield SleepAsync(self.reactor, self.UpperLevel.Parameter['Setting_WaitTime'])
 
                 #Take Data
-                Data1D = yield Buffer_Ramp_DACADC(self.parent.DeviceList['DataAquisition_Device']['DeviceObject'], [GateChannel], [VoltageChannel, CurrentChannel],[StartVoltage], [EndVoltage], NumberOfSteps, Delay)
+                Data1D = yield Buffer_Ramp_DACADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], [GateChannel], [VoltageChannel, CurrentChannel],[StartVoltage], [EndVoltage], NumberOfSteps, Delay)
                 
                 Data1D = Multiply(Data1D, Multiplier) #Scale them with corresponding multiplier [voltage, current]
                 Data1D = AttachData_Front(Data1D, np.linspace(StartVoltage, EndVoltage, NumberOfSteps)) #Attach Gate Voltage
@@ -230,14 +231,14 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
                 Data1D = AttachData_Front(Data1D, np.linspace(MagneticFieldSet[FieldIndex], MagneticFieldSet[FieldIndex], NumberOfSteps)) #Attach Magnetic Field
                 Data1D = AttachData_Front(Data1D, np.linspace(FieldIndex, FieldIndex, NumberOfSteps)) #Attach Field Index
                 Data1D = Attach_ResistanceConductance(Data1D, 4, 5)
-                self.parent.serversList['dv'].add(Data1D)
+                self.UpperLevel.serversList['dv'].add(Data1D)
 
                 XData = np.linspace(StartVoltage, EndVoltage, NumberOfSteps)
                 VoltageData, CurrentData, ResistanceData = Data1D[:, 4], Data1D[:, 5], Data1D[:, 6]
-                ClearPlots(self.parent.Plotlist)
-                Plot1DData(XData, VoltageData, self.parent.Plotlist['VoltagePlot']['PlotObject'])
-                Plot1DData(XData, CurrentData, self.parent.Plotlist['CurrentPlot']['PlotObject'])
-                Plot1DData(XData, ResistanceData, self.parent.Plotlist['ResistancePlot']['PlotObject'])
+                ClearPlots(self.UpperLevel.Plotlist)
+                Plot1DData(XData, VoltageData, self.UpperLevel.Plotlist['VoltagePlot']['PlotObject'])
+                Plot1DData(XData, CurrentData, self.UpperLevel.Plotlist['CurrentPlot']['PlotObject'])
+                Plot1DData(XData, ResistanceData, self.UpperLevel.Plotlist['ResistancePlot']['PlotObject'])
 
                 #Sync Data2D
                 Data2D = np.append(Data2D, Data1D, axis = 0)
@@ -263,12 +264,12 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
         try:
             if self.checkBox_FourTerminalMagneticFieldSetting_BacktoZero.isChecked():
                 yield SleepAsync(self.reactor, 1)
-                # yield RampMagneticField(self.parent.DeviceList['Magnet_Device']['DeviceObject'], str(self.parent.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), 0.0, self.parent.Parameter['MagnetControl_RampSpeed'], self.reactor)
-            self.parent.serversList['dv'].add_comment(str(self.parent.textEdit_Comment.toPlainText()))
-            self.parent.DEMONS.SetScanningFlag(False)
-            self.parent.Refreshinterface()
-            saveDataToSessionFolder(self.winId(), self.parent.sessionFolder, str(self.parent.lineEdit_ImageNumber.text()) + ' - ' + 'Magnetic Field ' + self.parent.Parameter['DeviceName'])
-            saveDataToSessionFolder(self.parent.winId(), self.parent.sessionFolder, str(self.parent.lineEdit_ImageNumber.text()) + ' - ' + 'Four Terminal ' + self.parent.Parameter['DeviceName'])
+                # yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), 0.0, self.UpperLevel.Parameter['MagnetControl_RampSpeed'], self.reactor)
+            self.UpperLevel.serversList['dv'].add_comment(str(self.UpperLevel.textEdit_Comment.toPlainText()))
+            self.UpperLevel.DEMONS.SetScanningFlag(False)
+            self.UpperLevel.Refreshinterface()
+            saveDataToSessionFolder(self.winId(), self.UpperLevel.sessionFolder, str(self.UpperLevel.lineEdit_ImageNumber.text()) + ' - ' + 'Magnetic Field ' + self.UpperLevel.Parameter['DeviceName'])
+            saveDataToSessionFolder(self.UpperLevel.winId(), self.UpperLevel.sessionFolder, str(self.UpperLevel.lineEdit_ImageNumber.text()) + ' - ' + 'Four Terminal ' + self.UpperLevel.Parameter['DeviceName'])
 
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno

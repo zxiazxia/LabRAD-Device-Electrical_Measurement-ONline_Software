@@ -354,6 +354,7 @@ def UpdateLineCutLineEdit(PlotDictionary, LineCutName):
 def RefreshLineCutPlot(PlotDictionary, LineCutPlotName, PlotData):
     try:
         Value = PlotDictionary[LineCutPlotName]['Value']
+        PlotDictionary[LineCutPlotName]['LineCut'].setValue(float(Value))#Move Linecut
         LineCutPlot = PlotDictionary[LineCutPlotName]['PlotObject']
         if LineCutPlotName == 'YZPlot':
             Min, Scale = PlotDictionary['PlotObject'].Position[0], PlotDictionary['PlotObject'].ScaleSize[0]
@@ -383,6 +384,10 @@ def Division(voltage, current, multiplier = 1):
         resistance = float(voltage / 0.0000000001) * multiplier
     return resistance
 
+def Subtract(InputA, InputB):
+    Difference = InputA - InputB
+    return Difference
+
 '''
 Attach Attach_Data to the front of data
 '''
@@ -407,6 +412,14 @@ def AttachData_Back(data, attached_data):
     Data_Combined = np.insert(data, column, attached_data, axis = axisnumber)
     return Data_Combined
 
+def ReplaceData(data, index, replaced_data):
+    Data_Replaced = data
+    if len(data.shape) == 1: # 1D array
+        Data_Replaced[index] = replaced_data
+    else:
+        Data_Replaced[:, index] = replaced_data
+    return Data_Replaced
+
 def Attach_ResistanceConductance(data, VoltageIndex, CurrentIndex, multiplier = 1):
     try:
         if len(data.shape) == 1: # 1D array
@@ -423,6 +436,20 @@ def Attach_ResistanceConductance(data, VoltageIndex, CurrentIndex, multiplier = 
         return Data_Attached
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+        
+def Generate_Difference(data, InputAIndex, InputBIndex, dataIndex):
+    try:
+        if len(data.shape) == 1: # 1D array
+            InputA, InputB = data[InputAIndex], data[InputBIndex]
+            Difference = Subtract(InputA, InputB)
+        else:
+            InputA, InputB = data[:, InputAIndex], data[:, InputBIndex]
+            Difference = np.transpose(map(Subtract, InputA, InputB))
+        Data_Generated = ReplaceData(data, dataIndex, Difference)
+        return Data_Generated
+    except Exception as inst:
+        print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
+        
 '''
 Multiply array with the input list
 '''

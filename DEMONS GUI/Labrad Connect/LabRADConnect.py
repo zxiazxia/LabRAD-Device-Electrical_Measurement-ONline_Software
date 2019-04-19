@@ -46,7 +46,6 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         self.LabradDictionary['4KMonitor'] = {
         'cxn': False,
         'IPS120': False,
-        'dv': False,
         }
         
         self.pushButtonDictionary = {}
@@ -66,7 +65,6 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         self.pushButtonDictionary['4KMonitor'] = {
         'cxn': self.pushButton_4KMonitor_LabRAD,
         'IPS120': self.pushButton_4KMonitor_IPS120,
-        'dv': self.pushButton_4KMonitor_DataVault,
         }
 
         self.labelDictionary = {}
@@ -86,7 +84,6 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
         self.labelDictionary['4KMonitor'] = {
         'cxn': self.label_4KMonitor_Labrad,
         'IPS120': self.label_4KMonitor_IPS120,
-        'dv': self.label_4KMonitor_DataVault,
         }
 
         #Data vault session info
@@ -119,7 +116,6 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
 
         self.pushButton_4KMonitor_LabRAD.clicked.connect(lambda: self.connectServer('4KMonitor', 'cxn'))
         self.pushButton_4KMonitor_IPS120.clicked.connect(lambda: self.connectServer('4KMonitor', 'IPS120'))
-        self.pushButton_4KMonitor_DataVault.clicked.connect(lambda: self.connectServer('4KMonitor', 'dv'))
         
         self.pushButton_DataVaultFolder.clicked.connect(self.chooseDVFolder)
         self.pushButton_SessionFolder.clicked.connect(self.chooseSessionFolder)
@@ -142,6 +138,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         connection_flag = True
                     except Exception as inst:
                         connection_flag = False
+                        print 'Connect to ', LabradPosition, ' Labrad failed, Error: ', inst
                 elif servername == 'dv':
                     try:
                         dv = yield self.LabradDictionary[LabradPosition]['cxn'].data_vault
@@ -149,6 +146,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
 
                         if LabradPosition == 'Local':
                             reg = self.LabradDictionary[LabradPosition]['cxn'].registry #Set Registry
+                            yield reg.cd('')#Back to root directory
                             yield reg.cd(['Servers', 'Data Vault', 'Repository']) #Go into Repository
                             settinglist = yield reg.dir() # read the default settings
                             self.osDVFolder = yield reg.get(settinglist[1][-1]) #Get the path from default settings
@@ -168,7 +166,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                                 os.makedirs(self.SessionFolder)
                     except Exception as inst:
                         connection_flag = False
-                        print 'dv', inst
+                        print 'Connect to ', LabradPosition, ' Data Vault failed, Error: ', inst
                 elif servername == 'ser_server':
                     try:
                         computerName = platform.node() # get computer name
@@ -176,43 +174,49 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         ser_server = yield self.LabradDictionary[LabradPosition]['cxn'].servers[serialServerName]
                         self.LabradDictionary[LabradPosition][servername] = ser_server
                         connection_flag = True
-                    except:
+                    except Exception as inst:
                         connection_flag = False
+                        print 'Connect to ', LabradPosition, ' Serial Server failed, Error: ', inst
                 elif servername == 'DACADC':
                     try:
                         dac = yield self.LabradDictionary[LabradPosition]['cxn'].dac_adc
                         self.LabradDictionary[LabradPosition][servername] = dac
                         connection_flag = True
-                    except:
+                    except Exception as inst:
                         connection_flag = False
+                        print 'Connect to ', LabradPosition, ' DAC_ADC Server failed, Error: ', inst
                 elif servername == 'SR830':
                     try:
                         sr830 = yield self.LabradDictionary[LabradPosition]['cxn'].sr830
                         self.LabradDictionary[LabradPosition][servername] = sr830
                         connection_flag = True
-                    except:
+                    except Exception as inst:
                         connection_flag = False
+                        print 'Connect to ', LabradPosition, ' SR830 Server failed, Error: ', inst
                 elif servername == 'SR860':
                     try:
                         sr860 = yield self.LabradDictionary[LabradPosition]['cxn'].sr860
                         self.LabradDictionary[LabradPosition][servername] = sr860
                         connection_flag = True
-                    except:
+                    except Exception as inst:
                         connection_flag = False
+                        print 'Connect to ', LabradPosition, ' SR860 Server failed, Error: ', inst
                 elif servername == 'SIM900':
                     try:
                         sim900 = yield self.LabradDictionary[LabradPosition]['cxn'].sim900
                         self.LabradDictionary[LabradPosition][servername] = sim900
                         connection_flag = True
-                    except:
+                    except Exception as inst:
                         connection_flag = False
+                        print 'Connect to ', LabradPosition, ' SIM900 Server failed, Error: ', inst
                 elif servername == 'GPIBDeviceManager':
                     try:
                         gpib_device_manager = yield self.LabradDictionary[LabradPosition]['cxn'].gpib_device_manager
                         self.LabradDictionary[LabradPosition][servername] = gpib_device_manager
                         connection_flag = True
-                    except:
+                    except Exception as inst:
                         connection_flag = False
+                        print 'Connect to ', LabradPosition, ' GPIB Device Server failed, Error: ', inst
                 elif servername == 'GPIBServer':
                     try:
                         computerName = platform.node() # get computer name
@@ -222,20 +226,23 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                         connection_flag = True
                     except Exception as inst:
                         connection_flag = False
+                        print 'Connect to ', LabradPosition, ' GPIB Server failed, Error: ', inst
                 elif servername == 'AMI430':
                     try:
                         ami430 = yield self.LabradDictionary[LabradPosition]['cxn'].ami_430
                         self.LabradDictionary[LabradPosition][servername] = ami430
                         connection_flag = True
-                    except:
+                    except Exception as inst:
                         connection_flag = False
+                        print 'Connect to ', LabradPosition, ' AMI430 Server failed, Error: ', inst
                 elif servername == 'IPS120':
                     try:
                         ips = yield self.LabradDictionary[LabradPosition]['cxn'].ips120_power_supply
                         self.LabradDictionary[LabradPosition][servername] = ips
                         connection_flag = True
-                    except:
+                    except Exception as inst:
                         connection_flag = False
+                        print 'Connect to ', LabradPosition, ' IPS120 Server failed, Error: ', inst
 
                 if connection_flag:
                     if LabradPosition == 'Local':

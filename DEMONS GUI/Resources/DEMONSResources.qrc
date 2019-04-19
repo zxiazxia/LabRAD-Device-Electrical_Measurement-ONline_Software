@@ -1,5 +1,10 @@
 <RCC>
   <qresource prefix="Pictures">
+    <file>Pictures/Hysterisis.png</file>
+    <file>Pictures/save.png</file>
+    <file>Pictures/lock.png</file>
+    <file>Pictures/Info.png</file>
+    <file>Pictures/AddPlotter.png</file>
     <file>Pictures/Magnetic Field.png</file>
     <file>Pictures/Setting.png</file>
     <file>Pictures/addPlotIcon.png</file>
@@ -8,6 +13,8 @@
     <file>Pictures/homeIcon.png</file>
     <file>Pictures/refreshIcon.png</file>
     <file>Pictures/DemonLogo.png</file>
+    <file>Pictures/debug.png</file>
+    <file>Pictures/Ferromagnet.png</file>
     <file>Pictures/Four Terminal.png</file>
     <file>Pictures/Landaul Fan.PNG</file>
     <file>Pictures/SessionSelect.png</file>
