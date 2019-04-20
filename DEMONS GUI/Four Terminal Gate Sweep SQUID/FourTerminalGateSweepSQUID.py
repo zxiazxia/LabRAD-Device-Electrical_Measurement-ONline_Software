@@ -17,10 +17,12 @@ path = sys.path[0] + r"\Four Terminal Gate Sweep SQUID"
 sys.path.append(path + r'\FourTerminalGateSweepSQUIDSetting')
 sys.path.append(path + r'\MagneticFieldExpansionPack')
 sys.path.append(path + r'\HysterisisExpansionPack')
+sys.path.append(path + r'\GateHysteresisExpansionpack')
 
 import FourTerminalGateSweepSQUIDSetting
 import MagnetExtension
 import HysteresisExtension
+import GateHysteresisExtension
 
 FourTerminalGateSweepSQUIDWindowUI, QtBaseClass = uic.loadUiType(path + r"\FourTerminalGateSweepSQUIDWindow.ui")
 Ui_ServerList, QtBaseClass = uic.loadUiType(path + r"\requiredServers.ui")
@@ -46,7 +48,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
         self.pushButton_MagneticField.clicked.connect(lambda: openWindow(self.MagnetControlWindow))
         self.HysteresisWindow = HysteresisExtension.Hysteresis(self.reactor, self)
         self.pushButton_Hysterisis.clicked.connect(lambda: openWindow(self.HysteresisWindow))
-
+        self.GateHysteresisWindow = GateHysteresisExtension.GateHysteresis(self.reactor, self)
+        self.pushButton_GateHysterisis.clicked.connect(lambda: openWindow(self.GateHysteresisWindow))
+        
         self.serversList = { #Dictionary including toplevel server received from labrad connect
             'dv': False,
             'DACADC': False,
@@ -142,6 +146,11 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'Hysteresis_Numberofstep_Status': "Numberofsteps",
             'Hysteresis_RampSpeed': 1.0,
             'Hysteresis_Delay': 0.5,
+            'GateHysteresis_StartVoltage': -1.0,
+            'GateHysteresis_EndVoltage': 1.0,
+            'GateHysteresis_Numberofstep': 10,
+            'GateHysteresis_Numberofstep_Status': "Numberofsteps",
+            'GateHysteresis_Delay': 0.5,
             }
 
         self.lineEdit = {
@@ -175,6 +184,10 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'Hysteresis_Numberofstep': self.HysteresisWindow.lineEdit_Numberofstep,
             'Hysteresis_RampSpeed': self.HysteresisWindow.lineEdit_RampSpeed,
             'Hysteresis_Delay': self.HysteresisWindow.lineEdit_Delay,
+            'GateHysteresis_StartVoltage': self.GateHysteresisWindow.lineEdit_StartVoltage,
+            'GateHysteresis_EndVoltage': self.GateHysteresisWindow.lineEdit_EndVoltage,
+            'GateHysteresis_Numberofstep': self.GateHysteresisWindow.lineEdit_Numberofstep,
+            'GateHysteresis_Delay': self.GateHysteresisWindow.lineEdit_Delay,
             }
 
         for key in self.lineEdit:
@@ -401,6 +414,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
                     
             if flag_Main:
                 setIndicator(self.pushButton_Servers, 'rgb(0, 170, 0)')
+                setIndicator(self.GateHysteresisWindow.pushButton_Servers, 'rgb(0, 170, 0)')
                 if flag_MagneticExtension:
                     setIndicator(self.MagnetControlWindow.pushButton_Servers, 'rgb(0, 170, 0)')
                 if flag_HysteresisExtension:
@@ -414,6 +428,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
                 setIndicator(self.pushButton_Servers, 'rgb(161, 0, 0)')
                 setIndicator(self.MagnetControlWindow.pushButton_Servers, 'rgb(161, 0, 0)')
                 setIndicator(self.HysteresisWindow.pushButton_Servers, 'rgb(161, 0, 0)')
+                setIndicator(self.GateHysteresisWindow.pushButton_Servers, 'rgb(161, 0, 0)')
                 
         except Exception as inst:
             print 'Error: refreshServerIndicator', inst, ' on line: ', sys.exc_traceback.tb_lineno
@@ -428,6 +443,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
 
         self.MagnetControlWindow.Refreshinterface()
         self.HysteresisWindow.Refreshinterface()
+        self.GateHysteresisWindow.Refreshinterface()
 
     def SetupPlots(self):
         for PlotName in self.Plotlist:

@@ -8,7 +8,10 @@ import exceptions
 import time
 from PyQt4 import QtCore, QtGui
 
-def openWindow(window):
+'''
+Open Window function that receive the window object and open it
+'''
+def openWindow(window): 
     window.show()
     window.moveDefault()
     window.raise_()
@@ -186,11 +189,17 @@ def RedefineComboBox(combobox, server, reconnect = True):
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
 
+'''
+given a list of item names and populate that into combobox
+'''
 def ReconstructComboBox(combobox, list):
     combobox.clear()
     for name in list:
         combobox.addItem(name)
 
+'''
+Based on the buttons Condition which are a dictionary with format button: Boolean and enable/disable the button based on the boolean value
+'''
 def RefreshButtonStatus(ButtonsCondition):
     for button in ButtonsCondition:
         button.setEnabled(ButtonsCondition[button])
@@ -288,6 +297,9 @@ def Setup1DPlot(Plot, Layout, Title, yaxis, yunit, xaxis, xunit):
     Plot.enableAutoRange(enable = True)
     Layout.addWidget(Plot)
 
+'''
+From Plot List, plot all the data based on the PlotData itt is holding
+'''
 def RefreshPlot1D(PlotList):
     try:
         for PlotName in PlotList:

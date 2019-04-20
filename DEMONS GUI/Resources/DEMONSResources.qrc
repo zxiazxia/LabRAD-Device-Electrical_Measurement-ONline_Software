@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="Pictures">
+    <file>Pictures/Hysteresis Gate.png</file>
     <file>Pictures/Hysterisis.png</file>
     <file>Pictures/save.png</file>
     <file>Pictures/lock.png</file>

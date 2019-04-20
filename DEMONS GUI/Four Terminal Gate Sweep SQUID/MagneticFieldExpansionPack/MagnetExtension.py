@@ -187,7 +187,7 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
 
             Multiplier = [self.UpperLevel.Parameter['Voltage_LI_Sensitivity'] * self.UpperLevel.Parameter['Voltage_LI_Gain'] / 10.0, self.UpperLevel.Parameter['Current_LI_Sensitivity'] * self.UpperLevel.Parameter['Current_LI_Gain'] / 10.0] #Voltage, Current
 
-            ImageNumber, ImageDir = yield CreateDataVaultFile(self.UpperLevel.serversList['dv'], 'Gate And Magnetic Field Sweep' + str(self.UpperLevel.Parameter['DeviceName']), ('Magnetic Field Index', 'Magnetic Field', 'Gate Index', 'Gate Voltage'), ('Voltage', 'Current', 'Resistance', 'Conductance'))
+            ImageNumber, ImageDir = yield CreateDataVaultFile(self.UpperLevel.serversList['dv'], 'Gate And Magnetic Field Sweep' + str(self.UpperLevel.Parameter['DeviceName']), ('Magnetic Field Index', 'Gate Index', 'Magnetic Field', 'Gate Voltage'), ('Voltage', 'Current', 'Resistance', 'Conductance'))
             self.UpperLevel.lineEdit_ImageNumber.setText(ImageNumber)
             self.UpperLevel.lineEdit_ImageDir.setText(ImageDir)
 
@@ -227,8 +227,8 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
                 
                 Data1D = Multiply(Data1D, Multiplier) #Scale them with corresponding multiplier [voltage, current]
                 Data1D = AttachData_Front(Data1D, np.linspace(StartVoltage, EndVoltage, NumberOfSteps)) #Attach Gate Voltage
-                Data1D = AttachData_Front(Data1D, range(NumberOfSteps)) #Attach Gate Index
                 Data1D = AttachData_Front(Data1D, np.linspace(MagneticFieldSet[FieldIndex], MagneticFieldSet[FieldIndex], NumberOfSteps)) #Attach Magnetic Field
+                Data1D = AttachData_Front(Data1D, range(NumberOfSteps)) #Attach Gate Index
                 Data1D = AttachData_Front(Data1D, np.linspace(FieldIndex, FieldIndex, NumberOfSteps)) #Attach Field Index
                 Data1D = Attach_ResistanceConductance(Data1D, 4, 5)
                 self.UpperLevel.serversList['dv'].add(Data1D)
