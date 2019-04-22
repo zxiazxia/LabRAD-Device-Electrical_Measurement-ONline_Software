@@ -396,7 +396,7 @@ class GateHysteresis(QtGui.QMainWindow, Ui_GateHysteresisWindow):
 
             Multiplier = [self.UpperLevel.Parameter['Voltage_LI_Sensitivity'] * self.UpperLevel.Parameter['Voltage_LI_Gain'] / 10.0, self.UpperLevel.Parameter['Current_LI_Sensitivity'] * self.UpperLevel.Parameter['Current_LI_Gain'] / 10.0] #Voltage, Current
 
-            ImageNumber, ImageDir = yield CreateDataVaultFile(self.UpperLevel.serversList['dv'], 'Gate Hysteresis Sweep ' + str(self.UpperLevel.Parameter['DeviceName']), ('Magnetic Field Index', 'Gate Index', 'Magnetic Field', 'Gate Voltage'), ('Voltage forth', 'Current forth', 'Resistance forth', 'Conductance forth', 'Voltage back', 'Current back', 'Resistance back', 'Conductance back', 'Voltage Subtract', 'Current Subtract', 'Resistance Subtract', 'Conductance Subtract'))
+            ImageNumber, ImageDir = yield CreateDataVaultFile(self.UpperLevel.serversList['dv'], 'Gate Hysteresis Sweep ' + str(self.UpperLevel.Parameter['DeviceName']), ('Gate Index', 'Magnetic Field Index', 'Gate Voltage', 'Magnetic Field'), ('Voltage forth', 'Current forth', 'Resistance forth', 'Conductance forth', 'Voltage back', 'Current back', 'Resistance back', 'Conductance back', 'Voltage Subtract', 'Current Subtract', 'Resistance Subtract', 'Conductance Subtract'))
             self.UpperLevel.lineEdit_ImageNumber.setText(ImageNumber)
             self.UpperLevel.lineEdit_ImageDir.setText(ImageDir)
 
@@ -410,74 +410,77 @@ class GateHysteresis(QtGui.QMainWindow, Ui_GateHysteresisWindow):
             StartVoltage, EndVoltage = self.UpperLevel.Parameter['GateHysteresis_StartVoltage'], self.UpperLevel.Parameter['GateHysteresis_EndVoltage']
             NumberOfSteps, VoltageDelay = self.UpperLevel.Parameter['GateHysteresis_Numberofstep'], self.UpperLevel.Parameter['GateHysteresis_Delay']
 
-            self.Data2D = np.zeros((FieldSteps * NumberOfSteps, 14)) #2 independent variables, 12 dependent variables
-            self.Data2D[:, 0] = range(FieldSteps) * NumberOfSteps# magnetic field index
-            self.Data2D[:, 1] = range(FieldSteps)# gate index
+            self.Data2D = np.zeros((FieldSteps * NumberOfSteps, 16)) #4 independent variables, 12 dependent variables
+            FieldIndexData, VoltageIndexData = np.meshgrid(range(FieldSteps), range(NumberOfSteps)) #generate meshgrid of the index, look up np.meshgrid for example
+            FieldValue, VoltageValue = np.meshgrid(np.linspace(StartField, EndField, FieldSteps), np.linspace(StartVoltage, EndVoltage, NumberOfSteps)) #generate meshgrid of the value, look up np.meshgrid for example
             
-            MagneticFieldSet = np.linspace(StartField, EndField, FieldSteps)
-            self.Data2D[:, 1] = MagneticFieldSet # magnetic field 
+            self.Data2D[:, 0] = VoltageIndexData.flatten()
+            self.Data2D[:, 1] = FieldIndexData.flatten()
+            self.Data2D[:, 2] = VoltageValue.flatten()
+            self.Data2D[:, 3] = FieldValue.flatten()
             
             for Plot in self.Plotlist:
-                self.Plotlist[Plot]['PlotData Forth'][0] = MagneticFieldSet
-                self.Plotlist[Plot]['PlotData Forth'][1] = np.linspace(0.0, 0.0, FieldSteps)
-                self.Plotlist[Plot]['PlotData Back'][0] = MagneticFieldSet
-                self.Plotlist[Plot]['PlotData Back'][1] = np.linspace(0.0, 0.0, FieldSteps)
+                self.Plotlist[Plot]['PlotData'] = np.zeros((NumberOfSteps, FieldSteps))
                 
-            
-            for FieldIndex in range(FieldSteps):
-                if self.UpperLevel.DEMONS.Scanning_Flag == False:
-                    print 'Abort the Sweep'
-                    yield self.FinishSweep()
-                    break
-                        
-                #Set Magnetic Field
-                # yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
-                yield SleepAsync(self.reactor, FieldDelay)
-                self.Data2D[FieldIndex][2] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], VoltageChannel) #Voltage
-                self.Data2D[FieldIndex][3] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], CurrentChannel) #Current
-                self.Data2D[FieldIndex][2: 4] = Multiply(self.Data2D[FieldIndex][2: 4], Multiplier) 
-                self.Data2D[FieldIndex][4] = Division(self.Data2D[FieldIndex][2], self.Data2D[FieldIndex][3]) #Resistance forth
-                self.Data2D[FieldIndex][5] = Division(self.Data2D[FieldIndex][3], self.Data2D[FieldIndex][2]) #Conductance forth
-
-                self.Plotlist['VoltagePlot']['PlotData Forth'][1] = self.Data2D[:,2]
-                self.Plotlist['CurrentPlot']['PlotData Forth'][1] = self.Data2D[:,3]
-                self.Plotlist['ResistancePlot']['PlotData Forth'][1] = self.Data2D[:,4]
-
-                ClearPlots(self.Plotlist)
-                for Plot in self.Plotlist:
-                    Plot1DData(self.Plotlist[Plot]['PlotData Forth'][0], self.Plotlist[Plot]['PlotData Forth'][1], self.Plotlist[Plot]['PlotObject'], 'r')
-                    Plot1DData(self.Plotlist[Plot]['PlotData Back'][0], self.Plotlist[Plot]['PlotData Back'][1], self.Plotlist[Plot]['PlotObject'], 'b')
+            for VoltageIndex in range(NumberOfSteps):
+                #Set Gate Voltage
+                yield Ramp_DACADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, np.linspace(StartVoltage, EndVoltage, NumberOfSteps)[VoltageIndex], 0.0001, 0.01) #Set the DAC to the correct voltage, hard coded how fast it sweep
+                yield SleepAsync(self.reactor, VoltageDelay)
                 
-            for FieldIndex in reversed(range(FieldSteps)):
-                if self.UpperLevel.DEMONS.Scanning_Flag == False:
-                    print 'Abort the Sweep'
-                    yield self.FinishSweep()
-                    break
-                
-                #Set Magnetic Field
-                # yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
-                yield SleepAsync(self.reactor, FieldDelay)
-                self.Data2D[FieldIndex][6] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], VoltageChannel) #Voltage
-                self.Data2D[FieldIndex][7] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], CurrentChannel) #Current
-                self.Data2D[FieldIndex][6: 8] = Multiply(self.Data2D[FieldIndex][6: 8], Multiplier) 
-                self.Data2D[FieldIndex][8] = Division(self.Data2D[FieldIndex][6], self.Data2D[FieldIndex][7]) #Resistance forth
-                self.Data2D[FieldIndex][9] = Division(self.Data2D[FieldIndex][7], self.Data2D[FieldIndex][6]) #Conductance forth
-                
-                self.Plotlist['VoltagePlot']['PlotData Back'][1] = self.Data2D[:,6]
-                self.Plotlist['CurrentPlot']['PlotData Back'][1] = self.Data2D[:,7]
-                self.Plotlist['ResistancePlot']['PlotData Back'][1] = self.Data2D[:,8]
-                
-                ClearPlots(self.Plotlist)
-                for Plot in self.Plotlist:
-                    Plot1DData(self.Plotlist[Plot]['PlotData Forth'][0], self.Plotlist[Plot]['PlotData Forth'][1], self.Plotlist[Plot]['PlotObject'], 'r')
-                    Plot1DData(self.Plotlist[Plot]['PlotData Back'][0], self.Plotlist[Plot]['PlotData Back'][1], self.Plotlist[Plot]['PlotObject'], 'b')
-                
-                if FieldIndex == 0:
-                    self.Data2D = Generate_Difference(self.Data2D, 2, 6, 10)
-                    self.Data2D = Generate_Difference(self.Data2D, 3, 7, 11)
-                    self.Data2D = Generate_Difference(self.Data2D, 4, 8, 12)
-                    self.Data2D = Generate_Difference(self.Data2D, 5, 9, 13)
-                    self.FinishSweep()
+                for FieldIndex in range(FieldSteps):
+                    if self.UpperLevel.DEMONS.Scanning_Flag == False:
+                        print 'Abort the Sweep'
+                        yield self.FinishSweep()
+                        break
+                            
+                    #Set Magnetic Field
+                    # yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
+                    yield SleepAsync(self.reactor, FieldDelay)
+                    self.Data2D[FieldIndex][2] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], VoltageChannel) #Voltage
+                    self.Data2D[FieldIndex][3] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], CurrentChannel) #Current
+                    self.Data2D[FieldIndex][2: 4] = Multiply(self.Data2D[FieldIndex][2: 4], Multiplier) 
+                    self.Data2D[FieldIndex][4] = Division(self.Data2D[FieldIndex][2], self.Data2D[FieldIndex][3]) #Resistance forth
+                    self.Data2D[FieldIndex][5] = Division(self.Data2D[FieldIndex][3], self.Data2D[FieldIndex][2]) #Conductance forth
+    
+                    self.Plotlist['VoltagePlot']['PlotData Forth'][1] = self.Data2D[:,2]
+                    self.Plotlist['CurrentPlot']['PlotData Forth'][1] = self.Data2D[:,3]
+                    self.Plotlist['ResistancePlot']['PlotData Forth'][1] = self.Data2D[:,4]
+    
+                    ClearPlots(self.Plotlist)
+                    for Plot in self.Plotlist:
+                        Plot1DData(self.Plotlist[Plot]['PlotData Forth'][0], self.Plotlist[Plot]['PlotData Forth'][1], self.Plotlist[Plot]['PlotObject'], 'r')
+                        Plot1DData(self.Plotlist[Plot]['PlotData Back'][0], self.Plotlist[Plot]['PlotData Back'][1], self.Plotlist[Plot]['PlotObject'], 'b')
+                    
+                for FieldIndex in reversed(range(FieldSteps)):
+                    if self.UpperLevel.DEMONS.Scanning_Flag == False:
+                        print 'Abort the Sweep'
+                        yield self.FinishSweep()
+                        break
+                    
+                    #Set Magnetic Field
+                    # yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
+                    yield SleepAsync(self.reactor, FieldDelay)
+                    self.Data2D[FieldIndex][6] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], VoltageChannel) #Voltage
+                    self.Data2D[FieldIndex][7] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], CurrentChannel) #Current
+                    self.Data2D[FieldIndex][6: 8] = Multiply(self.Data2D[FieldIndex][6: 8], Multiplier) 
+                    self.Data2D[FieldIndex][8] = Division(self.Data2D[FieldIndex][6], self.Data2D[FieldIndex][7]) #Resistance forth
+                    self.Data2D[FieldIndex][9] = Division(self.Data2D[FieldIndex][7], self.Data2D[FieldIndex][6]) #Conductance forth
+                    
+                    self.Plotlist['VoltagePlot']['PlotData Back'][1] = self.Data2D[:,6]
+                    self.Plotlist['CurrentPlot']['PlotData Back'][1] = self.Data2D[:,7]
+                    self.Plotlist['ResistancePlot']['PlotData Back'][1] = self.Data2D[:,8]
+                    
+                    ClearPlots(self.Plotlist)
+                    for Plot in self.Plotlist:
+                        Plot1DData(self.Plotlist[Plot]['PlotData Forth'][0], self.Plotlist[Plot]['PlotData Forth'][1], self.Plotlist[Plot]['PlotObject'], 'r')
+                        Plot1DData(self.Plotlist[Plot]['PlotData Back'][0], self.Plotlist[Plot]['PlotData Back'][1], self.Plotlist[Plot]['PlotObject'], 'b')
+                    
+                    if FieldIndex == 0:
+                        self.Data2D = Generate_Difference(self.Data2D, 2, 6, 10)
+                        self.Data2D = Generate_Difference(self.Data2D, 3, 7, 11)
+                        self.Data2D = Generate_Difference(self.Data2D, 4, 8, 12)
+                        self.Data2D = Generate_Difference(self.Data2D, 5, 9, 13)
+                        self.FinishSweep()
 
 
         except Exception as inst:

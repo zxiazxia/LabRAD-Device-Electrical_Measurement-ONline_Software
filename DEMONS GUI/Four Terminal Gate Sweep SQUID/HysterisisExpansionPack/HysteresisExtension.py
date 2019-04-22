@@ -82,7 +82,7 @@ class Hysteresis(QtGui.QMainWindow, Ui_HysteresisWindow):
 
     def DetermineEnableConditions(self):
         self.ButtonsCondition={
-            self.pushButton_StartHysteresisSweep: (self.UpperLevel.DeviceList['Hysteresis_Device']['DeviceObject'] != False) and self.UpperLevel.DEMONS.Scanning_Flag == False or True,
+            self.pushButton_StartHysteresisSweep: (self.UpperLevel.DeviceList['Hysteresis_Device']['DeviceObject'] != False) and self.UpperLevel.DEMONS.Scanning_Flag == False and self.UpperLevel.serversList['dv'] != False,
             self.pushButton_AbortHysteresisSweep: self.UpperLevel.DEMONS.Scanning_Flag == True,
             self.comboBox_Hysteresis_SelectServer: self.UpperLevel.DEMONS.Scanning_Flag == False,
             self.comboBox_Hysteresis_SelectDevice: self.UpperLevel.DEMONS.Scanning_Flag == False,
@@ -140,7 +140,7 @@ class Hysteresis(QtGui.QMainWindow, Ui_HysteresisWindow):
                     break
                         
                 #Set Magnetic Field
-                # yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
+                yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
                 yield SleepAsync(self.reactor, FieldDelay)
                 self.Data2D[FieldIndex][2] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], VoltageChannel) #Voltage
                 self.Data2D[FieldIndex][3] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], CurrentChannel) #Current
@@ -164,7 +164,7 @@ class Hysteresis(QtGui.QMainWindow, Ui_HysteresisWindow):
                     break
                 
                 #Set Magnetic Field
-                # yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
+                yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
                 yield SleepAsync(self.reactor, FieldDelay)
                 self.Data2D[FieldIndex][6] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], VoltageChannel) #Voltage
                 self.Data2D[FieldIndex][7] = yield Read_ADC(self.UpperLevel.DeviceList['DataAquisition_Device']['DeviceObject'], CurrentChannel) #Current
@@ -198,7 +198,7 @@ class Hysteresis(QtGui.QMainWindow, Ui_HysteresisWindow):
             self.UpperLevel.serversList['dv'].add(self.Data2D)
             if self.checkBox_HysteresisSetting_BacktoZero.isChecked():
                 yield SleepAsync(self.reactor, 1)
-                # yield RampMagneticField(self.UpperLevel.DeviceList['Hysteresis_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Hysteresis_Device']['ComboBoxServer'].currentText()), 0.0, self.UpperLevel.Parameter['Hysteresis_RampSpeed'], self.reactor)
+                yield RampMagneticField(self.UpperLevel.DeviceList['Hysteresis_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Hysteresis_Device']['ComboBoxServer'].currentText()), 0.0, self.UpperLevel.Parameter['Hysteresis_RampSpeed'], self.reactor)
             self.UpperLevel.serversList['dv'].add_comment(str(self.UpperLevel.textEdit_Comment.toPlainText()))
             self.UpperLevel.DEMONS.SetScanningFlag(False)
             self.UpperLevel.Refreshinterface()

@@ -58,6 +58,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'SR860': False,
             'AMI430': False,
             '4KMonitor IPS120': False,
+            'IPS120': False,
         }
 
         self.DeviceList = {}#self.DeviceList['Device Name'][Device Property]
@@ -99,7 +100,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'ComboBoxDevice': self.MagnetControlWindow.comboBox_MagnetControl_SelectDevice,
             'ServerIndicator': self.MagnetControlWindow.pushButton_MagnetControl_ServerIndicator,
             'DeviceIndicator': self.MagnetControlWindow.pushButton_MagnetControl_DeviceIndicator, 
-            'ServerNeeded': ['AMI430', '4KMonitor IPS120'],
+            'ServerNeeded': ['AMI430', '4KMonitor IPS120', 'IPS120'],
         }
         
         self.DeviceList['Hysteresis_Device'] = {
@@ -109,7 +110,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
             'ComboBoxDevice': self.HysteresisWindow.comboBox_Hysteresis_SelectDevice,
             'ServerIndicator': self.HysteresisWindow.pushButton_Hysteresis_ServerIndicator,
             'DeviceIndicator': self.HysteresisWindow.pushButton_Hysteresis_DeviceIndicator, 
-            'ServerNeeded': ['AMI430', '4KMonitor IPS120'],
+            'ServerNeeded': ['AMI430', '4KMonitor IPS120', 'IPS120'],
         }
 
         self.Parameter = {
@@ -280,7 +281,7 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
     def DetermineEnableConditions(self):
         self.ButtonsCondition={
             self.lineEdit_Device_Name: True,
-            self.pushButton_StartFourTerminalSweep: self.DeviceList['DataAquisition_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_StartFourTerminalSweep: self.DeviceList['DataAquisition_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False and self.serversList['dv'] != False,
             self.pushButton_AbortFourTerminalSweep: False,
             self.comboBox_Voltage_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_Voltage_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
@@ -378,6 +379,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
     def connectServer(self, key, server):
         try:
             self.serversList[str(key)] = server
+            for name, DevicePropertyList in self.DeviceList.iteritems():#Reconstruct all combobox when all servers are connected
+                if key in DevicePropertyList['ServerNeeded']:
+                    ReconstructComboBox(DevicePropertyList['ComboBoxServer'], DevicePropertyList['ServerNeeded'])
             self.refreshServerIndicator()
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
@@ -388,7 +392,6 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
     def disconnectServer(self, ServerName):
         try:
             self.serversList[str(ServerName)] = False
-
             for key, DevicePropertyList in self.DeviceList.iteritems():
                 if str(ServerName) == str(DevicePropertyList['ComboBoxServer'].currentText()):
                     DevicePropertyList['ServerObject'] = False
@@ -400,9 +403,9 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
 
     def refreshServerIndicator(self):
         try:
-            optional_Main = ['4KMonitor IPS120']#This optional will reconstruct combobox multiple time when you disconnect/connect server individually
-            optional_MagneticExtension = []
-            optional_HysteresisExtension = []
+            optional_Main = ['4KMonitor IPS120', 'AMI430', 'IPS120', 'SR830', 'SR860']
+            optional_MagneticExtension = ['SR830', 'SR860']
+            optional_HysteresisExtension = ['SR830', 'SR860']
             flag_Main, flag_MagneticExtension, flag_HysteresisExtension = True, True, True
             for key in self.serversList:
                 if self.serversList[str(key)] == False and not key in optional_Main:
@@ -420,9 +423,6 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepSQUIDWindowUI):
                 if flag_HysteresisExtension:
                     setIndicator(self.HysteresisWindow.pushButton_Servers, 'rgb(0, 170, 0)')
                     
-                for key, DevicePropertyList in self.DeviceList.iteritems():#Reconstruct all combobox when all servers are connected
-                    ReconstructComboBox(DevicePropertyList['ComboBoxServer'], DevicePropertyList['ServerNeeded'])
-
                 self.Refreshinterface()
             else:
                 setIndicator(self.pushButton_Servers, 'rgb(161, 0, 0)')

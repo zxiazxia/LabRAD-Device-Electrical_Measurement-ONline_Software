@@ -412,8 +412,11 @@ border:1px solid rgb(168,168,168)
             <property name="text">
              <string/>
             </property>
-            <property name="checked">
+            <property name="checkable">
              <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -517,7 +520,7 @@ border:1px solid rgb(168,168,168)
              </size>
             </property>
             <property name="text">
-             <string>Wait Time</string>
+             <string>Wait Time For Gate</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>

@@ -618,7 +618,31 @@ class UnitWarning(QtGui.QDialog, Ui_UnitWarning):
     def closeEvent(self, e):
         self.reject()
 
+#---------------------------------------------------------------------------------------------------------#         
+""" The following section creates a generic warning."""
+        
 
+Ui_GeneralWarning, QtBaseClass = uic.loadUiType(path + r"\GeneralWarningWindow.ui")
+        
+class GeneralWarning(QtGui.QDialog, Ui_GeneralWarning):
+    def __init__(self, parent, text):
+        super(GeneralWarning, self).__init__(parent)
+        self.window = parent
+        self.setupUi(self)
+        
+        self.label.setText(text)
+        
+        self.push_yes.clicked.connect(self.acceptEntry)
+        self.push_no.clicked.connect(self.rejectEntry)
+        
+    def acceptEntry(self):
+        self.accept()
+        
+    def rejectEntry(self):
+        self.reject()
+        
+    def closeEvent(self, e):
+        self.reject()
 
 
 

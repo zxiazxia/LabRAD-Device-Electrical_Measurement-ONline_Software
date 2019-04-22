@@ -160,7 +160,7 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
 
     def DetermineEnableConditions(self):
         self.ButtonsCondition={
-            self.pushButton_StartFourTerminalSweep: (self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'] != False) and self.UpperLevel.DEMONS.Scanning_Flag == False or True,
+            self.pushButton_StartFourTerminalSweep: (self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'] != False) and self.UpperLevel.DEMONS.Scanning_Flag == False and self.UpperLevel.serversList['dv'] != False,
             self.pushButton_AbortFourTerminalSweep: self.UpperLevel.DEMONS.Scanning_Flag == True,
             self.comboBox_MagnetControl_SelectServer: self.UpperLevel.DEMONS.Scanning_Flag == False,
             self.comboBox_MagnetControl_SelectDevice: self.UpperLevel.DEMONS.Scanning_Flag == False,
@@ -215,7 +215,7 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
                     break
 
                 #Set Magnetic Field
-                # yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
+                yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), MagneticFieldSet[FieldIndex], FieldSpeed, self.reactor)
                 yield SleepAsync(self.reactor, FieldDelay)
 
                 #Ramp DACADC to initial
@@ -264,7 +264,7 @@ class MagnetControl(QtGui.QMainWindow, Ui_MagnetControlWindow):
         try:
             if self.checkBox_FourTerminalMagneticFieldSetting_BacktoZero.isChecked():
                 yield SleepAsync(self.reactor, 1)
-                # yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), 0.0, self.UpperLevel.Parameter['MagnetControl_RampSpeed'], self.reactor)
+                yield RampMagneticField(self.UpperLevel.DeviceList['Magnet_Device']['DeviceObject'], str(self.UpperLevel.DeviceList['Magnet_Device']['ComboBoxServer'].currentText()), 0.0, self.UpperLevel.Parameter['MagnetControl_RampSpeed'], self.reactor)
             self.UpperLevel.serversList['dv'].add_comment(str(self.UpperLevel.textEdit_Comment.toPlainText()))
             self.UpperLevel.DEMONS.SetScanningFlag(False)
             self.UpperLevel.Refreshinterface()

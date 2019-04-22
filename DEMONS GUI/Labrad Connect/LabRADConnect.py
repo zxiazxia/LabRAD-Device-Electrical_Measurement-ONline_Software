@@ -270,7 +270,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                 Prefix = ''
             else:
                 Prefix = LabradPosition + ' '
-            self.discxnsignal.emit(LabradPosition + servername)
+            self.discxnsignal.emit(Prefix + servername)
         except Exception as inst:
             print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
     
