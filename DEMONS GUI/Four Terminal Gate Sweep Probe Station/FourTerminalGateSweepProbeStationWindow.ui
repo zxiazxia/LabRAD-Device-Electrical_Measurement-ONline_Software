@@ -2060,7 +2060,7 @@ color: rgb(168, 168, 168)
 }</string>
               </property>
               <property name="text">
-               <string>Current Sensing Lock In:</string>
+               <string>Current Sensing Lock In (Excitation):</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

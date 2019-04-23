@@ -621,6 +621,12 @@ class UnitWarning(QtGui.QDialog, Ui_UnitWarning):
 #---------------------------------------------------------------------------------------------------------#         
 """ The following section creates a generic warning."""
         
+def ShowWarning(text, parent = None):
+    warning = GeneralWarning(parent, text)
+    if warning.exec_():
+        return True
+    else:
+        return False
 
 Ui_GeneralWarning, QtBaseClass = uic.loadUiType(path + r"\GeneralWarningWindow.ui")
         
@@ -796,7 +802,7 @@ def Buffer_Ramp_Debug(Device, Output, Input, Min, Max, NoS, Delay):
 @inlineCallbacks
 def RampMagneticField(DeviceObject, ServerName, TargetField, RampRate, Reactor):
     try:
-        if ServerName == 'IPS120':
+        if 'IPS120' in ServerName:
             yield DeviceObject.set_control(3)
             yield DeviceObject.set_fieldsweep_rate(RampRate)#Set Ramp Rate
             yield DeviceObject.set_control(2)
@@ -827,9 +833,9 @@ def RampMagneticField(DeviceObject, ServerName, TargetField, RampRate, Reactor):
                     yield DeviceObject.set_activity(1)
                     yield DeviceObject.set_control(2)
                     print 'restarting loop'
-                    SleepAsync(Reactor, 2)
+                    SleepAsync(Reactor, 0.25)
 
-        if ServerName == 'AMI430':
+        if 'AMI430' in ServerName:
             print 'Setting field to ' + str(TargetField)
             t0 = time.time() #Keep track of starting time for setting the field
             yield DeviceObject.conf_field_targ(TargetField) #Set targer field

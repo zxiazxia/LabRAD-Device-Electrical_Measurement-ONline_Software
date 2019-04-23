@@ -14,8 +14,8 @@
    <string>Unit Warning</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/nSOTScanner/Pictures/jj_schema.svg</normaloff>:/nSOTScanner/Pictures/jj_schema.svg</iconset>
+   <iconset resource="DEMONSResources.qrc">
+    <normaloff>:/Pictures/Pictures/DemonLogo.png</normaloff>:/Pictures/Pictures/DemonLogo.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">#Dialog{
