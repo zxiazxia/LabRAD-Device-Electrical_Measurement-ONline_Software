@@ -765,7 +765,7 @@ Ramp the DACADC without taking data, usually used to ramp to initial voltage.
 def Ramp_DACADC(DACADC_Device, Port, StartingVoltage, EndVoltage, StepSize, Delay, c = None):
     try:
         if StartingVoltage != EndVoltage:
-            Delay = int(Delay * 1000) #Delay in DAC is in microsecond
+            Delay = int(Delay * 1000000) #Delay in DAC is in microsecond
             Numberofsteps = int(abs(StartingVoltage - EndVoltage) / StepSize)
             if Numberofsteps < 2:
                 Numberofsteps = 2
@@ -780,8 +780,8 @@ buffer ramp function can be look up on DACADC server.
 @inlineCallbacks
 def Buffer_Ramp_DACADC(DACADC_Device, ChannelOutput, ChannelInput, Min, Max, Numberofsteps, Delay):
     try:
-        Delay = int(Delay * 1000)
-        data = yield DACADC_Device.buffer_ramp(ChannelOutput,ChannelInput,Min,Max,Numberofsteps,Delay)
+        DACDelay = int(Delay * 1000000)#This is in unit of microsecond
+        data = yield DACADC_Device.buffer_ramp(ChannelOutput,ChannelInput,Min,Max,Numberofsteps,DACDelay)
         returnValue(np.transpose(data))
     except Exception as inst:
         print 'Error:', inst, ' on line: ', sys.exc_traceback.tb_lineno
