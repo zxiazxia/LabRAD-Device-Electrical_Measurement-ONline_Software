@@ -322,7 +322,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                 DVFolder = DVFolder + '\\' + i
                 osDVFolder = osDVFolder +'\\' + i + '.dir'
             self.DVFolder =  self.osDVFolder + '\\' + DVFolder
-            self.SessionFolder = self.osDVFolder + '\\' + osDVFolder + '\\Image'
+            self.SessionFolder = self.osDVFolder + '\\' + osDVFolder + '\\Image' + '\\' + str(datetime.date.today())
             self.lineEdit_DataVaultFolder.setText(self.DVFolder)
             self.lineEdit_SessionFolder.setText(self.SessionFolder)
             self.newDVFolder.emit(DVList)
