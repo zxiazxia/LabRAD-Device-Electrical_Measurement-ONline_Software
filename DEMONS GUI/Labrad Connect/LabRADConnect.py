@@ -157,7 +157,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                             self.newDVFolder.emit([])#Emit DataVault Default
                             connection_flag = True
 
-                            self.SessionFolder = self.osDVFolder + '\\Image'
+                            self.SessionFolder = self.osDVFolder + '\\Image' + '\\' + str(datetime.date.today())
                             self.lineEdit_SessionFolder.setText(self.SessionFolder)
                             self.newSessionFolder.emit(self.SessionFolder)
 
@@ -291,7 +291,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
     @inlineCallbacks
     def chooseDVFolder(self, c = None):
         try:
-            if self.LabradDictionary['dv'] is False:
+            if self.LabradDictionary['Local']['dv'] is False:
                 msgBox = QtGui.QMessageBox(self)
                 msgBox.setIcon(QtGui.QMessageBox.Information)
                 msgBox.setWindowTitle('Data Vault Connection Missing')
@@ -300,7 +300,7 @@ class Window(QtGui.QMainWindow, LabRADConnectUI):
                 msgBox.setStyleSheet("background-color:black; color:rgb(168,168,168)")
                 msgBox.exec_()
             else: 
-                dv = self.LabradDictionary['dv']
+                dv = self.LabradDictionary['Local']['dv']
                 dvExplorer = dirExplorer.dataVaultExplorer(dv, self.reactor, self)
                 yield dvExplorer.popDirs()
                 dvExplorer.show()
