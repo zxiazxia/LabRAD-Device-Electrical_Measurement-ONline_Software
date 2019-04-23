@@ -172,7 +172,6 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
         self.comboBox_Voltage_LI_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceList, 'Voltage_LI_Device', self.serversList, str(self.DeviceList['Voltage_LI_Device']['ComboBoxServer'].currentText())))
         self.comboBox_Voltage_LI_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.DeviceList, 'Voltage_LI_Device', str(self.DeviceList['Voltage_LI_Device']['ComboBoxDevice'].currentText()), self.Refreshinterface))
         
-
         self.comboBox_Current_LI_SelectServer.currentIndexChanged.connect(lambda: SelectServer(self.DeviceList, 'Current_LI_Device', self.serversList, str(self.DeviceList['Current_LI_Device']['ComboBoxServer'].currentText())))
         self.comboBox_Current_LI_SelectDevice.currentIndexChanged.connect(lambda: SelectDevice(self.DeviceList, 'Current_LI_Device', str(self.DeviceList['Current_LI_Device']['ComboBoxDevice'].currentText()), self.Refreshinterface))
 
@@ -216,8 +215,8 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
             self.comboBox_Voltage_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_Voltage_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_LI_Excitation: self.DEMONS.Scanning_Flag == False,
-            self.pushButton_LI_Excitation_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
-            self.pushButton_LI_Excitation_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Excitation_Read: self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Excitation_Set: self.DeviceList['Current_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
             self.comboBox_Current_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_Current_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
         }
