@@ -78,7 +78,7 @@ class Window(QtGui.QMainWindow, TwoTerminalGateSweepProbeStationWindowUI):
             'LI_Timeconstant': 'Read',
             'LI_Frequency': 'Read',
             'Voltage_LI_Gain': 1.0,
-            'Resistance': 1000000,
+            'Resistance': 100000000,
             'FourTerminal_StartVoltage': -1.0,
             'FourTerminal_EndVoltage': 1.0,
             'FourTerminal_Delay': 0.3,
@@ -144,6 +144,7 @@ class Window(QtGui.QMainWindow, TwoTerminalGateSweepProbeStationWindowUI):
 
         self.lineEdit_LI_Excitation.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'LI_Excitation', self.lineEdit))
         self.pushButton_LI_Excitation_Read.clicked.connect(lambda: ReadEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'LI_Excitation', self.lineEdit['LI_Excitation']))
+        self.pushButton_LI_Excitation_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'LI_Excitation', self.lineEdit['LI_Excitation']))#Send to Voltage Lock in
         self.lineEdit_LI_Timeconstant.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'LI_Timeconstant', self.lineEdit))
         self.pushButton_LI_Timeconstant_Set.clicked.connect(lambda: SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].time_constant, self.Parameter, 'LI_Timeconstant', self.lineEdit['LI_Timeconstant']))#Send to Voltage Lock in
         self.lineEdit_LI_Frequency.editingFinished.connect(lambda: UpdateLineEdit_Bound(self.Parameter, 'LI_Frequency', self.lineEdit))
@@ -175,7 +176,7 @@ class Window(QtGui.QMainWindow, TwoTerminalGateSweepProbeStationWindowUI):
     def DetermineEnableConditions(self):
         self.ButtonsCondition={
             self.lineEdit_Device_Name: True,
-            self.pushButton_StartFourTerminalSweep: (self.DeviceList['DataAquisition_Device']['DeviceObject'] != False) and (self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False) and (self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False) and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_StartFourTerminalSweep: (self.DeviceList['DataAquisition_Device']['DeviceObject'] != False) and (self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False) and self.DEMONS.Scanning_Flag == False,
             self.pushButton_AbortFourTerminalSweep: self.DEMONS.Scanning_Flag == True,
             self.comboBox_DataAquisition_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_DataAquisition_SelectDevice: self.DEMONS.Scanning_Flag == False,
@@ -186,11 +187,11 @@ class Window(QtGui.QMainWindow, TwoTerminalGateSweepProbeStationWindowUI):
             self.lineEdit_FourTerminal_Delay: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_FourTerminal_Resistance: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_LI_Timeconstant: self.DEMONS.Scanning_Flag == False,
-            self.pushButton_LI_Timeconstant_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
-            self.pushButton_LI_Timeconstant_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Timeconstant_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Timeconstant_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
             self.lineEdit_LI_Frequency: self.DEMONS.Scanning_Flag == False,
-            self.pushButton_LI_Frequency_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
-            self.pushButton_LI_Frequency_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Frequency_Read: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
+            self.pushButton_LI_Frequency_Set: self.DeviceList['Voltage_LI_Device']['DeviceObject'] != False and self.DEMONS.Scanning_Flag == False,
             self.comboBox_Voltage_LI_SelectServer: self.DEMONS.Scanning_Flag == False,
             self.comboBox_Voltage_LI_SelectDevice: self.DEMONS.Scanning_Flag == False,
             self.lineEdit_LI_Excitation: self.DEMONS.Scanning_Flag == False,
