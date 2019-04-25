@@ -224,55 +224,60 @@ class Window(QtGui.QMainWindow, FourTerminalGateSweepProbeStationWindowUI):
     @inlineCallbacks
     def StartMeasurement(self, c):
         try:
-            self.DEMONS.SetScanningFlag(True)
+            self.DEMONS.SetScanningFlag(True)#Set scanning flag to be True, this is a flag in DEMON main Window and it is used for preventing to start multiple measurements
     
-            self.Refreshinterface()
+            self.Refreshinterface()#Based on flag, disable buttons
+            
+            #At the beginning of the measurement, set the parameters to the lock-in
             SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].time_constant, self.Parameter, 'LI_Timeconstant', self.lineEdit['LI_Timeconstant'])
             SetEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].time_constant, self.Parameter, 'LI_Timeconstant', self.lineEdit['LI_Timeconstant'])
             SetEdit_Parameter(self.DeviceList['Voltage_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency'])
             SetEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].frequency, self.Parameter, 'LI_Frequency', self.lineEdit['LI_Frequency'])
             SetEdit_Parameter(self.DeviceList['Current_LI_Device']['DeviceObject'].sine_out_amplitude, self.Parameter, 'LI_Excitation', self.lineEdit['LI_Excitation'])
     
-            Multiplier = [self.Parameter['Voltage_LI_Gain'], self.Parameter['Current_LI_Gain']] #Voltage, Current
+            Multiplier = [self.Parameter['Voltage_LI_Gain'], self.Parameter['Current_LI_Gain']] #Voltage, Current for multiply the data
     
-            ImageNumber, ImageDir = yield CreateDataVaultFile(self.serversList['dv'], 'FourTerminalGateSweep ' + str(self.Parameter['DeviceName']), ('Gate Index', 'Gate Voltage'), ('Voltage', 'Current', 'Resistance', 'Conductance'))
-            self.lineEdit_ImageNumber.setText(ImageNumber)
-            self.lineEdit_ImageDir.setText(ImageDir)
+            ImageNumber, ImageDir = yield CreateDataVaultFile(self.serversList['dv'], 'FourTerminalGateSweep ' + str(self.Parameter['DeviceName']), ('Gate Index', 'Gate Voltage'), ('Voltage', 'Current', 'Resistance', 'Conductance')) #Create datavault with independent variables and dependent variables, this return the datavault number and the directory
+            self.lineEdit_ImageNumber.setText(ImageNumber) #set text on lineedit in GUI
+            self.lineEdit_ImageDir.setText(ImageDir) #set text on lineedit in GUI
     
-            yield AddParameterToDataVault(self.serversList['dv'], self.Parameter)
-            ClearPlots(self.Plotlist)
+            yield AddParameterToDataVault(self.serversList['dv'], self.Parameter) #Add parameters to data vault
+            ClearPlots(self.Plotlist) #Clear plots
     
             GateChannel = self.Parameter['FourTerminal_GateChannel']
             StartVoltage, EndVoltage = self.Parameter['FourTerminal_StartVoltage'], self.Parameter['FourTerminal_EndVoltage']
             NumberOfSteps, Delay = self.Parameter['FourTerminal_Numberofstep'], self.Parameter['FourTerminal_Delay']
     
-            yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, self.Parameter['Setting_RampStepSize'], self.Parameter['Setting_RampDelay'], self.reactor)
-            yield SleepAsync(self.reactor, self.Parameter['Setting_WaitTime'])
+            yield Ramp_SIM900_VoltageSource(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, 0.0, StartVoltage, self.Parameter['Setting_RampStepSize'], self.Parameter['Setting_RampDelay'], self.reactor)#Ramp to initial voltage
+            yield SleepAsync(self.reactor, self.Parameter['Setting_WaitTime'])#Wait the time for everything to settle down
     
-            Data = np.empty((0,6))
-            GateVoltageSet = np.linspace(StartVoltage, EndVoltage, NumberOfSteps)
-            for GateIndex in range(NumberOfSteps):
-                if self.DEMONS.Scanning_Flag == False:
+            Data = np.empty((0,6)) #Generate empty data with the correct dimension
+            GateVoltageSet = np.linspace(StartVoltage, EndVoltage, NumberOfSteps) #Generate Gate Voltage at which to set
+            for GateIndex in range(NumberOfSteps): #Sweep all the Gate Voltage
+                if self.DEMONS.Scanning_Flag == False: #Check if Aborted, if so, end the sweep
                     print 'Abort the Sweep'
                     yield self.FinishSweep(GateVoltageSet[GateIndex])
                     break #Break it outside of the for loop
-                yield Set_SIM900_VoltageOutput(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, GateVoltageSet[GateIndex])
-                yield SleepAsync(self.reactor, Delay)
-                Voltage = yield Get_SR_LI_R(self.DeviceList['Voltage_LI_Device']['DeviceObject'])
-                Current = yield Get_SR_LI_R(self.DeviceList['Current_LI_Device']['DeviceObject'])
-                Data_Line = np.array([Voltage, Current])
-                Data_Line = Multiply(Data_Line, Multiplier)
-                Data_Line = AttachData_Front(Data_Line, GateVoltageSet[GateIndex])
-                Data_Line = AttachData_Front(Data_Line, GateIndex)
-                Data_Line = Attach_ResistanceConductance(Data_Line, 2, 3)
-                self.serversList['dv'].add(Data_Line)
-                Data = np.append(Data, [Data_Line], axis = 0)
-                XData, VoltageData, CurrentData, ResistanceData, ConductanceData = Data[:,1], Data[:,2], Data[:,3], Data[:,4], Data[:,5]
-                ClearPlots(self.Plotlist)
-                Plot1DData(XData, VoltageData, self.Plotlist['VoltagePlot']['PlotObject'])
-                Plot1DData(XData, CurrentData, self.Plotlist['CurrentPlot']['PlotObject'])
-                Plot1DData(XData, ResistanceData, self.Plotlist['ResistancePlot']['PlotObject'])
-                if GateIndex == NumberOfSteps - 1:
+                yield Set_SIM900_VoltageOutput(self.DeviceList['DataAquisition_Device']['DeviceObject'], GateChannel, GateVoltageSet[GateIndex]) #Set the voltage to the correct voltage
+                yield SleepAsync(self.reactor, Delay) #Wait proper amount of time for lock-in
+                Voltage = yield Get_SR_LI_R(self.DeviceList['Voltage_LI_Device']['DeviceObject'])#Read voltage from lock-in
+                Current = yield Get_SR_LI_R(self.DeviceList['Current_LI_Device']['DeviceObject'])#Read current from lock-in
+                
+                Data_Line = np.array([Voltage, Current])#make data into a list
+                Data_Line = Multiply(Data_Line, Multiplier)#Multitply data 
+                Data_Line = AttachData_Front(Data_Line, GateVoltageSet[GateIndex]) #Attach gate voltage
+                Data_Line = AttachData_Front(Data_Line, GateIndex) #Attach gate index
+                Data_Line = Attach_ResistanceConductance(Data_Line, 2, 3) #Attach resistance and conductance, after this step, the data is 1 by 6
+                
+                self.serversList['dv'].add(Data_Line) #Add the data to datavault
+                
+                Data = np.append(Data, [Data_Line], axis = 0)#Meta data for plotting
+                XData, VoltageData, CurrentData, ResistanceData, ConductanceData = Data[:,1], Data[:,2], Data[:,3], Data[:,4], Data[:,5]#Generate data for plotting
+                ClearPlots(self.Plotlist)#Plotting
+                Plot1DData(XData, VoltageData, self.Plotlist['VoltagePlot']['PlotObject'])#Plotting
+                Plot1DData(XData, CurrentData, self.Plotlist['CurrentPlot']['PlotObject'])#Plotting
+                Plot1DData(XData, ResistanceData, self.Plotlist['ResistancePlot']['PlotObject'])#Plotting
+                if GateIndex == NumberOfSteps - 1:#When reach the end of the voltage, finish the sweep
                     yield self.FinishSweep(GateVoltageSet[GateIndex])
 
         except Exception as inst:
