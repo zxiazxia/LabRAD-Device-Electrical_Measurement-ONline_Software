@@ -12,6 +12,7 @@ sys.path.append(path + r'\Resources')
 sys.path.append(path + r'\Labrad Connect')
 sys.path.append(path + r'\DataVaultBrowser')
 sys.path.append(path + r'\Four Terminal Gate Sweep Probe Station')
+sys.path.append(path + r'\Two Terminal Gate Sweep Probe Station')
 sys.path.append(path + r'\Four Terminal Gate Sweep SQUID')
 sys.path.append(path + r'\DAC Controler')
 # sys.path.append(path + r'\Data Plotter')
@@ -22,6 +23,7 @@ MainWindowUI, QtBaseClass = uic.loadUiType(UI_path)
 #import all windows for gui
 import LabRADConnect
 import FourTerminalGateSweepProbeStation
+import TwoTerminalGateSweepProbeStation
 import FourTerminalGateSweepSQUID
 import DACControler
 # import DataPlotter
@@ -47,6 +49,7 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
         self.MeasurementWindows = {
             'LabRAD': LabRADConnect.Window(self.reactor, None),
             'FourTerminalGateSweepProbeStationWindow': FourTerminalGateSweepProbeStation.Window(self.reactor, self, None),
+            'TwoTerminalGateSweepProbeStationWindow': TwoTerminalGateSweepProbeStation.Window(self.reactor, self, None),
             'DACTrackerWindow': DACControler.Window(self.reactor, None),
             'FourTerminalGateSweepSQUIDWindow': FourTerminalGateSweepSQUID.Window(self.reactor, self, None),
             # 'DataPlotterWindow': DataPlotter.Window(self.reactor, self, None),
@@ -56,12 +59,12 @@ class MainWindow(QtGui.QMainWindow, MainWindowUI):
         self.pushButton_FourTerminalGateSweepProbeStation.clicked.connect(lambda: openWindow(self.MeasurementWindows['FourTerminalGateSweepProbeStationWindow']))
         self.pushButton_DACADC_Tracker.clicked.connect(lambda: openWindow(self.MeasurementWindows['DACTrackerWindow']))
         self.pushButton_FourTerminalGateSweepSQUID.clicked.connect(lambda: openWindow(self.MeasurementWindows['FourTerminalGateSweepSQUIDWindow']))
+        self.pushButton_TwoTerminalGateSweepProbeStation.clicked.connect(lambda: openWindow(self.MeasurementWindows['TwoTerminalGateSweepProbeStationWindow']))
         # self.pushButton_DataPlotter.clicked.connect(lambda: openWindow(self.MeasurementWindows['DataPlotterWindow']))
         
         self.MeasurementWindows['LabRAD'].cxnsignal.connect(self.connect)
         self.MeasurementWindows['LabRAD'].discxnsignal.connect(self.disconnect)
         self.MeasurementWindows['LabRAD'].newSessionFolder.connect(self.distributeSessionFolder)
-        
         
         #Open by default the LabRAD Connect Module and Device Select
         openWindow(self.MeasurementWindows['LabRAD'])
