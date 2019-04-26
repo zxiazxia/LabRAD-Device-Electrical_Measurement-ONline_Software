@@ -656,7 +656,7 @@ border:1px solid rgb(168,168,168)
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_4">
+           <layout class="QGridLayout" name="gridLayout_4" rowstretch="1,1,1,1" columnstretch="2,2,0">
             <item row="0" column="0">
              <widget class="QLabel" name="label">
               <property name="minimumSize">
@@ -950,7 +950,7 @@ border:1px solid rgb(168,168,168)
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,1,1" columnstretch="2,1,1,1,0">
+           <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,1,1" columnstretch="2,2,0">
             <item row="1" column="0">
              <widget class="QLabel" name="label_Delay">
               <property name="minimumSize">
@@ -973,7 +973,7 @@ border:1px solid rgb(168,168,168)
               </property>
              </widget>
             </item>
-            <item row="1" column="1" colspan="3">
+            <item row="1" column="1">
              <widget class="QLineEdit" name="lineEdit_FourTerminal_Delay">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1006,7 +1006,7 @@ border:1px solid rgb(168,168,168)
               </property>
              </widget>
             </item>
-            <item row="1" column="4">
+            <item row="1" column="2">
              <widget class="QLabel" name="label_Delay_Unit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -1083,116 +1083,6 @@ color: rgb(168, 168, 168)
              </widget>
             </item>
             <item row="2" column="2">
-             <widget class="QPushButton" name="pushButton_LI_Timeconstant_Read">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>9999</width>
-                <height>9999</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:disabled#pushButton_LI_Timeconstant_Read{
-color: rgb(168,168,168);
-background-color:rgb(50,50,50);
-border: 1px solid rgb(168,168,168);
-border-radius: 5px
-}
-
-QPushButton:pressed#pushButton_LI_Timeconstant_Read{
-color: rgb(0,255,255);
-background-color:rgb(150,150,150);
-border: 1px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-QPushButton#pushButton_LI_Timeconstant_Read{
-color: rgb(0,255,255);
-background-color:rgb(0,0,0);
-border: 2px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-</string>
-              </property>
-              <property name="text">
-               <string>Read</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="3">
-             <widget class="QPushButton" name="pushButton_LI_Timeconstant_Set">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>9999</width>
-                <height>9999</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:disabled#pushButton_LI_Timeconstant_Set{
-color: rgb(168,168,168);
-background-color:rgb(50,50,50);
-border: 1px solid rgb(168,168,168);
-border-radius: 5px
-}
-
-QPushButton:pressed#pushButton_LI_Timeconstant_Set{
-color: rgb(0,255,255);
-background-color:rgb(150,150,150);
-border: 1px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-QPushButton#pushButton_LI_Timeconstant_Set{
-color: rgb(0,255,255);
-background-color:rgb(0,0,0);
-border: 2px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-</string>
-              </property>
-              <property name="text">
-               <string>Set</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="4">
              <widget class="QLabel" name="label_29">
               <property name="minimumSize">
                <size>
@@ -1211,7 +1101,7 @@ border-radius: 5px
               </property>
              </widget>
             </item>
-            <item row="0" column="0" colspan="5">
+            <item row="0" column="0" colspan="3">
              <widget class="QLabel" name="label_2">
               <property name="minimumSize">
                <size>
@@ -1254,7 +1144,7 @@ border:1px solid rgb(168,168,168)
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_7" rowstretch="1,1,1" columnstretch="2,1,1,1,0">
+           <layout class="QGridLayout" name="gridLayout_7" rowstretch="1,1,1" columnstretch="2,2,0">
             <item row="2" column="0">
              <widget class="QLabel" name="label_30">
               <property name="minimumSize">
@@ -1311,116 +1201,6 @@ border:1px solid rgb(168,168,168)
              </widget>
             </item>
             <item row="2" column="2">
-             <widget class="QPushButton" name="pushButton_LI_Frequency_Read">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>9999</width>
-                <height>9999</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:disabled#pushButton_LI_Frequency_Read{
-color: rgb(168,168,168);
-background-color:rgb(50,50,50);
-border: 1px solid rgb(168,168,168);
-border-radius: 5px
-}
-
-QPushButton:pressed#pushButton_LI_Frequency_Read{
-color: rgb(0,255,255);
-background-color:rgb(150,150,150);
-border: 1px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-QPushButton#pushButton_LI_Frequency_Read{
-color: rgb(0,255,255);
-background-color:rgb(0,0,0);
-border: 2px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-</string>
-              </property>
-              <property name="text">
-               <string>Read</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="3">
-             <widget class="QPushButton" name="pushButton_LI_Frequency_Set">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>9999</width>
-                <height>9999</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:disabled#pushButton_LI_Frequency_Set{
-color: rgb(168,168,168);
-background-color:rgb(50,50,50);
-border: 1px solid rgb(168,168,168);
-border-radius: 5px
-}
-
-QPushButton:pressed#pushButton_LI_Frequency_Set{
-color: rgb(0,255,255);
-background-color:rgb(150,150,150);
-border: 1px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-QPushButton#pushButton_LI_Frequency_Set{
-color: rgb(0,255,255);
-background-color:rgb(0,0,0);
-border: 2px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-</string>
-              </property>
-              <property name="text">
-               <string>Set</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="4">
              <widget class="QLabel" name="label_27">
               <property name="minimumSize">
                <size>
@@ -1439,7 +1219,7 @@ border-radius: 5px
               </property>
              </widget>
             </item>
-            <item row="0" column="0" colspan="5">
+            <item row="0" column="0" colspan="3">
              <widget class="QLabel" name="label_Voltage_LI_Settings_3">
               <property name="minimumSize">
                <size>
@@ -1520,116 +1300,6 @@ color: rgb(168, 168, 168)
              </widget>
             </item>
             <item row="1" column="2">
-             <widget class="QPushButton" name="pushButton_LI_Excitation_Read">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>9999</width>
-                <height>9999</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:disabled#pushButton_LI_Excitation_Read{
-color: rgb(168,168,168);
-background-color:rgb(50,50,50);
-border: 1px solid rgb(168,168,168);
-border-radius: 5px
-}
-
-QPushButton:pressed#pushButton_LI_Excitation_Read{
-color: rgb(0,255,255);
-background-color:rgb(150,150,150);
-border: 1px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-QPushButton#pushButton_LI_Excitation_Read{
-color: rgb(0,255,255);
-background-color:rgb(0,0,0);
-border: 2px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-</string>
-              </property>
-              <property name="text">
-               <string>Read</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QPushButton" name="pushButton_LI_Excitation_Set">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>9999</width>
-                <height>9999</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:disabled#pushButton_LI_Excitation_Set{
-color: rgb(168,168,168);
-background-color:rgb(50,50,50);
-border: 1px solid rgb(168,168,168);
-border-radius: 5px
-}
-
-QPushButton:pressed#pushButton_LI_Excitation_Set{
-color: rgb(0,255,255);
-background-color:rgb(150,150,150);
-border: 1px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-QPushButton#pushButton_LI_Excitation_Set{
-color: rgb(0,255,255);
-background-color:rgb(0,0,0);
-border: 2px solid rgb(0,255,255);
-border-radius: 5px
-}
-
-</string>
-              </property>
-              <property name="text">
-               <string>Set</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="4">
              <widget class="QLabel" name="label_33">
               <property name="minimumSize">
                <size>
