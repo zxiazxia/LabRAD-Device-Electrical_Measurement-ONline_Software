@@ -17,7 +17,7 @@
 ### BEGIN NODE INFO
 [info]
 name = DAC-ADC
-version = 1.2.0
+version = 1.2.1
 description = DAC-ADC Box server: AD5764-AD7734, AD5780-AD7734, AD5791-AD7734
 [startup]
 cmdline = %PYTHON% %FILE%
@@ -128,8 +128,6 @@ class DAC_ADCWrapper(DeviceWrapper):
         ans = yield p.send()
         returnValue(ans.read_line)
         
-
-
 class DAC_ADCServer(DeviceServer):
     name = 'DAC-ADC'
     deviceName = 'Arduino DAC-ADC'
@@ -189,6 +187,23 @@ class DAC_ADCServer(DeviceServer):
 
         returnValue(devs)
 
+    @inlineCallbacks
+    def BufferError(self , dev):
+        """Reads the first couple of bytes and determines if it is an error message. Return the message either once the full error 
+           is received, or it is determined that an error is not being thrown."""
+        error =  'VOLTAGE_OVERRANGE'
+        message= ''
+        count = 0
+        while count < 17:
+            bytestoread = yield dev.in_waiting()
+            if bytestoread > 0:
+                byte = yield dev.readByte(1)
+                message = message + byte
+                if byte != error[count]:
+                    returnValue(message)
+                count += 1
+        returnValue(message)
+        
     @setting(100)
     def connect(self,c,server,port):
         dev=self.selectedDevice(c)
@@ -212,14 +227,13 @@ class DAC_ADCServer(DeviceServer):
         self.sigOutputSet([str(port),voltage])
         returnValue(ans)
 
-
     @setting(104,port='i',returns='v[]')
     def read_voltage(self,c,port):
         """
         GET_ADC returns the voltage read by an input channel. Do not confuse with GET_DAC; GET_DAC has not been implemented yet.
         """
         dev=self.selectedDevice(c)
-        if not (port in range(4)):
+        if not (port in range(8)):
             returnValue("Error: invalid port number.")
             return
         yield dev.write("GET_ADC,%i\r"%port)
@@ -237,6 +251,11 @@ class DAC_ADCServer(DeviceServer):
         yield dev.write("RAMP1,%i,%f,%f,%i,%i\r"%(port,ivoltage,fvoltage,steps,delay))
         self.sigRamp1Started([str(port),str(ivoltage),str(fvoltage),str(steps),str(delay)])
         ans = yield dev.read()
+        if "VOLTAGE_OVERRANGE" in ans:
+            v = yield dev.read()
+            while v != "":
+                v = yield dev.read()
+            returnValue(ans)
         returnValue(ans)
 
     @setting(106,port1='i',port2='i',ivoltage1='v',ivoltage2='v',fvoltage1='v',fvoltage2='v',steps='i',delay='i',returns='s')
@@ -249,6 +268,11 @@ class DAC_ADCServer(DeviceServer):
         yield dev.write("RAMP2,%i,%i,%f,%f,%f,%f,%i,%i\r"%(port1,port2,ivoltage1,ivoltage2,fvoltage1,fvoltage2,steps,delay))
         self.sigRamp2Started([str(port1),str(port2),str(ivoltage1),str(ivoltage2),str(fvoltage1),str(fvoltage2),str(steps),str(delay)])
         ans = yield dev.read()
+        if "VOLTAGE_OVERRANGE" in ans:
+            v = yield dev.read()
+            while v != "":
+                v = yield dev.read()
+            returnValue(ans)
         returnValue(ans)
 
     @setting(107,dacPorts='*i', adcPorts='*i', ivoltages='*v[]', fvoltages='*v[]', steps='i',delay='v[]',nReadings='i',returns='**v[]')#(*v[],*v[])')
@@ -284,9 +308,14 @@ class DAC_ADCServer(DeviceServer):
         channels = []
         data = ''
 
+        data = yield self.BufferError(dev)
+        if 'VOLTAGE_OVERRANGE' in data:
+            v = dev.read()
+            returnValue('DACOverrange')
+        
         dev.setramping(True)
         try:
-            nbytes = 0
+            nbytes = len(data)
             totalbytes = steps * adcN * 2
             while dev.isramping() and (nbytes < totalbytes):
                 bytestoread = yield dev.in_waiting()
@@ -299,11 +328,11 @@ class DAC_ADCServer(DeviceServer):
                         tmp = yield dev.readByte(bytestoread)
                         data = data + tmp
                         nbytes = nbytes + bytestoread
-
+            
             dev.setramping(False)
-
+            
             data = list(data)
-
+            
             for x in xrange(adcN):
                 channels.append([])
 
@@ -352,7 +381,7 @@ class DAC_ADCServer(DeviceServer):
             sfvoltages = sfvoltages + str(fvoltages[x]) + ","
 
         sivoltages = sivoltages[:-1]
-        sfvoltages = sfvoltages[:-1]    
+        sfvoltages = sfvoltages[:-1]
 
         for x in xrange(adcN):
             sadcPorts = sadcPorts + str(adcPorts[x])
@@ -364,9 +393,17 @@ class DAC_ADCServer(DeviceServer):
         voltages = []
         channels = []
         data = ''
+        
+        data = yield self.BufferError(dev)
+        if 'VOLTAGE_OVERRANGE' in data:
+            v = dev.read()
+            # while v != '':
+                # v=dev.read()
+            returnValue('DACOverrange')
+       
         dev.setramping(True)
         try:
-            nbytes = 0
+            nbytes = len(data)
             totalbytes = adcSteps * adcN * 2
             while dev.isramping() and (nbytes < totalbytes):
                 bytestoread = yield dev.in_waiting()
@@ -590,9 +627,6 @@ class DAC_ADCServer(DeviceServer):
         reactor.callLater(secs,d.callback,'Sleeping')
         return d
             
-            
-
-
 __server__ = DAC_ADCServer()
 
 if __name__ == '__main__':
