@@ -347,6 +347,31 @@ class SIM900Server(DeviceServer):
         dev=self.selectedDevice(c)
         yield dev.write('SNDT %s,"*RST"\r'%channel)
 
+    @setting(401, channel='i', returns = 's')
+    def Channel_IDN(self, c, channel):
+        '''
+        Send *IDN? to channel
+        '''
+        dev=self.selectedDevice(c)
+        yield dev.write('CONN %s,"cometzir"\r'%channel)
+        ans=yield dev.query('*IDN?\r')
+        yield dev.write('cometzir\r')
+        returnValue(str(ans))
+
+    @setting(402, channel='i', config = 'i', returns = 'i')
+    def Multiplexer_SetConfig(self, c, channel, config):
+        '''
+        Set Configuratyion of Multiplexer
+        channel: The slot of SIM925 in SIM900
+        config: desired channel
+        '''
+        dev=self.selectedDevice(c)
+        yield dev.write('SNDT %s,"CHAN %s"\r'%(channel, config))
+        yield dev.write('CONN %s,"cometzir"\r'%channel)
+        ans=yield dev.query('CHAN?\r')
+        yield dev.write('cometzir\r')
+        returnValue(int(ans))
+
 __server__ = SIM900Server()
 
 if __name__ == '__main__':
