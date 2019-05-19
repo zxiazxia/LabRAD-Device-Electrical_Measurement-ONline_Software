@@ -31,6 +31,7 @@ timeout = 20
 """
 
 from math import log10
+from numpy import log2
 from labrad.server import setting
 from labrad.gpib import GPIBManagedServer
 from twisted.internet.defer import inlineCallbacks, returnValue
@@ -67,6 +68,7 @@ def getSensitivity(i, mode):
             return 10 * 10**(-9 + i/3)
         else:
             return 10 * 10**(-15 + i/3)
+    
 
 MODE_DICT = {
     'A': 0,
@@ -559,6 +561,49 @@ class SR830(GPIBManagedServer):
         resp = yield dev.query("SYNC?")
         returnValue(int(resp))
 
+    @setting(41, 'Sample Rate', rate = 'v', returns = 'v')
+    def sample_rate(self, c, rate = None):
+        '''Sets the sampling rate for buffered data acquisition. Only discrete values are accepted of 
+        0.0625 Hz, 0.125 Hz, 0.250 Hz, 0.5 Hz, 1 Hz, 2 Hz, 4 Hz, 8 Hz, 16 Hz, 32 Hz, 64 Hz, 128 Hz, 256 Hz,
+        and 512 Hz. The function will round to the nearest frequency.'''
+        dev = self.selectedDevice(c)
+        if rate is not None:
+            index = int(round(log2(rate/0.0625)))
+            if index < 0:
+                index = 0
+            elif index > 13:
+                index = 13
+            yield dev.write("SRAT {}".format(index))
+        resp = yield dev.query("SRAT?")
+        freq = 0.0625*2**int(resp)
+        returnValue(freq)
+        
+    @setting(42, 'Buffer Mode', mode = 'i', returns = 'i')
+    def buffer_mode(self, c, mode = None):
+        '''Sets the buffer mode for buffered data acquisition. 0 corresponds to 1 shot (stops after the buffer
+        is filled) and 1 corresponds to loop (overwrites earlier values in the buffer if it's filled).'''
+        dev = self.selectedDevice(c)
+        if mode is not None:
+            yield dev.write("SEND {}".format(mode))
+            
+        resp = yield dev.query("SEND?")
+        returnValue(int(resp))
+        
+    @setting(43, 'Clear Buffer')
+    def clear_buffer(self, c):
+        dev = self.selectedDevice(c)
+        yield dev.write("REST")
+        
+    @setting(44, 'Pause Buffer'):
+    def pause_buffer(self, c):
+        dev = self.selectedDevice(c)
+        yield dev.write("PAUS")
+        
+    @setting(45, 'Start Buffer')
+    def start_buffer(self, c):
+        dev = self.selectedDevice(c)
+        yield dev.write("STRT")
+        
 __server__ = SR830()
 
 if __name__ == '__main__':
